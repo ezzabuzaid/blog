@@ -1,4 +1,5 @@
 ---
+import { AstroSeo } from "@astrolib/seo";
 import { SITE } from "@config";
 import "@styles/base.css";
 import { ViewTransitions } from "astro:transitions";
@@ -9,8 +10,17 @@ export interface Props {
   description?: string;
   ogImage?: string;
   canonicalURL?: string;
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    expirationTime?: string;
+    authors?: (string | undefined)[];
+    section?: string;
+    tags?: string[];
+  };
 }
 const {
+  article = {},
   title = SITE.title,
   author = SITE.author,
   description = SITE.desc,
@@ -32,26 +42,44 @@ const socialImageURL = new URL(ogImage, Astro.url.origin).href;
     <meta name="generator" content={Astro.generator} />
 
     <!-- General Meta Tags -->
-    <title>{title}</title>
-    <meta name="title" content={title} />
     <meta name="description" content={description} />
     <meta name="author" content={author} />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@ezzabuzaid" />
-    <meta name="twitter:creator" content="@ezzabuzaid" />
-    <meta name="twitter:url" content={canonicalURL} />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={socialImageURL} />
+
+    <AstroSeo
+      title={title}
+      description={description}
+      canonical={canonicalURL}
+      twitter={{
+        cardType: "summary_large_image",
+        handle: "@ezzabuzaid",
+        site: "@ezzabuzaid",
+      }}
+      openGraph={{
+        url: canonicalURL,
+        site_name: SITE.title,
+        type: "article",
+        article: {
+          ...article,
+          authors: (article.authors ?? []).filter(Boolean) as string[],
+        },
+        images: [
+          {
+            url: socialImageURL,
+            width: 1200,
+            height: 630,
+            alt: title,
+          },
+        ],
+      }}
+    />
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -18,6 +18,7 @@
     "@astrojs/mdx": "^1.0.0",
     "@astrojs/prefetch": "^0.4.0",
     "@astrojs/rss": "^3.0.0",
+    "@astrolib/seo": "^0.6.0",
     "@resvg/resvg-js": "^2.4.1",
     "astro": "^3.0.3",
     "fuse.js": "^6.6.2",
