@@ -8,6 +8,8 @@ import remarkCollapse from "remark-collapse";
 import remarkToc from "remark-toc";
 import { remarkReadingTime } from "./remark-reading-time.mjs";
 
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeSlug from "rehype-slug";
 // https://astro.build/config
 export default defineConfig({
   site: "https://techtext.dev/",
@@ -26,10 +28,12 @@ export default defineConfig({
     remarkPlugins: [
       remarkReadingTime,
       remarkToc,
+      rehypeSlug,
+      [rehypeAutolinkHeadings, { behavior: "append" }],
       [
         remarkCollapse,
         {
-          test: "Table of contents",
+          test: "Table Of Content",
         },
       ],
     ],
