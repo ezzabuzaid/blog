@@ -1,9 +1,0 @@
-{
-	"grammarly.selectors": [
-		{
-			"language": "markdown",
-			"scheme": "file",
-			"pattern": "src/content/blog/reactive-infinity-scroll.md"
-		}
-	]
-}
