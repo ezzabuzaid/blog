@@ -62,6 +62,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
           >
             <div class="flex flex-col">
               <form
+                id="newsletter"
                 class="border-black bg-white mt-4 justify-between rounded-2xl border-2 p-2 shadow sm:flex"
               >
                 <label class="sr-only" for="email-address">Email address</label>
@@ -151,7 +152,53 @@ const socialCount = SOCIALS.filter(social => social.active).length;
 
   <Footer />
 </Layout>
+<script>
+  document
+    .getElementById("newsletter")
+    ?.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(event.target as any);
+      const value = Object.fromEntries(formData.entries());
+      console.log(value);
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append(
+        "Authorization",
+        "Bearer 9e4caa6340f52bfaa1ace921f9dd58c2"
+      );
 
+      const raw = JSON.stringify({
+        project: "faslh",
+        channel: "newsletter",
+        event: "User Joined",
+        description: `Email: ${value.email}`,
+        icon: "🎉",
+        tags: {
+          email: value.email,
+        },
+        notify: true,
+      });
+
+      const requestOptions: RequestInit = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+
+      fetch("https://api.logsnag.com/v1/log", requestOptions)
+        .then(response => response.text())
+        .then(result => import("canvas-confetti"))
+        .then(confetti =>
+          confetti.default({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          })
+        )
+        .catch(error => console.log("error", error));
+    });
+</script>
 <style>
   /* ===== Hero Section ===== */
 
