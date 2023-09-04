@@ -35,6 +35,7 @@ const socialImageURL = new URL(ogImage, Astro.url.origin).href;
 <html lang="en">
   <head>
     <ViewTransitions />
+    <meta name="msvalidate.01" content="028AB3230C1387CBBF8E25014AAB09FE" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -50,6 +51,12 @@ const socialImageURL = new URL(ogImage, Astro.url.origin).href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
+
+    <!-- Plausible Analytics -->
+    <script
+      defer
+      data-domain="techtext.dev"
+      src="https://plausible.io/js/script.js"></script>
 
     <!-- Twitter -->
 

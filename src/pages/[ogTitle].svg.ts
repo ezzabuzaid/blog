@@ -1,12 +1,12 @@
 import generateOgImage from "@utils/generateOgImage";
 import type { APIRoute } from "astro";
-import { getPosts } from "../utils/getPosts";
+import { getPublishedPosts } from "../utils/getPosts";
 
 export const get: APIRoute = async ({ params }) => ({
   body: await generateOgImage(params.ogTitle),
 });
 
-const postImportResult = await getPosts(({ data }) => !data.draft);
+const postImportResult = await getPublishedPosts();
 const posts = Object.values(postImportResult);
 
 export function getStaticPaths() {

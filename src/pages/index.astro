@@ -9,10 +9,8 @@ import { SOCIALS } from "@config";
 import Layout from "@layouts/Layout.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import slugify from "@utils/slugify";
-import { getPosts } from "../utils/getPosts";
 
-const posts = await getPosts();
-const sortedPosts = getSortedPosts(posts);
+const sortedPosts = await getSortedPosts();
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 
 const socialCount = SOCIALS.filter(social => social.active).length;

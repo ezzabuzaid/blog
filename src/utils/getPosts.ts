@@ -12,3 +12,7 @@ export async function getPosts(
   }
   return posts;
 }
+
+export function getPublishedPosts() {
+  return getPosts(({ data }) => (import.meta.env.DEV ? true : !data.draft));
+}

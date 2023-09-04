@@ -2,11 +2,9 @@ import rss from "@astrojs/rss";
 import { SITE } from "@config";
 import getSortedPosts from "@utils/getSortedPosts";
 import slugify from "@utils/slugify";
-import { getPosts } from "../utils/getPosts";
 
 export async function get() {
-  const posts = await getPosts();
-  const sortedPosts = getSortedPosts(posts);
+  const sortedPosts = await getSortedPosts();
   return rss({
     title: SITE.title,
     description: SITE.desc,

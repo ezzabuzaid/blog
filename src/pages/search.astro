@@ -5,10 +5,10 @@ import SearchBar from "@components/Search";
 import { SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
-import { getPosts } from "../utils/getPosts";
+import { getPublishedPosts } from "../utils/getPosts";
 
 // Retrieve all articles
-const posts = await getPosts(({ data }) => !data.draft);
+const posts = await getPublishedPosts();
 
 // List of items to search in
 ---

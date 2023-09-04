@@ -1,12 +1,10 @@
-import type { CollectionEntry } from "astro:content";
+import { getPublishedPosts } from "./getPosts";
 
-const getSortedPosts = (posts: CollectionEntry<"blog">[]) =>
-  posts
-    .filter(({ data }) => !data.draft)
-    .sort(
-      (a, b) =>
-        Math.floor(new Date(b.data.pubDatetime).getTime() / 1000) -
-        Math.floor(new Date(a.data.pubDatetime).getTime() / 1000)
-    );
-
-export default getSortedPosts;
+export default async function getSortedPosts() {
+  const posts = await getPublishedPosts();
+  return posts.sort(
+    (a, b) =>
+      Math.floor(new Date(b.data.pubDatetime).getTime() / 1000) -
+      Math.floor(new Date(a.data.pubDatetime).getTime() / 1000)
+  );
+}

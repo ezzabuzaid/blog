@@ -3,7 +3,7 @@ import type { Site, SocialObjects } from "./types";
 export const SITE: Site = {
   website: "https://techtext.dev/",
   author: "Ezzabuzaid",
-  desc: "Your home for in-depth tech articles and tutorials",
+  desc: "We produce targeted articles and step-by-step guides, meticulously curated for software engineers.",
   title: "TechText",
   ogImage: "logo.svg",
   lightAndDarkMode: true,
