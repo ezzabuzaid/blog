@@ -568,7 +568,7 @@ This isn't to say that infinite scrolling is bad; instead, the emphasis is on ap
 - "Load More" Button: A button at the bottom that, when clicked, loads additional content below the existing content.
 - Segmented Tabs: For categorizing content, where each tab reveals a different set of data. Imagine Twitter segmenting the tweets based on some criteria, Science, Tech, Angular, 2021, and so on.
 
-## Conclusion
+## Summary
 
 In addition to the core functionality, further enhancements can be incorporated
 
@@ -581,12 +581,14 @@ The functionality can also work with any framework as long as RxJS is used, Type
 
 I'd love to hear your thoughts and opinions.
 
-## Footnotes
+## Sources
 
 - [Infinite Scroll Advantages and Disadvantages: When to Use It and When to Avoid It
   ](https://builtin.com/ux-design/infinite-scroll)
 - [Infinite Scroll UX Done Right: Guidelines and Best Practices
   ](https://www.smashingmagazine.com/2022/03/designing-better-infinite-scroll/)
+- [Infinite Scroll & Accessibility! Is It Any Good?
+  ](https://www.digitala11y.com/infinite-scroll-accessibility-is-it-any-good/)
 
 ## Complete Code
 
