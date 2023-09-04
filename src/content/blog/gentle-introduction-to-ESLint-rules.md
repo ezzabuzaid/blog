@@ -142,7 +142,7 @@ Let's start with a simple example: prevent the developer from using the `var` ke
 ```
 
 <figure>
-  {% replit @EzzAbuzaid1/Eslint#use-let.js %}
+  <iframe src="https://replit.com/@EzzAbuzaid1/Eslint#use-let.js?embed=1" width="600" height="400" />
   <figcaption>In the shell, type `npx eslint use-let.js` to see the result for <u>use-let</u> rule.</figcaption>
 </figure>
 
@@ -215,7 +215,8 @@ To specify options, we need to write a valid JSON schema. the `schema` property 
 ```
 
 <figure>
-  {% replit @EzzAbuzaid1/Eslint#no-var-kind.js %}
+  <iframe src="https://replit.com/@EzzAbuzaid1/Eslint#no-vard-kind.js?embed=1" width="600" height="400" />
+
   <figcaption>In the shell, type `npx eslint no-var-kind.js` to see the result for <u>no-var-kind</u> rule.</figcaption>
 </figure>
 
@@ -264,7 +265,7 @@ Completing the previous example this is how we can auto-fix the reported code. W
 <small>_Note: you shouldn't determine the node range that way, for the sake of not complicating the code, I've added 3 to the start position, for instance, if `var` start position is 5 then the end is 8 because `var` length is 3. Check out [the official rule] (https://github.com/eslint/eslint/blob/main/lib/rules/no-var.js)_ </small>
 
 <figure>
-  {% replit @EzzAbuzaid1/Eslint#no-var-kind.js %}
+  <iframe src="https://replit.com/@EzzAbuzaid1/Eslint#no-var-kind.js?embed=1" width="600" height="400" />
   <figcaption>Make sure you're at no-var-kind.js file first, then in the shell, type `npx eslint no-var-kind.js --fix` to see the result for <u>no-var-kind</u> rule.</figcaption>
 </figure>
 
@@ -408,7 +409,8 @@ if (!reassigned) {
 ```
 
 <figure>
-  {% replit @EzzAbuzaid1/Eslint#no-var-kind.js %}
+  <iframe src="https://replit.com/@EzzAbuzaid/#no-var-kind.js" width="600" height="400" />
+
   <figcaption>Make sure you're at prefer-const.js file first, then in the shell, type `npx eslint prefer-const.js --fix --fix-type suggestion` to see the result for <u>prefer-const</u> rule. you can as well toggle the comment and rerun the command to see the result difference.</figcaption>
 </figure>
 
@@ -584,7 +586,7 @@ The AST is - _some properties omitted for brevity_.
 ```
 
 <figure>
-  {% replit @EzzAbuzaid1/Eslint#img-alt.html %}
+  <iframe src="https://replit.com/@EzzAbuzaid1/Eslint#img-alt.js?embed=1" width="600" height="400" />
   <figcaption>In the shell, type `npx eslint img-alt.html` to see the result for <u>img-alt</u> rule.</figcaption>
 </figure>
 
@@ -624,7 +626,7 @@ This rule will report a message in case `img` tag is not within `figure` tag.
 ```
 
 <figure>
-  {% replit @EzzAbuzaid1/Eslint#img-figure.html %}
+  <iframe src="https://replit.com/@EzzAbuzaid1/Eslint#img-figure.js?embed=1" width="600" height="400" />
   <figcaption>In the shell, type `npx eslint img-figure.html` to see the result for <u>img-figure</u> rule.</figcaption>
 </figure>
 
@@ -691,7 +693,7 @@ log();
 ```
 
 <figure>
-  {% replit @EzzAbuzaid1/Eslint#no-console.js %}
+  <iframe src="https://replit.com/@EzzAbuzaid1/Eslint#no-console.js?embed=1" width="600" height="400" />
   <figcaption>In the shell, type `npx eslint no-console.js` to see the result for <u>no-console</u> rule.</figcaption>
 </figure>
 
@@ -782,7 +784,8 @@ for (const nextToken of tokens.slice(index + 2)) {
 ```
 
 <figure>
-  {% replit @EzzAbuzaid1/Eslint#no-console.js %}
+  <iframe src="https://replit.com/@EzzAbuzaid1/Eslint#no-console.js?embed=1" width="600" height="400" />
+
   <figcaption>In the shell, type `npx eslint private.js` to see the result for <u>private</u> rule.</figcaption>
 </figure>
 
