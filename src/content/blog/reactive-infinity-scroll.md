@@ -22,19 +22,17 @@ Ever tried to load a ton of data on a webpage and found it super slow or clunky?
 
 ## Problem
 
-The necessity for infinite scrolling stems from various factors:
+Infinite scrolling is often used for a few key reasons:
 
-- Data Handling: Immediate loading of extensive data sets risks sluggish performance or site crashes.
-
-- User Interaction: Conventional pagination disrupts user engagement, whereas infinite scrolling facilitates a smoother experience.
+- Data Fetching: Loading large data sets all at once can lead to latency issues or even browser crashes. It's better to load data incrementally to maintain performance.
 
 - Mobile Usability: On mobile platforms, scrolling is more intuitive than navigating through multiple pages.
 
-- Resource Optimization: Incremental data loading is generally more efficient for both server and client-side operations.
+- Resource Optimization: Incremental data loading is generally more resource-efficient, reducing the load on both the server and the client, which can lead to faster load times and a better user experience.
 
 ## Solution
 
-We are going to build minmal yet efficient function using RxJS and TypeScript (optional) with example on how to use it with Angular.
+We are going to build minmal yet efficient function using RxJS and TypeScript (optional).
 
 - Vertical Scroll Support
 - Horizontal Scroll Support both LTR and RTL
@@ -107,7 +105,7 @@ source$
 
 To catch the end of observable lifetime we need to keep an eye there, that what `finalize` do, it called upon observable completion (complete notification)
 
-It is usually used to perform some cleanup operations, stop the loading animation or debug the memory (ensure that observable do complete and doesn't stuck in the memory).
+It is usually used to perform some cleanup operations, stop the loading animation or debug the memory, for example, add log statement to ensure that observable do complete and doesn't stuck in the memory 🥲.
 
 ```ts
 const source$ = from([1, 2, 3, 4, 5]);
@@ -120,11 +118,13 @@ source$
   .subscribe(event => console.log(event));
 ```
 
+Before start with \*map operators, my advise
+
 ### switchMap
 
-Sometime we need to call a backend server to fetch some data on ever emission, we've few methods to accomplish that.
+Sometime we need to call a backend server to fetch some data on every emission, we've few methods to accomplish that.
 
-Like normal `map` but its function argument has to return an observable, we call it inner observable. When an event come through it'll create a subscription from the inner observable and hold that pending till the inner observable completes. If new event came through while the previous inner observable hasn't yet complted then `switchMap` will cancel that observable and subscribe to the new one.
+Like normal `map` but its function argument -project function- has to return an observable, we call it inner observable. When an event come through it'll create a subscription from the inner observable and hold that pending till the inner observable completes. If new event came through while the previous inner observable hasn't yet complted then `switchMap` will cancel that observable and subscribe to the new one.
 
 ```ts
 const source$ = from([1, 2, 3, 4, 5]);
