@@ -10,8 +10,9 @@ tags:
   - linter
   - formatter
   - eslint plugin
-  - custom esling rules
-description: ""
+  - eslint plugins
+  - custom eslint rules
+description: "Unlock the power of custom linting by learning how to write your own ESLint rules tailored for your specific coding requirements."
 ---
 
 Have you ever wondered how your editor can know if you used `var` instead of `let`? or that you missed adding `alt` to the `img` tag? Yes, that is **ESLint** ladies and gentlemen.

@@ -9,14 +9,22 @@ tags:
   - angular-infinity-scroll
   - infinity-scroll-in-angular
   - infinity-scroll-rxjs
-description: "Create an infinity scrolling using TypeScript and RxJS"
+description: "Create an infinity scrolling using RxJS"
 ---
 
-Ever tried to load a ton of data on a webpage and found it super slow or clunky? Yeah, we've all been there. One good way to make things smoother is by using infinite scrolling. Like how your Twitter feed just keeps loading more tweets as you scroll down.
+Ever tried to load a ton of data on a webpage and found it super slow or clunky? You're not alone. One effective way to improve the experience is through infinite scrolling, similar to how your Twitter feed continuously loads more tweets as you scroll down.
 
 [What is Infinity Scroll](https://builtin.com/ux-design/infinite-scroll)
 
 > A web design technique where, as the user scrolls down a page, more content automatically and continuously loads at the bottom, eliminating the user’s need to click to the next page.
+
+Would you like to see the result?
+
+<iframe height="400" style="width: 100%;" scrolling="no" title="Reactive Infinity Scrolling - Vertical" src="https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=result&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/BavLOLp">
+  Reactive Infinity Scrolling - Vertical</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>
 
 ## Table of content
 
@@ -32,15 +40,30 @@ Infinite scrolling is often used for a few key reasons:
 
 ## Solution
 
-We are going to build a minimal yet efficient function using RxJS and TypeScript (optional).
+You're going to build a minimal yet efficient function using RxJS. It will include:
 
-- Vertical Scroll Support
-- Horizontal Scroll supports both LTR and RTL
-- Threshold to dictate when additional data should be fetched
-- Data Loading State
-  The writing presumes that you have a basic understanding of RxJS. We'll learn about the used RxJS operator and any unusual code along the way.
+- Support for vertical scrolling
+- Horizontal scroll support for both LTR and RTL
+- A threshold for determining when to fetch more data
+- Loading state
+
+The writing assumes you have a basic understanding of RxJS. No worries though, I'll explain any special code or RxJS features along the way. So get ready, because you're about to dive into some RxJS operators! 😄
+
+_[You can skip the next section](#scroll-api) if you're already familiar with using RxJS operators._
+
+If you're only interested in the final code then [Jumb To The Code](#the-code)
 
 Let's start
+
+## Getting Started
+
+The only thing you need to get started is RxJS. Install it with this command:
+
+```shell
+npm i rxjs
+```
+
+_Note: I'm using TypeScript primarily for clarity in showing what options are available through types. You're free to omit them, but if you do want to use types, I'd suggest opting for a framework that has built-in TypeScript support._
 
 ## RxJS operators
 
@@ -59,14 +82,14 @@ The result would be 1 2 3 4 5. -Each in a new line-
 
 ### filter
 
-Let's say we only want to log odd numbers
+To only log odd numbers
 
 ```ts
 const source$ = from([1, 2, 3, 4, 5]);
 source$.pipe(filter(event => event % 2)).subscribe(event => console.log(event));
 ```
 
-Perhaps there's a chance the `source$` might emit a `null` event so we use a filter to prevent it from going through the rest of the source sequence
+Say there's a possibility that the `source$` might emit a `null` value. You can use a `filter`` to stop it from passing through the rest of the sequence.
 
 ```ts
 const source$ = from([1, 2, 3, null, 5]);
@@ -77,7 +100,7 @@ source$
 
 ### map
 
-To transform the sequence of events we can use the `map` operator
+To change the sequence of events, you can use the `map` operator.
 
 ```ts
 source$
@@ -102,16 +125,18 @@ source$
 
 ### finalize
 
-To catch the end of an observable lifetime we need to keep an eye there, that what `finalize` do, is called upon observable completion (complete notification)
+To monitor the end of an observable's lifecycle, you can use the `finalize` operator. It gets triggered when the observable completes.
 
 It is usually used to perform some cleanup operations, stop the loading animation, or debug the memory, for example, add a log statement to ensure that the observable is complete and doesn't stuck in the memory 🥲.
 Before starting with map operators, my advise
 
+---
+
+Sometimes, you need to fetch some data with every incoming event, say from the backend server. There are a few methods to do this.
+
 ### switchMap
 
-Sometimes we need to call a backend server to fetch some data on every emission, we've a few methods to accomplish that.
-
-Like a normal `map` but its function argument -project function- has to return an observable, we call it inner observable. When an event comes through it'll create a subscription from the inner observable and hold that pending till the inner observable completes. If a new event comes through while the previous inner observable hasn't yet been completed then `switchMap` will cancel that observable and subscribe to the new one.
+Like a regular map, the `switchMap` operator uses a project function that returns an observable -its first argument-, known as the inner observable. When an event occurs, `switchMap` subscribes to this inner observable, creating a subscription that lasts until the inner observable completes. If a new event arrives before the previous inner observable completes, switchMap cancels the existing subscription and starts a new one. In other words, it _switches_\* to a new subscription.
 
 ```ts
 const source$ = from([1, 2, 3, 4, 5]);
@@ -129,7 +154,7 @@ Worth noting that in this sample only the todo with id 5 will be logged because 
 
 ### concatMap
 
-It blocks new events from going through the source sequence unless the inner observable completes. It is particularly useful for database writing operations or animating/moving an element
+It blocks new events from going through the source sequence unless the inner observable completes. It is particularly useful for database writing operations or animating/moving an element where it's important to complete one action before starting another.
 
 ```ts
 source$
@@ -141,7 +166,7 @@ This sample will log all todos in order. Essentially what happens is `concatMap`
 
 ### mergeMap
 
-It doesn't cancel the previous inner observable nor blocks the source sequence till the current inner observable completes. `mergeMap` will subscribe to the event inner observable without regard to its completion, so if an event came through and the previous inner observable hasn't been completed yet that's fine, `mergeMap` will subscribe to them in parallel.
+It doesn't cancel the previous subscription nor blocks the source sequence till the current inner observable completes. `mergeMap` will subscribe to the inner observable without regard to its completion, so if an event comes through and the previous inner observable hasn't been completed yet that's fine, `mergeMap` will subscribe to the inner observable.
 
 ```ts
 source$
@@ -170,13 +195,13 @@ To summarise
 3. `mergeMap` doesn't care about the status of the inner observable so it'll subscribe to the inner observable without worrying about the previous inner observable.
 4. `exhaustMap` will ignore any event till the current inner observable is complete.
 
-Okay, that is a lot, isn't it? I understand that if you're new to RxJS you might not be able to digest all this info, your best bet is to practice and that's what we're trying to do here!
+Okay, that is a lot, isn't it? I understand that if you're new to RxJS you might not be able to digest all this info, Your best bet is to practice and that's what you're trying to do here.
 
-We've three other operators we need to touch on
+There are three more operators you'll want to know about.
 
 ### debounceTime
 
-You're building a login form and upon the user typing its password you want to hit the backend server to ensure the password conforms to certain criteria.
+Imagine you're building a login form and upon the user typing its password you want to hit the backend server to ensure the password conforms to certain criteria.
 
 ```ts
 condt source$ = fromEvent(passwordInput, 'input').pipe(
@@ -186,10 +211,10 @@ condt source$ = fromEvent(passwordInput, 'input').pipe(
 source$.subscribe(event => console.log(event));
 ```
 
-This example might work just fine with one key caveat; on every keystroke, we'll be sending a request to the backend server, thanks to `switchMap` it'll cancel previous requests so there might not be as much harm, still we have an operator that can improve this operation, `debounceTime`, it ignores any events till the `dueTime` -argument- is pass.
+This example might work fine with one key caveat; on every keystroke, a request is sent to the backend server, thanks to `switchMap` it'll cancel previous requests so there might not be as much harm, however, using `debounceTime` you can ignore `input` events till the `dueTime` -argument- is pass.
 
 ```ts
-condt source$ = fromEvent(passwordInput, 'input').pipe(
+const source$ = fromEvent(passwordInput, 'input').pipe(
   debounceTime(2000)
   map((event) => passwordInput.value),
   switchMap((password) => checkPasswordValidaity(password))
@@ -216,7 +241,7 @@ This sample will immediately log "+1" even if `timezoneInput` value is never ent
 
 ### fromEvent
 
-We could rewrite the previous example to be as follows
+You could rewrite the previous example to be as follows
 
 ```ts
 const timezoneInputController = new Subject<string>();
@@ -232,11 +257,11 @@ const source$ = timezoneInputValue$.pipe(
 source$.subscribe(event => console.log(event));
 ```
 
-Thanks to RxJS we can use `fromEvent` that will encapsulate that boilerplate, all we need to do is to say which event to listen to from what element. Of course `fromEvent`` returns an observable 🙂.
+Thanks to RxJS you can use `fromEvent` that will encapsulate that boilerplate, all you need to do is to say which event to listen to and from what element. Of course `fromEvent` returns an observable 🙂
 
 ### takeUntil
 
-I admit that might be difficult to digest, it was for me. Taking the same previous example, Let's say that we have a form and an input and submit button. When the user clicks on the submit button we no longer want to listen to the `timezoneInput` element `input` event, yes, `takeUntil` as it sounds, it lets the subscribers take the events until the provided observable emits at least once.
+I admit this one might be difficult to digest, it was for me. Taking the same previous example, Let's say that you have a form, an input, and a submit button. When the user clicks on the submit button you want to stop listening to the `timezoneInput` element `input` event. Yes, `takeUntil` as it sounds, it lets the subscribers take events until the provided observable emits at least once.
 
 ```ts
 const formSubmission$ = fromEvent(formEl, 'submit')
@@ -257,7 +282,7 @@ source$
 
 ### pipe
 
-The pipe function in RxJS is a utility for composing operations on observables. Use it to chain multiple operators together in a readable manner, or to create reusable custom operators. This is crucial when the source sequance is complex to manage.
+The pipe function in RxJS is a utility for composing operations on observables. Use it to chain multiple operators together in a readable manner, or to create reusable custom operators. This is crucial when the source sequence is complex to manage.
 
 ```ts
 import { pipe } from "rxjs"; // add it to not to be confused with Observable.pipe
@@ -281,7 +306,7 @@ Time to talk about some of the Scroll API(s)
 
 You already know the _Scroll Bar_, it's at the right end of the page 🥸, no really, when you the user scroll in any direction the browser emits a few events, like `scroll`, `scrollend`, and `wheel`.
 
-We're going to learn enough that we can tackle the problem at hand.
+You are going to learn enough that to tackle the problem at hand.
 
 Let's start with `scroll` and `scrollend`:
 
@@ -305,9 +330,9 @@ Keep in mind that this only works if the element—the one that has the event li
 
 The `wheel` event fires while an element or any of its children is being scrolled using the mouse/trackpad **wheel** which means trying to scroll down/up using the keyboard won't trigger it.
 
-### Dimensions and Properties
+### Size Properties
 
-We will focus mainly on the scroll event for our current tasks. Nevertheless, I've sketched out these additional events and properties for a comprehensive understanding. Let's delve into key dimensional properties we need:
+For the task at hand, the scroll event will be the primary focus. However, I've also outlined some additional events and properties to give you a well-rounded understanding. Now, let's look at the key size properties you'll need to know:
 
 - `element.clientWidth`: The inner width of the element, excluding borders and scrollbar.
 - `element.scrollWidth`: The width of the content, including content not visible on the screen. If the element is not horizontally scrollable then it'd be the same as ` clientWidth``.
@@ -342,8 +367,7 @@ Take a look at the below image.
 <center>scrollPosition indicates to what point the user scrolled</center>
 
 Presuming the `totalHeight` is `500px`, `clientHeight` `300px`, and the `scrollPosition` is `100px`, deducting the sum of `scrollPosition` and `clientHeight` from `totalHeight` would result in `100px` which is the remaining distance to reach the bottom of the element.
-
-Similar formula when calculating the remaining distance to the end horizontally
+A similar formula when calculating the remaining distance to the end horizontally
 
 ```ts
 function calculateRemainingDistanceOnXAxis(element: HTMLElement): number {
@@ -359,7 +383,7 @@ You might have noticed the `Math.abs` being used and that due to RTL direction w
 
 ![Scroll-XAxis.](../../assets/scroll-end-xaxis.svg)
 
-Given the data we've about the element dimension we can also create a function to check if the element is scrollable or not
+Side tip: Using the information you have about the element's sizes, you can also make a function to see if the element can be scrolled or not.
 
 ```ts
 type InfinityScrollDirection = "horizontal" | "vertical";
@@ -376,7 +400,7 @@ function isScrollable(
 }
 ```
 
-Simply put, if the element scroll dimension is the same as its client dimension then it isn't scrollable.
+Simply put, if the element scroll's size is the same as its client's size then it isn't scrollable.
 
 ## The Code
 
@@ -417,7 +441,7 @@ function infinityScroll<T extends any[]>(options: InfinityScrollOptions<T>) {
 }
 ```
 
-As promised before, our infinity scroll function is customizable. Now we're going to listen to the element -_the one that has list of item that is supposed to infinitly scrolled_-
+As promised before, our infinity scroll function is customizable. Now we're going to listen to the element -_the one \_that has \_a \_list\_\_ of item_ that is supposed to infinitely scrolled\_-
 
 ```ts
 function infinityScroll<T extends any[]>(options: InfinityScrollOptions<T>) {
@@ -430,7 +454,7 @@ function infinityScroll<T extends any[]>(options: InfinityScrollOptions<T>) {
 ```
 
 - `fromEvent` listens to `scroll` event of the scrollable element.
-- `startsWith` starts the event sequence to fetch the first batch of data.
+- `startsWith` starts the source sequence to fetch the first batch of data.
 - `ensureScrolled` is a chainable operator that confirms the scroll position surpasses the predefined threshold before proceeding.
 - `fetchData` is another chainable operator that fetches data based on the `pageIndex`, more on that later.
 
@@ -482,10 +506,10 @@ const fetchData = pipe(
 ```
 
 - `exhaustMap` ignores any event till the `loadFn` completes. If `exhaustMap` project function (its first argument) has been called, that implies the previous (if any) observable has been completed and is ready to accept new events -load more data-.
-- `tap` is telling that we finished loading more data.
-- `finalize` does the same as tap in our case, however, `tap` won't be called if `loadFn` -request to the backend server- had responded with an error, and in case of an error, the source observable completes therefore `finalize`. In other words, if the source sequence errored or the user explicitly completed the source then we stop the loading.
+- `tap` is signaling data loading is finished.
+- `finalize` does the same as tap in our case, however, `tap` won't be called if `loadFn` -request to the backend server- had responded with an error, and in case of an error, the source observable completes hence `finalize`. In other words, if the source sequence errored or the user explicitly completed the source then stop the loading.
 
-Notice in the `exhaustMap` that we signal the loading state. You might wonder why not to put the loading signaling line into a `tap` operator just before the `exhaustMap`; that would cause the loading observable to emit `true` whenever `loadMore` emits which doesn't necessarily means load more data now -the previous inner observable of `loadFn` might not have been completed yet- so to avoid such behavior we rely on `exhaustMap` to tell us that we are ready to load more data.
+Notice how `exhaustMap` indicates the loading state. You might question why not place the loading signal in a `tap` operator right before `exhaustMap`. Doing so would cause the loading observable to emit true whenever loadMore triggers. But this doesn't necessarily mean it's time to load more data -_the previous inner observable from `loadFn` hasn't finished yet_-. To avoid this, `exhaustMap` is used to confirm that it's ready to load more data.
 
 The real piece of code; incrementing the page index to fetch the next patch of data
 
@@ -504,21 +528,69 @@ The `exhaustMap` project function has two arguments
 1. The event from the source sequence.
 2. The index corresponds to the most recent event (this number signifies the position of the latest event).
 
-In our specific case, we are only interested in the event position/index. See the following case to better understand how it works
+In this specific case, you'll be focused on the event position or `index`. Check out the following example for a clearer understanding of how it operates.
 
 - At first time the source `loadMore` emits the `index` will be zero.
-- We loaded 3 batches of data so the next `index` will be 4.
+- 3 batches of data are loaded, so the next `index` will be 4.
 - Assuming `initialPageIndex` is 1 and the data is to be loaded for the first time then the `pageIndex` is 1
-- Assuming `initialPageIndex` is 1 and the data is to be loaded for the fifth time then the `pageIndex` is 2
+- Assuming `initialPageIndex` is 1 and the data is to be loaded for the fifth time then the `pageIndex` is 6
 - Assuming `initialPageIndex` is 4 and the data is to be loaded for the first time then the `pageIndex` is 4
 
-The last case might be off, Let's say you're scrolling the Twitter feed, and for some reason, the browser reloaded, so instead of loading data from the beginning, you decided to store the `pageIndex` in some state (URL query string) so in such cases only the data from the last `pageIndex` will be there so the experience continues as if nothing happened. Prior data needs to be there as well either by loading it till the `pageIndex` or via implementing an opposite scroll direction data loading 🥲
+The last case might be off; usualy you might have `initialPageIndex` 0, but let's say you're scrolling the Twitter feed, and for some reason, the browser reloaded, so instead of loading data from the beginning, you decided to store the `pageIndex` in some state (URL query string) so in such cases only the data from the last `pageIndex` will be there so the experience continues as if nothing happened. _Prior data needs to be there as well either by loading it till the `pageIndex` or via implementing an opposite scroll direction data loading 🥲_
+
+---
+
+What about using [`mergeMap`](#mergemap), [`switchMap`](#switchMap), or [`concatMap`](#concatmap)? You might have thought about that already!
+
+Given the following scenario: A user scrolled down to the end of the page, but the request to load more data is still pending. The user kept scrolling down to the end of the page but the data was not yet resolved. What do you think would happen?
+
+_Note: The following recordings use slow 3g network speed_
+
+### Using mergeMap
+
+With each scroll event, `mergeMap` subscribes to the inner observable without regard to the previous subscription, essentially leading to a new request -loadMode- with each verified scroll event -below the threshold-
+
+<iframe  height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/Jjwboxj?default-tab=js&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/Jjwboxj">
+  Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>
+
+![Issues with using merge map.](../../assets/mergeMap.gif)
+
+### Using switchMap
+
+With each scroll event, `switchMap` will cancel/unsubscribe from the previous subscription and subscribe to the inner observable again, essentially leading to a new request but the previous unresolved one will be canceled so only one request will be pending at a time. That might be okay, however, the event position `index` will increment each time `switchMap` subscripes to the inner observable which leads to incorrect data being loaded.
+
+<iframe height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/abPBmNQ?default-tab=js&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/abPBmNQ">
+  Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>
+
+![Issues with using switch map.](../../assets/switchMap.gif)
+
+### Using concatMap
+
+With each scroll event, `concatMap` will subscribe to the inner observable, blocking the source sequence till the current subscription completes -loadMore request resolves-, essentially leading to a new request with every verified scroll but holding them onto till it can process a new event. The event position `index` will increment each time `concatMap` subscribes to the inner observable which leads to requesting more data than needed. See the recording below and take a good look at what happens in the _Network Tap_ when the user stops scrolling.
+
+<iframe height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/gOZLwow?default-tab=js&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/gOZLwow">
+  Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>
+
+![Issues with using concat map.](../../assets/concatMap.gif)
+
+### Using exaustMap
+
+It is the winner because it ignores any scroll event if there's a pending request -inner observable hasn't yet completed-
 
 ## Example
 
 ### Vertical Scrolling
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="Reactive Infinity Scrolling - Vertical" src="https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+<iframe height="400" style="width: 100%;" scrolling="no" title="Reactive Infinity Scrolling - Vertical" src="https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/ezzabuzaid/pen/BavLOLp">
   Reactive Infinity Scrolling - Vertical</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
   on <a href="https://codepen.io">CodePen</a>.
@@ -526,7 +598,7 @@ The last case might be off, Let's say you're scrolling the Twitter feed, and for
 
 ### Horizontal Scrolling
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/oNJzPGN?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+<iframe height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/oNJzPGN?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/ezzabuzaid/pen/oNJzPGN">
   Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
   on <a href="https://codepen.io">CodePen</a>.
@@ -534,7 +606,7 @@ The last case might be off, Let's say you're scrolling the Twitter feed, and for
 
 ### RTL Horizontal Scrolling
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/gOZwdXg?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+<iframe height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/gOZwdXg?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/ezzabuzaid/pen/gOZwdXg">
   Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
   on <a href="https://codepen.io">CodePen</a>.
@@ -542,7 +614,7 @@ The last case might be off, Let's say you're scrolling the Twitter feed, and for
 
 ## UX and Accessibility Consideration
 
-We talked a lot about the technical side of Infinity Scrolling and all the good we could have with it, however, there are disadvantages to Infinity Scrolling.
+You've heard a lot about the technical aspects of infinite scrolling and its advantages. However, it's important to also consider the downsides of this approach.
 
 1. It can be a problem for those who navigate websites using keyboards. Automatic content loading can disrupt keyboard navigation and trap users in a specific part of the page. Especially if the infinity scrolling is the main way of navigating the website
 2. The absence of pagination makes it difficult for users to pick up where they left off, or to 'go back' accurately. It is also hard for developers to facilitate these requirements.
@@ -575,7 +647,7 @@ In addition to the core functionality, further enhancements can be incorporated
 1. Enable and disable features.
 2. An option to store the pageIndex to resume the user journey, history API for instance.
 3. Retry operation, Although I think it shouldn't be part of the infinity scroll function, you can provide it as an option.
-4. Load more data in the opposite direction: Suppose the user navigates to the profile page, then navigates back to the feed (Twitter), the last page index is stored in the history API which would tell us what next to fetch, but imagine that we cannot afford to load prior data all at once, so in addition to load data as user scroll down, we can load data as user scrolls up.
+4. Load more data when scrolling up: Imagine you navigate to a profile page and then go back to the feed, like on Twitter. The last page index could be saved in the history API, guiding what to fetch next. But what if you can't load all the earlier data at once? In that case, you can also load more content when the user scrolls up, not just when scrolling down.
 
 The functionality can also work with any framework as long as RxJS is used, TypeScript is merely used to provide types that can be safely removed. [You can find an example in the comment section on how to use it with Angular](https://gist.github.com/ezzabuzaid/b5f1f494200698845a5a76a315ad502d)
 
