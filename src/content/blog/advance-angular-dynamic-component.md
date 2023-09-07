@@ -8,7 +8,7 @@ tags:
   - dynamic component
   - component loader
   - dynamic component loader
-description: ""
+description: "Create Angular Dynamic Components the correcy way"
 ---
 
 In this article, I will show you how you can still use inputs and outputs and support OnChanges lifecycle while creating dynamic components.

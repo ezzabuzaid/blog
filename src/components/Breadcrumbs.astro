@@ -4,12 +4,16 @@ const currentUrlPath = Astro.url.pathname.replace(/\/+$/, "");
 
 // Get url array from path
 // eg: /tags/tailwindcss => ['tags', 'tailwindcss']
-const breadcrumbList = currentUrlPath.split("/").slice(1);
+let breadcrumbList = currentUrlPath.split("/").slice(1);
 
 // if breadcrumb is Home > Posts > 1 <etc>
 // replace Posts with Posts (page number)
 breadcrumbList[0] === "posts" &&
   breadcrumbList.splice(0, 2, "Home", `Posts (page ${breadcrumbList[1] || 1})`);
+
+if (breadcrumbList.length === 1) {
+  breadcrumbList = [];
+}
 ---
 
 <nav class="breadcrumb" aria-label="breadcrumb">
@@ -24,9 +28,9 @@ breadcrumbList[0] === "posts" &&
           </li>
         ) : (
           <li class="space-x-2">
-            <a
-            rel="prefetch-intent"
-            href={`/${breadcrumb}`}>{breadcrumb}</a>
+            <a rel="prefetch-intent" href={`/${breadcrumb}`}>
+              {breadcrumb}
+            </a>
             <span aria-hidden="true">&#62;</span>
           </li>
         )

@@ -2,14 +2,13 @@
 author: ezzabuzaid
 pubDatetime: 2021-9-10T00:00:00+00:00
 title: React Context In Angular
-featured: true
+featured: false
 tags:
   - angular
   - react
   - react context
   - state mangement
-  - tree state mangement
-description: ""
+description: "Mimic React Context API in Angular"
 ---
 
 In this article, I'm going to show you how to mimic **React Context API** in **Angular**, I'll start by defining **React Context**, talk about what problem is meant to solve, and a possible implementation in Angular.

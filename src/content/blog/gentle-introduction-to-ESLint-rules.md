@@ -8,7 +8,6 @@ tags:
   - javascript
   - static analysis
   - linter
-  - formatter
   - eslint plugin
   - eslint plugins
   - custom eslint rules

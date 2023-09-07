@@ -1,18 +1,15 @@
 ---
 author: ezzabuzaid
-pubDatetime: 2023-09-01T17:23:56.283Z
+pubDatetime: 2023-09-07T17:23:56.283Z
 title: Reactive Infinity Scroll
 featured: true
-draft: true
 tags:
-  - infinity-scroll
-  - angular-infinity-scroll
-  - infinity-scroll-in-angular
-  - infinity-scroll-rxjs
+  - rxjs
+  - angular
 description: "Create an infinity scrolling using RxJS"
 ---
 
-Ever tried to load a ton of data on a webpage and found it super slow or clunky? You're not alone. One effective way to improve the experience is through infinite scrolling, similar to how your Twitter feed continuously loads more tweets as you scroll down.
+Ever tried to load a ton of data on a webpage and found it super slow or laggy? You're not alone. An effective way to improve the experience is through infinite scrolling, similar to how your Twitter feed continuously loads more tweets as you scroll down.
 
 [What is Infinity Scroll](https://builtin.com/ux-design/infinite-scroll)
 
@@ -32,7 +29,7 @@ Would you like to see the result?
 
 Infinite scrolling is often used for a few key reasons:
 
-- Data Fetching: Loading large data sets all at once can lead to latency issues or even browser crashes. It's better to load data incrementally to maintain performance.
+- Data Fetching: Loading large data sets all at once can lead to latency issues or even browser crashes.
 
 - Mobile Usability: On mobile platforms, scrolling is more intuitive than navigating through multiple pages.
 
@@ -505,7 +502,7 @@ const fetchData = pipe(
 );
 ```
 
-- `exhaustMap` ignores any event till the `loadFn` completes. If `exhaustMap` project function (its first argument) has been called, that implies the previous (if any) observable has been completed and is ready to accept new events -load more data-.
+- `exhaustMap` ignores any event till the `loadFn` completes. If `exhaustMap` project function (its first argument) has been called, that implies the previous (if any) observable is completed and is ready to accept new events -load more data-.
 - `tap` is signaling data loading is finished.
 - `finalize` does the same as tap in our case, however, `tap` won't be called if `loadFn` -request to the backend server- had responded with an error, and in case of an error, the source observable completes hence `finalize`. In other words, if the source sequence errored or the user explicitly completed the source then stop the loading.
 
@@ -584,7 +581,24 @@ With each scroll event, `concatMap` will subscribe to the inner observable, bloc
 
 ### Using exaustMap
 
-It is the winner because it ignores any scroll event if there's a pending request -inner observable hasn't yet completed-
+It is the winner in this scenario because it effectively manages pending requests. When a scroll event triggers a new request, exhaustMap will ignore any subsequent scroll events until the current request (inner observable) is complete. This ensures that only one request is pending at a time, and it prevents the index from incrementing incorrectly.
+
+---
+
+That being said, a simple workaround would be to explicitly ignore any scroll even while the data is loading.
+
+```ts
+const fetchData = pipe(
+  filter(() => options.loading.value === false),
+  // mergeMap, switchMap and concatMap should work now.
+  exaustMap((_, index) => {
+    // ...
+  })
+  // ...
+);
+```
+
+However, this approach has a limitation. Since `options.loading` is a user-defined observable, there's a risk that the user might change its value. If that happens, the issue will appear.
 
 ## Example
 
@@ -614,46 +628,55 @@ It is the winner because it ignores any scroll event if there's a pending reques
 
 ## UX and Accessibility Consideration
 
-You've heard a lot about the technical aspects of infinite scrolling and its advantages. However, it's important to also consider the downsides of this approach.
+Infinite scrolling isn't a magic fix. I know some folks who strongly advise against using it. Here's why:
 
-1. It can be a problem for those who navigate websites using keyboards. Automatic content loading can disrupt keyboard navigation and trap users in a specific part of the page. Especially if the infinity scrolling is the main way of navigating the website
-2. The absence of pagination makes it difficult for users to pick up where they left off, or to 'go back' accurately. It is also hard for developers to facilitate these requirements.
-3. Makes certain content like footers hard to reach,
-4. Automatic loading of content can make it difficult for screen reader users to understand the structure of the page, leading to confusion and disorientation.
-5. Some users with cognitive impairments might find the endless stream of content overwhelming or distracting. It doesn't allow them to control the pace at which they consume information. -This is my personal opinion and not a fact.-
+1. Bad for Keyboard Users: If you're using a keyboard to get around a website, infinite scrolling can mess that up and get you stuck.Especially if the infinity scrolling is the main way of navigating the website
 
-When building an infinite scroll experience you've to consider important factors such as:
+2. Hard to Pick Up Where You Left Off: Without page numbers, it's tough to go back to where you were. This makes it hard for users and a headache for developers to implement.
 
-1. Placing content correctly and making them accessible like footer, contact information
+3. Unreachable Content: Makes certain content like footers hard to reach.
+
+4. Confusing Screen Readers: If someone's using a screen reader, the constant loading can make the page structure confusing.
+
+5. Too Much, Too Fast: For some people, like those who get easily distracted, the never-ending flow of content can be overwhelming. _This one's just my take, but it's something to think about._
+
+When building an infinite scroll you've to consider important factors such as:
+
+1. Placing content correctly and making them accessible like footer, and contact information.
 2. Allowing users to return to their previous spot.
 3. Offering the ability to jump ahead.
 4. Ensuring the experience is navigable for users who rely solely on keyboards.
 
 I recognize that these tasks present significant developmental challenges. However, as the saying goes, quality comes at a cost.
 
-This isn't to say that infinite scrolling is bad; instead, the emphasis is on applying it with caution. _I recall a website that let its users choose the pagination strategy to use. That's a thoughtful touch!_
+This isn't to say that infinite scrolling is bad; instead, the emphasis is on applying it with caution.
 
 ## Other Pagination Strategies
 
-- Pagination: A classic row of numbers where each number represents a page of content.
-- 'Previous' and 'Next' Arrows: Simple arrows or buttons that navigate to adjacent content.
-- "Load More" Button: A button at the bottom that, when clicked, loads additional content below the existing content.
-- Segmented Tabs: For categorizing content, where each tab reveals a different set of data. Imagine Twitter segmenting the tweets based on some criteria, Science, Tech, Angular, 2021, and so on.
+- Traditional Pagination: This approach uses a combination of numbered pagination and 'Previous'/'Next' buttons to offer both specific and sequential page access.
 
-## Summary
+- "Load More" Button: Includes a button at the end of the visible content; clicking it appends additional items to the list.
+
+- Content Segmentation: Utilizes tabs or filters to categorize content, enabling quick navigation to topic-specific data—e.g., segmenting tweets into categories like Science, Tech, Angular, 2021, etc.
+
+## Next Step
 
 In addition to the core functionality, further enhancements can be incorporated
 
-1. Enable and disable features.
-2. An option to store the pageIndex to resume the user journey, history API for instance.
-3. Retry operation, Although I think it shouldn't be part of the infinity scroll function, you can provide it as an option.
-4. Load more data when scrolling up: Imagine you navigate to a profile page and then go back to the feed, like on Twitter. The last page index could be saved in the history API, guiding what to fetch next. But what if you can't load all the earlier data at once? In that case, you can also load more content when the user scrolls up, not just when scrolling down.
+1. Resume Journey: An option to store the pageIndex to resume the user journey, history API for instance.
+2. Error Recovery: retry loading data when the operation fails. Although I think it shouldn't be part of the infinity scroll function, you can provide it as an option.
+3. Load more data when scrolling up: Imagine you navigate to a profile page and then go back to the feed, like on Twitter. The last page index could be saved in the history API, guiding what to fetch next. But what if you can't load all the earlier data at once? In that case, you can also load more content when the user scrolls up, not just when scrolling down.
+4. Improve performance by integrating Virtual Scrolling to only render visible elements.
 
-The functionality can also work with any framework as long as RxJS is used, TypeScript is merely used to provide types that can be safely removed. [You can find an example in the comment section on how to use it with Angular](https://gist.github.com/ezzabuzaid/b5f1f494200698845a5a76a315ad502d)
+## Summary
 
-I'd love to hear your thoughts and opinions.
+Congrats! You've learned how to implement infinite scrolling and gained a deep understanding of the RxJS operators that power this feature. Alongside the technical side, you've taken a critical look at the potential accessibility challenges that come with infinite scrolling, equipping you with a balanced view of its pros and cons.
 
-## Sources
+This implementation is framework-agnostic, requiring only RxJS as a dependency. While TypeScript is used for type safety, it's not a hard requirement and can be easily omitted.
+
+Stay tuned for an upcoming post on **Virtual Scroll**. Subscribe to the newsletter to get notified when it's published. Your feedback and opinions are highly valued, so feel free to share them.
+
+## Resources
 
 - [Infinite Scroll Advantages and Disadvantages: When to Use It and When to Avoid It
   ](https://builtin.com/ux-design/infinite-scroll)
@@ -661,6 +684,147 @@ I'd love to hear your thoughts and opinions.
   ](https://www.smashingmagazine.com/2022/03/designing-better-infinite-scroll/)
 - [Infinite Scroll & Accessibility! Is It Any Good?
   ](https://www.digitala11y.com/infinite-scroll-accessibility-is-it-any-good/)
+
+## Bonus Section - Angular Implementation
+
+- Create a Directive to abstract the infinity scroll function
+
+```ts
+import { Directive, ElementRef, Input, OnDestroy, inject } from "@angular/core";
+
+export interface InfinityScrollDirectiveOptions<T>
+  extends Omit<InfinityScrollOptions<T>, "element"> {
+  // Omit "element" to use direcive's host element
+  /**
+   * User defined Observable that tells if all data had been loaded.
+   */
+  noMoreData$: Observable<any>;
+}
+
+@Directive({
+  selector: "[infinityScroll]",
+  exportAs: "infinityScroll", // export the directive instance to the host template
+  standalone: true,
+})
+export class InfinityScrollDirective<T> implements OnDestroy {
+  #elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  #destroy = new Subject<void>();
+  #dataBuffer = new BehaviorSubject<T[]>([]);
+  data$: Observable<T[]> = this.#dataBuffer.asObservable();
+
+  @Input({ required: true, alias: "infinityScroll" })
+  set options(value: InfinityScrollDirectiveOptions<T[]>) {
+    this.#destroy.next(); // ensures that previous infinityScroll subscription is unsubscribed so you don't duplicate operations
+    infinityScroll({
+      ...value,
+      element: this.#elementRef.nativeElement,
+    })
+      .pipe(
+        takeUntil(this.options.noMoreData$),
+        // stop if there isn't more data
+        takeUntil(this.#destroy)
+        // stop if the "options" input changed or the directive has been destroyed
+      )
+      .subscribe(data => {
+        // Append the data into #dataBuffer source
+        this.#dataBuffer.next([...this.#dataBuffer.value, ...data]);
+      });
+  }
+
+  ngOnDestroy(): void {
+    // Indicate infinity scrolling have to stop
+    this.#destroy.next();
+  }
+}
+```
+
+- Use it in a component template
+
+```html
+<mat-progress-bar
+  *ngIf="infinityScrollOptions.loading | async" // show loading bar
+  mode="query"
+></mat-progress-bar>
+
+<div
+  [infinityScroll]="infinityScrollOptions"
+  #infinityScroll="infinityScroll"  // alias to infinity scroll directive instance
+>
+  <mat-list role="list">
+    <mat-list-item
+      // loop over the data source
+      *ngFor="let item of infinityScroll.data$ | async"
+      >{{ item.title }}</mat-list-item
+    >
+  </mat-list>
+</div>
+```
+
+- Configure Infinity Scroll
+
+```ts
+import { CommonModule } from "@angular/common";
+import { HttpClient } from "@angular/common/http";
+import { Component, inject } from "@angular/core";
+import { MatListModule } from "@angular/material/list";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { BehaviorSubject, delay, filter, pairwise, tap } from "rxjs";
+import {
+  InfinityScrollDirective,
+  InfinityScrollDirectiveOptions,
+  InfinityScrollResult,
+} from "./infinity-scroll.directive";
+
+interface Todo {
+  title: string;
+}
+
+const PAGE_SIZE = 10;
+@Component({
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
+  standalone: true,
+  imports: [
+    MatListModule,
+    CommonModule,
+    InfinityScrollDirective,
+    MatProgressBarModule,
+  ],
+})
+export class AppComponent {
+  #http = inject(HttpClient);
+  #lastBatchLength = new BehaviorSubject<number>(PAGE_SIZE /** Page Size */);
+  noMoreData$ = this.#lastBatchLength.asObservable().pipe(
+    pairwise(),
+    tap(([prev, curr]) => console.log(prev, curr)),
+    filter(([prev, curr]) => prev !== curr)
+    // if the last batch length is the not same
+    // as the current batch length, then there is no more data
+    // assuming page length is constant
+  );
+  infinityScrollOptions: InfinityScrollDirectiveOptions<Todo[]> = {
+    initialPageIndex: 1,
+    threshold: 50,
+    loading: new BehaviorSubject(false),
+    noMoreData$: this.noMoreData$,
+    loadFn: (result: InfinityScrollResult) => {
+      return this.#http
+        .get<Todo[]>(`https://jsonplaceholder.typicode.com/todos`, {
+          params: {
+            _start: result.pageIndex,
+            _limit: PAGE_SIZE,
+          },
+        })
+        .pipe(
+          tap(todos => {
+            this.#lastBatchLength.next(todos.length);
+          })
+        );
+    },
+  };
+}
+```
 
 ## Complete Code
 
