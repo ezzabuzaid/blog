@@ -159,7 +159,6 @@ const socialCount = SOCIALS.filter(social => social.active).length;
       event.preventDefault();
       const formData = new FormData(event.target as any);
       const value = Object.fromEntries(formData.entries());
-      console.log(value);
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
       myHeaders.append(
