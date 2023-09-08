@@ -6,7 +6,7 @@ featured: true
 tags:
   - rxjs
   - angular
-description: "Create an infinity scrolling using RxJS"
+description: "Create an infinity scroll using RxJS"
 ---
 
 Ever tried to load a ton of data on a webpage and found it super slow or laggy? You're not alone. An effective way to improve the experience is through infinite scrolling, similar to how your Twitter feed continuously loads more tweets as you scroll down.
@@ -15,13 +15,7 @@ Ever tried to load a ton of data on a webpage and found it super slow or laggy? 
 
 > A web design technique where, as the user scrolls down a page, more content automatically and continuously loads at the bottom, eliminating the user’s need to click to the next page.
 
-Would you like to see the result?
-
-<iframe height="400" style="width: 100%;" scrolling="no" title="Reactive Infinity Scrolling - Vertical" src="https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=result&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/BavLOLp">
-  Reactive Infinity Scrolling - Vertical</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+Scroll down for the [result](#example), Or [see the complete code](https://gist.github.com/ezzabuzaid/b5f1f494200698845a5a76a315ad502d)
 
 ## Table of content
 
@@ -66,6 +60,8 @@ _Note: I'm using TypeScript primarily for clarity in showing what options are av
 
 RxJS operators are functions that manipulate and transform observable sequences. These operators can be used to filter, combine, project, or perform other operations on an observable sequence of events.
 
+### Common RxJS Operators
+
 There are a lot of them, most used (by me 😆) are `tap`, `map`, `filter`, `switchMap`, and `finalize`. You might already know how to use those but lucky you, we're going to learn about other useful operators!
 
 Take a look at the following observable:
@@ -77,7 +73,7 @@ source$.subscribe(event => console.log(event));
 
 The result would be 1 2 3 4 5. -Each in a new line-
 
-### filter
+#### filter
 
 To only log odd numbers
 
@@ -95,7 +91,7 @@ source$
   .subscribe(event => console.log(event));
 ```
 
-### map
+#### map
 
 To change the sequence of events, you can use the `map` operator.
 
@@ -107,7 +103,7 @@ source$
 
 What if I want to inspect an event without changing the source sequence
 
-### tap
+#### tap
 
 ```ts
 source$
@@ -120,83 +116,13 @@ source$
   .subscribe(event => console.log(event));
 ```
 
-### finalize
+#### finalize
 
 To monitor the end of an observable's lifecycle, you can use the `finalize` operator. It gets triggered when the observable completes.
 
 It is usually used to perform some cleanup operations, stop the loading animation, or debug the memory, for example, add a log statement to ensure that the observable is complete and doesn't stuck in the memory 🥲.
-Before starting with map operators, my advise
 
----
-
-Sometimes, you need to fetch some data with every incoming event, say from the backend server. There are a few methods to do this.
-
-### switchMap
-
-Like a regular map, the `switchMap` operator uses a project function that returns an observable -its first argument-, known as the inner observable. When an event occurs, `switchMap` subscribes to this inner observable, creating a subscription that lasts until the inner observable completes. If a new event arrives before the previous inner observable completes, switchMap cancels the existing subscription and starts a new one. In other words, it _switches_\* to a new subscription.
-
-```ts
-const source$ = from([1, 2, 3, 4, 5]);
-
-function fetchData(id: number) {
-  return from(fetch(`https://jsonplaceholder.typicode.com/todos/{id}`));
-}
-
-source$
-  .pipe(switchMap(event => fetchData(event)))
-  .subscribe(event => console.log(event));
-```
-
-Worth noting that in this sample only the todo with id 5 will be logged because `switchMap` works by **switching** the priority to the recent event as explained above. `from([...])` will emit the events after each other immediately thereby `switchMap` will switch (subscribe) to the next event inner observable as soon as it arrives without regard to the previous event. The switch operation essentially means unsubscribing from the previous inner observable and subscribing to the new one.
-
-### concatMap
-
-It blocks new events from going through the source sequence unless the inner observable completes. It is particularly useful for database writing operations or animating/moving an element where it's important to complete one action before starting another.
-
-```ts
-source$
-  .pipe(concatMap(event => fetchData(event)))
-  .subscribe(event => console.log(event));
-```
-
-This sample will log all todos in order. Essentially what happens is `concatMap` blocks the next event till the inner observable at hand completes.
-
-### mergeMap
-
-It doesn't cancel the previous subscription nor blocks the source sequence till the current inner observable completes. `mergeMap` will subscribe to the inner observable without regard to its completion, so if an event comes through and the previous inner observable hasn't been completed yet that's fine, `mergeMap` will subscribe to the inner observable.
-
-```ts
-source$
-  .pipe(mergeMap(event => fetchData(event)))
-  .subscribe(event => console.log(event));
-```
-
-This sample will log all todos but in uncertain order, for instance, the second request might resolve before the first one and `mergeMap` doesn't care about the order, if that is important then use `concatMap`.
-
-### exhaustMap
-
-The final one and the most important in this writing is `exhaustMap`: it is like `switchMap` but with one key difference; it ignores the recent events in favor of the current inner observable completion in contrary to `switchMap` which cancels the previous inner observable in favor of new inner observable.
-
-```ts
-source$
-  .pipe(exhaustMap(event => fetchData(event)))
-  .subscribe(event => console.log(event));
-```
-
-This sample will only log the first todo as the first todo request hasn't been completed yet other events came through therefore they've been ignored.
-
-To summarise
-
-1. `switchMap` will unsubscribe from the current inner observable (if hasn't been completed yet) in favor of the next even inner observable.
-2. `concatMap` will block the source sequence so the inner observable at hand must be complete before allowing other events to flow.
-3. `mergeMap` doesn't care about the status of the inner observable so it'll subscribe to the inner observable without worrying about the previous inner observable.
-4. `exhaustMap` will ignore any event till the current inner observable is complete.
-
-Okay, that is a lot, isn't it? I understand that if you're new to RxJS you might not be able to digest all this info, Your best bet is to practice and that's what you're trying to do here.
-
-There are three more operators you'll want to know about.
-
-### debounceTime
+#### debounceTime
 
 Imagine you're building a login form and upon the user typing its password you want to hit the backend server to ensure the password conforms to certain criteria.
 
@@ -221,7 +147,7 @@ source$.subscribe(event => console.log(event));
 
 Adding `debounceTime` essentially implies creating 2 seconds between each keystroke, so a user enters "hello" and then before 2 seconds pass enters "world" and only one request will be sent. In other words, each event has to have a 2 seconds distance from the last event.
 
-### startWith
+#### startWith
 
 An observable might not have value immediately and you need an event readily available for the new `source$` subscribers.
 
@@ -236,7 +162,7 @@ source$.subscribe(event => console.log(event));
 
 This sample will immediately log "+1" even if `timezoneInput` value is never entered
 
-### fromEvent
+#### fromEvent
 
 You could rewrite the previous example to be as follows
 
@@ -256,7 +182,7 @@ source$.subscribe(event => console.log(event));
 
 Thanks to RxJS you can use `fromEvent` that will encapsulate that boilerplate, all you need to do is to say which event to listen to and from what element. Of course `fromEvent` returns an observable 🙂
 
-### takeUntil
+#### takeUntil
 
 I admit this one might be difficult to digest, it was for me. Taking the same previous example, Let's say that you have a form, an input, and a submit button. When the user clicks on the submit button you want to stop listening to the `timezoneInput` element `input` event. Yes, `takeUntil` as it sounds, it lets the subscribers take events until the provided observable emits at least once.
 
@@ -277,7 +203,7 @@ source$
   .subscribe(event => console.log(event));
 ```
 
-### pipe
+#### pipe
 
 The pipe function in RxJS is a utility for composing operations on observables. Use it to chain multiple operators together in a readable manner, or to create reusable custom operators. This is crucial when the source sequence is complex to manage.
 
@@ -285,19 +211,89 @@ The pipe function in RxJS is a utility for composing operations on observables. 
 import { pipe } from "rxjs"; // add it to not to be confused with Observable.pipe
 
 // Create a reusable custom operator using `pipe`
-const filterAndDouble = pipe(
-  filter((n: number) => n % 2 === 1),
-  map((n: number) => n * 2)
+const doubleOddNumbers = pipe<number>(
+  filter(n => n % 2 === 1),
+  map(n => n * 2)
 );
 
 const source$ = from([1, 2, 3, 4, 5]);
 
-source$.pipe(filterAndDouble).subscribe(x => console.log(x));
+source$.pipe(doubleOddNumbers).subscribe(x => console.log(x));
+// result: 1, 6, 10
 ```
 
 Wow, I really did it, and you did too 😎
 
 Time to talk about some of the Scroll API(s)
+
+---
+
+### Flattening Operators
+
+Sometimes, you need to fetch some data with every incoming event, say from the backend server. There are a few methods to do this.
+
+#### switchMap
+
+Like a regular map, the `switchMap` operator uses a project function that returns an observable -its first argument-, known as the inner observable. When an event occurs, `switchMap` subscribes to this inner observable, creating a subscription that lasts until the inner observable completes. If a new event arrives before the previous inner observable completes, switchMap cancels the existing subscription and starts a new one. In other words, it _switches_\* to a new subscription.
+
+```ts
+const source$ = from([1, 2, 3, 4, 5]);
+
+function fetchData(id: number) {
+  return from(fetch(`https://jsonplaceholder.typicode.com/todos/{id}`));
+}
+
+source$
+  .pipe(switchMap(event => fetchData(event)))
+  .subscribe(event => console.log(event));
+```
+
+Worth noting that in this sample only the todo with id 5 will be logged because `switchMap` works by **switching** the priority to the recent event as explained above. `from([...])` will emit the events after each other immediately thereby `switchMap` will switch (subscribe) to the next event inner observable as soon as it arrives without regard to the previous event. The switch operation essentially means unsubscribing from the previous inner observable and subscribing to the new one.
+
+#### concatMap
+
+It blocks new events from going through the source sequence unless the inner observable completes. It is particularly useful for database writing operations or animating/moving an element where it's important to complete one action before starting another.
+
+```ts
+source$
+  .pipe(concatMap(event => fetchData(event)))
+  .subscribe(event => console.log(event));
+```
+
+This sample will log all todos in order. Essentially what happens is `concatMap` blocks the next event till the inner observable at hand completes.
+
+#### mergeMap
+
+It doesn't cancel the previous subscription nor blocks the source sequence till the current inner observable completes. `mergeMap` will subscribe to the inner observable without regard to its completion, so if an event comes through and the previous inner observable hasn't been completed yet that's fine, `mergeMap` will subscribe to the inner observable.
+
+```ts
+source$
+  .pipe(mergeMap(event => fetchData(event)))
+  .subscribe(event => console.log(event));
+```
+
+This sample will log all todos but in uncertain order, for instance, the second request might resolve before the first one and `mergeMap` doesn't care about the order, if that is important then use `concatMap`.
+
+#### exhaustMap
+
+The final one and the most important in this writing is `exhaustMap`: it is like `switchMap` but with one key difference; it ignores the recent events in favor of the current inner observable completion in contrary to `switchMap` which cancels the previous inner observable in favor of new inner observable.
+
+```ts
+source$
+  .pipe(exhaustMap(event => fetchData(event)))
+  .subscribe(event => console.log(event));
+```
+
+This sample will only log the first todo as the first todo request hasn't been completed yet other events came through therefore they've been ignored.
+
+To summarise
+
+1. `switchMap` will unsubscribe from the current inner observable (if hasn't been completed yet) in favor of the next even inner observable.
+2. `concatMap` will block the source sequence so the inner observable at hand must be complete before allowing other events to flow.
+3. `mergeMap` doesn't care about the status of the inner observable so it'll subscribe to the inner observable without worrying about the previous inner observable.
+4. `exhaustMap` will ignore any event till the current inner observable is complete.
+
+Okay, that is a lot, isn't it? I understand that if you're new to RxJS you might not be able to digest all this info, Your best bet is to practice and that's what you're trying to do here.
 
 ## Scroll API
 
@@ -438,7 +434,7 @@ function infinityScroll<T extends any[]>(options: InfinityScrollOptions<T>) {
 }
 ```
 
-As promised before, our infinity scroll function is customizable. Now we're going to listen to the element -_the one \_that has \_a \_list\_\_ of item_ that is supposed to infinitely scrolled\_-
+As promised, you now can customize the infinite scroll function to your liking. Next, you'll learn how to attach an event listener to the specific element that contains your infinitely scrollable list of items.
 
 ```ts
 function infinityScroll<T extends any[]>(options: InfinityScrollOptions<T>) {
@@ -541,17 +537,13 @@ What about using [`mergeMap`](#mergemap), [`switchMap`](#switchMap), or [`concat
 
 Given the following scenario: A user scrolled down to the end of the page, but the request to load more data is still pending. The user kept scrolling down to the end of the page but the data was not yet resolved. What do you think would happen?
 
-_Note: The following recordings use slow 3g network speed_
+_Note: The following recordings use a slow 3g network speed_
 
 ### Using mergeMap
 
 With each scroll event, `mergeMap` subscribes to the inner observable without regard to the previous subscription, essentially leading to a new request -loadMode- with each verified scroll event -below the threshold-
 
-<iframe  height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/Jjwboxj?default-tab=js&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/Jjwboxj">
-  Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+[Edit in CodePen](https://codepen.io/ezzabuzaid/pen/Jjwboxj)
 
 ![Issues with using merge map.](../../assets/mergeMap.gif)
 
@@ -559,11 +551,7 @@ With each scroll event, `mergeMap` subscribes to the inner observable without re
 
 With each scroll event, `switchMap` will cancel/unsubscribe from the previous subscription and subscribe to the inner observable again, essentially leading to a new request but the previous unresolved one will be canceled so only one request will be pending at a time. That might be okay, however, the event position `index` will increment each time `switchMap` subscripes to the inner observable which leads to incorrect data being loaded.
 
-<iframe height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/abPBmNQ?default-tab=js&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/abPBmNQ">
-  Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+[Edit in CodePen](https://codepen.io/ezzabuzaid/pen/abPBmNQ)
 
 ![Issues with using switch map.](../../assets/switchMap.gif)
 
@@ -571,11 +559,7 @@ With each scroll event, `switchMap` will cancel/unsubscribe from the previous su
 
 With each scroll event, `concatMap` will subscribe to the inner observable, blocking the source sequence till the current subscription completes -loadMore request resolves-, essentially leading to a new request with every verified scroll but holding them onto till it can process a new event. The event position `index` will increment each time `concatMap` subscribes to the inner observable which leads to requesting more data than needed. See the recording below and take a good look at what happens in the _Network Tap_ when the user stops scrolling.
 
-<iframe height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/gOZLwow?default-tab=js&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/gOZLwow">
-  Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+[Edit in CodePen](https://codepen.io/ezzabuzaid/pen/gOZLwow)
 
 ![Issues with using concat map.](../../assets/concatMap.gif)
 
@@ -604,27 +588,15 @@ However, this approach has a limitation. Since `options.loading` is a user-defin
 
 ### Vertical Scrolling
 
-<iframe height="400" style="width: 100%;" scrolling="no" title="Reactive Infinity Scrolling - Vertical" src="https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/BavLOLp">
-  Reactive Infinity Scrolling - Vertical</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+{% codepen https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=js%2Cresult&editable=true %}
 
 ### Horizontal Scrolling
 
-<iframe height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/oNJzPGN?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/oNJzPGN">
-  Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+{% codepen https://codepen.io/ezzabuzaid/embed/preview/oNJzPGN?default-tab=js%2Cresult&editable=true %}
 
 ### RTL Horizontal Scrolling
 
-<iframe height="400" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/ezzabuzaid/embed/preview/gOZwdXg?default-tab=js%2Cresult&editable=true" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/ezzabuzaid/pen/gOZwdXg">
-  Untitled</a> by ezzabuzaid (<a href="https://codepen.io/ezzabuzaid">@ezzabuzaid</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+{% codepen https://codepen.io/ezzabuzaid/embed/preview/gOZwdXg?default-tab=js%2Cresult&editable=true %}
 
 ## UX and Accessibility Consideration
 
@@ -684,148 +656,3 @@ Stay tuned for an upcoming post on **Virtual Scroll**. Subscribe to the newslett
   ](https://www.smashingmagazine.com/2022/03/designing-better-infinite-scroll/)
 - [Infinite Scroll & Accessibility! Is It Any Good?
   ](https://www.digitala11y.com/infinite-scroll-accessibility-is-it-any-good/)
-
-## Bonus Section - Angular Implementation
-
-- Create a Directive to abstract the infinity scroll function
-
-```ts
-import { Directive, ElementRef, Input, OnDestroy, inject } from "@angular/core";
-
-export interface InfinityScrollDirectiveOptions<T>
-  extends Omit<InfinityScrollOptions<T>, "element"> {
-  // Omit "element" to use direcive's host element
-  /**
-   * User defined Observable that tells if all data had been loaded.
-   */
-  noMoreData$: Observable<any>;
-}
-
-@Directive({
-  selector: "[infinityScroll]",
-  exportAs: "infinityScroll", // export the directive instance to the host template
-  standalone: true,
-})
-export class InfinityScrollDirective<T> implements OnDestroy {
-  #elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-  #destroy = new Subject<void>();
-  #dataBuffer = new BehaviorSubject<T[]>([]);
-  data$: Observable<T[]> = this.#dataBuffer.asObservable();
-
-  @Input({ required: true, alias: "infinityScroll" })
-  set options(value: InfinityScrollDirectiveOptions<T[]>) {
-    this.#destroy.next(); // ensures that previous infinityScroll subscription is unsubscribed so you don't duplicate operations
-    infinityScroll({
-      ...value,
-      element: this.#elementRef.nativeElement,
-    })
-      .pipe(
-        takeUntil(this.options.noMoreData$),
-        // stop if there isn't more data
-        takeUntil(this.#destroy)
-        // stop if the "options" input changed or the directive has been destroyed
-      )
-      .subscribe(data => {
-        // Append the data into #dataBuffer source
-        this.#dataBuffer.next([...this.#dataBuffer.value, ...data]);
-      });
-  }
-
-  ngOnDestroy(): void {
-    // Indicate infinity scrolling have to stop
-    this.#destroy.next();
-  }
-}
-```
-
-- Use it in a component template
-
-```html
-<mat-progress-bar
-  *ngIf="infinityScrollOptions.loading | async" // show loading bar
-  mode="query"
-></mat-progress-bar>
-
-<div
-  [infinityScroll]="infinityScrollOptions"
-  #infinityScroll="infinityScroll"  // alias to infinity scroll directive instance
->
-  <mat-list role="list">
-    <mat-list-item
-      // loop over the data source
-      *ngFor="let item of infinityScroll.data$ | async"
-      >{{ item.title }}</mat-list-item
-    >
-  </mat-list>
-</div>
-```
-
-- Configure Infinity Scroll
-
-```ts
-import { CommonModule } from "@angular/common";
-import { HttpClient } from "@angular/common/http";
-import { Component, inject } from "@angular/core";
-import { MatListModule } from "@angular/material/list";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { BehaviorSubject, delay, filter, pairwise, tap } from "rxjs";
-import {
-  InfinityScrollDirective,
-  InfinityScrollDirectiveOptions,
-  InfinityScrollResult,
-} from "./infinity-scroll.directive";
-
-interface Todo {
-  title: string;
-}
-
-const PAGE_SIZE = 10;
-@Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
-  standalone: true,
-  imports: [
-    MatListModule,
-    CommonModule,
-    InfinityScrollDirective,
-    MatProgressBarModule,
-  ],
-})
-export class AppComponent {
-  #http = inject(HttpClient);
-  #lastBatchLength = new BehaviorSubject<number>(PAGE_SIZE /** Page Size */);
-  noMoreData$ = this.#lastBatchLength.asObservable().pipe(
-    pairwise(),
-    tap(([prev, curr]) => console.log(prev, curr)),
-    filter(([prev, curr]) => prev !== curr)
-    // if the last batch length is the not same
-    // as the current batch length, then there is no more data
-    // assuming page length is constant
-  );
-  infinityScrollOptions: InfinityScrollDirectiveOptions<Todo[]> = {
-    initialPageIndex: 1,
-    threshold: 50,
-    loading: new BehaviorSubject(false),
-    noMoreData$: this.noMoreData$,
-    loadFn: (result: InfinityScrollResult) => {
-      return this.#http
-        .get<Todo[]>(`https://jsonplaceholder.typicode.com/todos`, {
-          params: {
-            _start: result.pageIndex,
-            _limit: PAGE_SIZE,
-          },
-        })
-        .pipe(
-          tap(todos => {
-            this.#lastBatchLength.next(todos.length);
-          })
-        );
-    },
-  };
-}
-```
-
-## Complete Code
-
-<script src="https://gist.github.com/ezzabuzaid/b5f1f494200698845a5a76a315ad502d.js"></script>

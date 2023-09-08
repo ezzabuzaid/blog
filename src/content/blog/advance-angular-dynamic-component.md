@@ -62,7 +62,7 @@ Each of which has `propName` and `templateName` that corresponds to
 @Output(templateName) propName;
 ```
 
-`templateName` defaults to `propName` if not specifed.
+_Note: `templateName` defaults to `propName` if not specifed._
 
 ## Setup
 

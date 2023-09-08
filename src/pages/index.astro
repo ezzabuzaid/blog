@@ -187,7 +187,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
 
       fetch("https://api.logsnag.com/v1/log", requestOptions)
         .then(response => response.text())
-        .then(result => import("canvas-confetti"))
+        .then(() => import("canvas-confetti"))
         .then(confetti =>
           confetti.default({
             particleCount: 100,
