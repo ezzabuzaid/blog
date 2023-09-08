@@ -71,7 +71,7 @@ export default function SearchBar({ searchList }: Props) {
 
   return (
     <>
-      <form onSubmit={form => setInputVal(inputRef.current?.value || "")}>
+      <form onSubmit={() => setInputVal(inputRef.current?.value || "")}>
         <label className="relative block">
           <span className="absolute inset-y-0 left-0 flex items-center pl-2 opacity-75">
             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

@@ -6,10 +6,12 @@ import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 import remarkCollapse from "remark-collapse";
 import remarkToc from "remark-toc";
+import remarkCodepen from "./remark-codpen.mjs";
 import { remarkReadingTime } from "./remark-reading-time.mjs";
 
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://techtext.dev/",
@@ -27,6 +29,7 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [
       remarkReadingTime,
+      remarkCodepen,
       remarkToc,
       rehypeSlug,
       [rehypeAutolinkHeadings, { behavior: "append" }],
