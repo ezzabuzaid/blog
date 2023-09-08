@@ -7,6 +7,7 @@ tags:
   - rxjs
   - angular
 description: "Create an infinity scroll using RxJS"
+ogDescription: "Learn how to implement infinite scrolling using RxJS. Improve user experience, optimize resource usage, and fetch data incrementally!"
 ---
 
 Have you ever experienced slow loading or lag on a webpage while trying to load a large amount of data? If so, you're not alone. An effective solution to improve the experience is to use infinite scrolling, which works similarly to how your Twitter feed continuously loads more tweets as you scroll down.

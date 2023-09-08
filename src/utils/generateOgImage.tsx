@@ -21,7 +21,7 @@ const fetchFonts = async () => {
 
 const { fontRegular, fontBold } = await fetchFonts();
 
-const ogImage = (text: string) => {
+const ogImage = (text: string, description: string) => {
   return (
     <div
       style={{
@@ -74,13 +74,23 @@ const ogImage = (text: string) => {
         >
           <p
             style={{
-              fontSize: 72,
+              fontSize: 60,
               fontWeight: "bold",
               maxHeight: "84%",
               overflow: "hidden",
             }}
           >
             {text}
+          </p>
+          <p
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              maxHeight: "84%",
+              overflow: "hidden",
+            }}
+          >
+            {description}
           </p>
           <div
             style={{
@@ -105,9 +115,9 @@ const ogImage = (text: string) => {
               </span>
             </span>
 
-            <span style={{ overflow: "hidden", fontWeight: "bold" }}>
+            {/* <span style={{ overflow: "hidden", fontWeight: "bold" }}>
               {SITE.title}
-            </span>
+            </span> */}
           </div>
         </div>
       </div>
@@ -135,8 +145,8 @@ const options: SatoriOptions = {
   ],
 };
 
-const generateOgImage = async (mytext = SITE.title) => {
-  const svg = await satori(ogImage(mytext), options);
+const generateOgImage = async (text: string, description: string) => {
+  const svg = await satori(ogImage(text, description), options);
 
   // render png in production mode
   if (import.meta.env.MODE === "production") {
@@ -144,9 +154,9 @@ const generateOgImage = async (mytext = SITE.title) => {
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
 
-    console.info("Output PNG Image  :", `${mytext}.png`);
+    console.info("Output PNG Image  :", `${text}.png`);
 
-    await writeFile(`./dist/${mytext}.png`, pngBuffer);
+    await writeFile(`./dist/${text}.png`, pngBuffer);
   }
 
   return svg;
