@@ -1,7 +1,7 @@
 ---
 author: ezzabuzaid
 pubDatetime: 2023-09-07T17:23:56.283Z
-title: Reactive Infinity Scroll
+title: Angular Infinity Scroll
 featured: true
 draft: true
 tags:

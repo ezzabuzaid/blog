@@ -1,0 +1,99 @@
+---
+interface Props {}
+---
+
+<section class="bg-white border-black mb-12 border-b-2">
+  <div class="lg:p-20 2xl:px-0 2xl:max-w-7xl mx-auto p-4">
+    <div class="h-full space-y-12">
+      <div
+        class="lg:inline-flex lg:items-start h-full w-full justify-between gap-3"
+      >
+        <div class="flex flex-col">
+          <form
+            id="newsletter"
+            class="border-black bg-white mt-4 justify-between rounded-2xl border-2 p-2 shadow sm:flex"
+          >
+            <label class="sr-only" for="email-address"> Email address</label>
+            <input
+              autocomplete="email"
+              class="border-transparent bg-transparent focus:border-black w-full rounded-xl px-5 py-3 placeholder-black focus:ring-black sm:max-w-xs"
+              id="email-address"
+              name="email"
+              placeholder="Never miss a post!"
+              required=""
+              type="email"
+            />
+            <div
+              class="ml-auto mt-3 rounded-md sm:ml-3 sm:mt-0 sm:flex-shrink-0"
+            >
+              <button
+                class="border-black bg-black hover:bg-lila-500 hover:text-black text-white flex w-full items-center justify-center rounded-xl border-2 px-5 py-3 text-base font-medium focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                type="submit"
+              >
+                <svg
+                  class="mr-3 h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+                </svg>{" "}Subscribe for free
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  document
+    .getElementById("newsletter")
+    ?.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(event.target as any);
+      const value = Object.fromEntries(formData.entries());
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append(
+        "Authorization",
+        "Bearer 9e4caa6340f52bfaa1ace921f9dd58c2"
+      );
+
+      const raw = JSON.stringify({
+        project: "faslh",
+        channel: "newsletter",
+        event: "User Joined",
+        description: `Email: ${value.email}`,
+        icon: "🎉",
+        tags: {
+          email: value.email,
+        },
+        notify: true,
+      });
+
+      const requestOptions: RequestInit = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+
+      fetch("https://api.logsnag.com/v1/log", requestOptions)
+        .then(response => response.text())
+        .then(() => import("canvas-confetti"))
+        .then(confetti =>
+          confetti.default({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          })
+        )
+        .catch(error => console.log("error", error));
+    });
+</script>
