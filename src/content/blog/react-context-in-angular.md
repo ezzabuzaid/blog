@@ -19,6 +19,8 @@ If at any point you don't feel interested in reading further, think of this arti
 
 For clarity about what I’m going to talk about, the [project](https://github.com/ezzabuzaid/react-context-in-angular/tree/main/src/app/context) is available to browse through Github. or a [Demo](https://stackblitz.com/edit/github-ksgaad-aujpdi) if you prefer.
 
+## Table Of Content
+
 ## What Is React Context API
 
 From React [Documentation](https://reactjs.org/docs/context.html)

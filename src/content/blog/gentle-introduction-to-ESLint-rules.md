@@ -22,6 +22,8 @@ For you who ain't familiar with [ESLint](https://eslint.org/), I recommend that 
 
 All the code snippets are available in [Replit](https://replit.com/@EzzAbuzaid1/ESLint) - if you can't see the file in the caption, you've to manually navigate to it from the file explorer.
 
+## Table Of Content
+
 ## Problems
 
 1. One day Javascript rolled out new ways to create a variable (using `let` and `const`) an after some investigation it was mandatory to adapt to the new way, your team agreed and left the office thinking you're crazy. The next day the team have forgotten and it was like nothing happened yesterday.

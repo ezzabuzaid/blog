@@ -20,6 +20,8 @@ For clarity about what I’m going to talk about, the [project](https://github.c
 UPDATE - 5/8/2023
 _The component inspection API has been deprecated as of Angular V13, If you're using Angular v14 and above update your implementation to follow "https://github.com/ezzabuzaid/dynamic-component-article/blob/main/src/app/dynamic-component.directive.v14.ts"_
 
+## Table Of Content
+
 ## The Problem
 
 In order to create a dynamic component, you have to use either `ngComponentOutlet` directive or `ComponentFactoryResolver` object, neither provides a way to bind inputs and outputs.

@@ -17,7 +17,7 @@ Have you ever experienced slow loading or lag on a webpage while trying to load 
 
 Scroll down for the [result](#example), Or [see the complete code](https://gist.github.com/ezzabuzaid/b5f1f494200698845a5a76a315ad502d)
 
-## Table of content
+## Table Of Content
 
 ## Problem
 
