@@ -2,7 +2,7 @@
 author: ezzabuzaid
 pubDatetime: 2023-09-07T17:23:56.283Z
 title: Angular Infinity Scroll
-featured: true
+featured: false
 draft: true
 tags:
   - rxjs

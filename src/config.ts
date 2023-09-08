@@ -22,25 +22,25 @@ export const SOCIALS: SocialObjects = [
   {
     name: "Github",
     href: "https://github.com/ezzabuzaid",
-    linkTitle: ` ${SITE.title} on Github`,
+    linkTitle: `Follow me on Github`,
     active: true,
   },
   {
     name: "LinkedIn",
     href: "https://linkedin.com/in/ezzabuzaid",
-    linkTitle: `${SITE.title} on LinkedIn`,
+    linkTitle: `Find me on LinkedIn`,
     active: true,
   },
   {
     name: "Mail",
     href: "mailto:ezzabuzaid@hotmail.com",
-    linkTitle: `Send an email to ${SITE.title}`,
-    active: false,
+    linkTitle: `Send me an email`,
+    active: true,
   },
   {
     name: "Twitter",
     href: "https://twitter.com/ezzabuzaid",
-    linkTitle: `${SITE.title} on Twitter`,
-    active: false,
+    linkTitle: `Follow me on Twitter`,
+    active: true,
   },
 ];

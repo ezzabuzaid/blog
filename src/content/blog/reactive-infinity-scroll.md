@@ -9,7 +9,7 @@ tags:
 description: "Create an infinity scroll using RxJS"
 ---
 
-Ever tried to load a ton of data on a webpage and found it super slow or laggy? You're not alone. An effective way to improve the experience is through infinite scrolling, similar to how your Twitter feed continuously loads more tweets as you scroll down.
+Have you ever experienced slow loading or lag on a webpage while trying to load a large amount of data? If so, you're not alone. An effective solution to improve the experience is to use infinite scrolling, which works similarly to how your Twitter feed continuously loads more tweets as you scroll down.
 
 [What is Infinity Scroll](https://builtin.com/ux-design/infinite-scroll)
 
@@ -42,9 +42,9 @@ The writing assumes you have a basic understanding of RxJS. No worries though, I
 
 _[You can skip the next section](#scroll-api) if you're already familiar with using RxJS operators._
 
-If you're only interested in the final code then [Jumb To The Code](#the-code)
+If you're comfortable working with RxJS then [Jumb To The Code](#the-code)
 
-Let's start
+Well, Let's start!
 
 ## Getting Started
 
