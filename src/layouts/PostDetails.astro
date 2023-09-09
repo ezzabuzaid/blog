@@ -61,13 +61,15 @@ const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
     </button>
   </div>
   <main class="mx-auto w-full max-w-3xl px-4 pb-12">
-    <h1 class="text-2xl font-semibold text-skin-accent">{title}</h1>
-    <Datetime
+      <Datetime
       datetime={pubDatetime}
       minutesRead={minutesRead}
       size="lg"
       className="my-2"
     />
+    <h1 class="md:text-6xl mt-4 text-4xl font-semibold text-skin-accent">{title}</h1>
+    <p class="md:text-xl text-lg my-4 text-slate-500">{description}</p>
+
     <article id="article" role="article" class="[word-spacing:.09em] prose prose-code:font-[monospace] mx-auto mt-8 max-w-3xl">
       <Content />
     </article>

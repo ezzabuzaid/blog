@@ -6,8 +6,7 @@ featured: true
 tags:
   - rxjs
   - angular
-description: "Create an infinity scroll using RxJS"
-ogDescription: "Learn how to implement infinite scrolling using RxJS. Improve user experience, optimize resource usage, and fetch data incrementally!"
+description: "Learn how to implement infinite scrolling using RxJS. Improve user experience, optimize resource usage, and fetch data incrementally!"
 ---
 
 Have you ever experienced slow loading or lag on a webpage while trying to load a large amount of data? If so, you're not alone. An effective solution to improve the experience is to use infinite scrolling, which works similarly to how your Twitter feed continuously loads more tweets as you scroll down.
@@ -41,9 +40,7 @@ You're going to build a minimal yet efficient function using RxJS. It will inclu
 
 The writing assumes you have a basic understanding of RxJS. No worries though, I'll explain any special code or RxJS features along the way. So get ready, because you're about to dive into some RxJS operators! 😄
 
-_[You can skip the next section](#scroll-api) if you're already familiar with using RxJS operators._
-
-If you're comfortable working with RxJS then [Jumb To The Code](#the-code)
+For those already comfortable with RxJS, [you can skip the next section](#scroll-api) or [jump to The Code](#the-code)
 
 Well, Let's start!
 
@@ -223,10 +220,6 @@ source$.pipe(doubleOddNumbers).subscribe(x => console.log(x));
 // result: 1, 6, 10
 ```
 
-Wow, I really did it, and you did too 😎
-
-Time to talk about some of the Scroll API(s)
-
 ---
 
 ### Flattening Operators
@@ -235,7 +228,7 @@ Sometimes, you need to fetch some data with every incoming event, say from the b
 
 #### switchMap
 
-Like a regular map, the `switchMap` operator uses a project function that returns an observable -its first argument-, known as the inner observable. When an event occurs, `switchMap` subscribes to this inner observable, creating a subscription that lasts until the inner observable completes. If a new event arrives before the previous inner observable completes, switchMap cancels the existing subscription and starts a new one. In other words, it _switches_\* to a new subscription.
+Like a regular map, the `switchMap` operator uses a project function that returns an observable -its first argument-, known as the inner observable. When an event occurs, `switchMap` subscribes to this inner observable, creating a subscription that lasts until the inner observable completes. If a new event arrives before the previous inner observable completes, `switchMap` cancels the existing subscription and starts a new one. In other words, it _switches_ to a new subscription.
 
 ```ts
 const source$ = from([1, 2, 3, 4, 5]);
@@ -249,7 +242,7 @@ source$
   .subscribe(event => console.log(event));
 ```
 
-Worth noting that in this sample only the todo with id 5 will be logged because `switchMap` works by **switching** the priority to the recent event as explained above. `from([...])` will emit the events after each other immediately thereby `switchMap` will switch (subscribe) to the next event inner observable as soon as it arrives without regard to the previous event. The switch operation essentially means unsubscribing from the previous inner observable and subscribing to the new one.
+In this sample, only the todo with id 5 will be logged because `switchMap` works by **switching** the priority to the recent event as explained above. `from([...])` will emit the events after each other immediately thereby `switchMap` will switch (subscribe) to the next event inner observable as soon as it arrives without regard to the previous event. The switch operation essentially means unsubscribing from the previous inner observable and subscribing to the new one.
 
 #### concatMap
 
@@ -261,11 +254,11 @@ source$
   .subscribe(event => console.log(event));
 ```
 
-This sample will log all todos in order. Essentially what happens is `concatMap` blocks the next event till the inner observable at hand completes.
+This sample will log all todos in order. Essentially what happens is `concatMap` blocks the source sequance till the inner observable at hand completes.
 
 #### mergeMap
 
-It doesn't cancel the previous subscription nor blocks the source sequence till the current inner observable completes. `mergeMap` will subscribe to the inner observable without regard to its completion, so if an event comes through and the previous inner observable hasn't been completed yet that's fine, `mergeMap` will subscribe to the inner observable.
+It doesn't cancel the previous subscription nor blocks the source sequence. `mergeMap` will subscribe to the inner observable without regard to its completion, so if an event comes through and the previous inner observable hasn't been completed yet that's fine, `mergeMap` will subscribe to the inner observable anyway.
 
 ```ts
 source$
@@ -273,11 +266,11 @@ source$
   .subscribe(event => console.log(event));
 ```
 
-This sample will log all todos but in uncertain order, for instance, the second request might resolve before the first one and `mergeMap` doesn't care about the order, if that is important then use `concatMap`.
+This sample will log all todos but in uncertain order, for instance, the second request might resolve before the first one and `mergeMap` doesn't care about the order, If that is important then use `concatMap`.
 
 #### exhaustMap
 
-The final one and the most important in this writing is `exhaustMap`: it is like `switchMap` but with one key difference; it ignores the recent events in favor of the current inner observable completion in contrary to `switchMap` which cancels the previous inner observable in favor of new inner observable.
+The final one and the most important in this writing is `exhaustMap`: it is like `switchMap` but with one key difference; it ignores the recent events in favor of the current inner observable completion in contrary to `switchMap` which cancels the previous inner observable subscription in favor of a new one.
 
 ```ts
 source$
@@ -289,16 +282,22 @@ This sample will only log the first todo as the first todo request hasn't been c
 
 To summarise
 
-1. `switchMap` will unsubscribe from the current inner observable (if hasn't been completed yet) in favor of the next even inner observable.
+1. `switchMap` will unsubscribe from the existing subscription (if the previous inner observable hasn't been completed) in favor of a new one when a new event arrives.
 2. `concatMap` will block the source sequence so the inner observable at hand must be complete before allowing other events to flow.
-3. `mergeMap` doesn't care about the status of the inner observable so it'll subscribe to the inner observable without worrying about the previous inner observable.
+3. `mergeMap` doesn't care about the status of the inner observable so it'll subscribe to the inner observable as events come through.
 4. `exhaustMap` will ignore any event till the current inner observable is complete.
 
 Okay, that is a lot, isn't it? I understand that if you're new to RxJS you might not be able to digest all this info, Your best bet is to practice and that's what you're trying to do here.
 
+Wow, I really did it, and you did too 😎
+
+Time to talk about some of the Scroll API(s)
+
+---
+
 ## Scroll API
 
-You already know the _Scroll Bar_, it's at the right end of the page 🥸, no really, when you the user scroll in any direction the browser emits a few events, like `scroll`, `scrollend`, and `wheel`.
+You already know the _Scroll Bar_, it's at the right end of the page 🥸, no really, when the user scroll in any direction the browser emits a few events, like `scroll`, `scrollend`, and `wheel`.
 
 You are going to learn enough that to tackle the problem at hand.
 
@@ -377,7 +376,7 @@ You might have noticed the `Math.abs` being used and that due to RTL direction w
 
 ![Scroll-XAxis.](../../assets/scroll-end-xaxis.svg)
 
-Side tip: Using the information you have about the element's sizes, you can also make a function to see if the element can be scrolled or not.
+Side tip: Using the information you have about the element's sizes, you can also make a function to check if the element can be scrolled or not.
 
 ```ts
 type InfinityScrollDirection = "horizontal" | "vertical";
@@ -534,7 +533,7 @@ The last case might be off; usualy you might have `initialPageIndex` 0, but let'
 
 ---
 
-What about using [`mergeMap`](#mergemap), [`switchMap`](#switchMap), or [`concatMap`](#concatmap)? You might have thought about that already!
+What about using [`mergeMap`](#mergemap), [`switchMap`](#switchmap), or [`concatMap`](#concatmap)? You might have thought about that already!
 
 Given the following scenario: A user scrolled down to the end of the page, but the request to load more data is still pending. The user kept scrolling down to the end of the page but the data was not yet resolved. What do you think would happen?
 
@@ -589,15 +588,15 @@ However, this approach has a limitation. Since `options.loading` is a user-defin
 
 ### Vertical Scrolling
 
-{% codepen https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=js%2Cresult&editable=true %}
+{% codepen <https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=js%2Cresult&editable=true> %}
 
 ### Horizontal Scrolling
 
-{% codepen https://codepen.io/ezzabuzaid/embed/preview/oNJzPGN?default-tab=js%2Cresult&editable=true %}
+{% codepen <https://codepen.io/ezzabuzaid/embed/preview/oNJzPGN?default-tab=js%2Cresult&editable=true> %}
 
 ### RTL Horizontal Scrolling
 
-{% codepen https://codepen.io/ezzabuzaid/embed/preview/gOZwdXg?default-tab=js%2Cresult&editable=true %}
+{% codepen <https://codepen.io/ezzabuzaid/embed/preview/gOZwdXg?default-tab=js%2Cresult&editable=true> %}
 
 ## UX and Accessibility Consideration
 

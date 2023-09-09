@@ -1,5 +1,5 @@
 window.addEventListener("DOMContentLoaded", () => {
-  const primaryColorScheme = "light"; // "light" | "dark"
+  const primaryColorScheme = ""; // "light" | "dark"
 
   // Get theme data from local storage
 

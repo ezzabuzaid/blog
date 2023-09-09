@@ -124,11 +124,12 @@
   .focus-outline {
     @apply outline-2 outline-offset-1 outline-skin-fill focus-visible:no-underline focus-visible:outline-dashed;
   }
+  .icon-link {
+    position: relative;
+    @apply md:inline-block hidden;
+  }
 }
 
-.icon-link {
-  position: relative;
-}
 .icon-link::before {
   content: "";
   background-image: url("../assets/link-icon.svg");

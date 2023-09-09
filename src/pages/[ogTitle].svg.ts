@@ -2,8 +2,8 @@ import generateOgImage from "@utils/generateOgImage";
 import type { APIRoute } from "astro";
 import { getPublishedPosts } from "../utils/getPosts";
 
-export const get: APIRoute = async ({ params }) => ({
-  body: await generateOgImage(params.ogTitle!, params.ogDescription!),
+export const get: APIRoute = async ({ params, props }) => ({
+  body: await generateOgImage(params.ogTitle!, props.description!),
 });
 
 const postImportResult = await getPublishedPosts();
@@ -15,7 +15,9 @@ export function getStaticPaths() {
     .map(({ data }) => ({
       params: {
         ogTitle: data.title,
-        ogDescription: data.ogDescription,
+      },
+      props: {
+        description: data.description,
       },
     }));
 }
