@@ -4,6 +4,7 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
+import rehypeExternalLinks from "rehype-external-links";
 import remarkCollapse from "remark-collapse";
 import remarkToc from "remark-toc";
 import remarkEmbed from "./remark-embed.mjs";
@@ -19,20 +20,24 @@ export default defineConfig({
     prefetch(),
     mdx(),
     tailwind({
-      config: {
-        applyBaseStyles: false,
-      },
+      applyBaseStyles: false,
     }),
     react(),
     sitemap(),
   ],
   markdown: {
+    rehypePlugins: [
+      rehypeSlug,
+      [
+        rehypeExternalLinks,
+        { rel: ["noopener", "noreferrer"], target: "_blank" },
+      ],
+      [rehypeAutolinkHeadings, { behavior: "prepend" }],
+    ],
     remarkPlugins: [
       remarkReadingTime,
       remarkEmbed,
       remarkToc,
-      rehypeSlug,
-      [rehypeAutolinkHeadings, { behavior: "append" }],
       [
         remarkCollapse,
         {

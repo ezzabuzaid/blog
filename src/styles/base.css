@@ -125,3 +125,21 @@
     @apply outline-2 outline-offset-1 outline-skin-fill focus-visible:no-underline focus-visible:outline-dashed;
   }
 }
+
+.icon-link {
+  position: relative;
+}
+.icon-link::before {
+  content: "";
+  background-image: url("../assets/link-icon.svg");
+  background-size: cover;
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  top: 0.5rem;
+  right: 10px;
+}
+
+.icon-link:hover::before {
+  visibility: visible;
+}
