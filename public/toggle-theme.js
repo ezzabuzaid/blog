@@ -1,10 +1,10 @@
 window.addEventListener("DOMContentLoaded", () => {
-  const primaryColorScheme = ""; // "light" | "dark"
+  const primaryColorScheme = "light"; // "light" | "dark"
 
   // Get theme data from local storage
-  const currentTheme = localStorage.getItem("theme");
 
   function getPreferTheme() {
+    const currentTheme = localStorage.getItem("theme");
     // return theme value in local storage if it is set
     if (currentTheme) return currentTheme;
 
@@ -17,38 +17,30 @@ window.addEventListener("DOMContentLoaded", () => {
       : "light";
   }
 
-  let themeValue = getPreferTheme();
-
-  function setPreference() {
-    localStorage.setItem("theme", themeValue);
-    reflectPreference();
+  function setPreference(theme) {
+    localStorage.setItem("theme", theme);
+    reflectPreference(theme);
   }
 
-  function reflectPreference() {
-    document.firstElementChild.setAttribute("data-theme", themeValue);
+  function reflectPreference(theme) {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.classList.toggle("light", theme === "light");
 
-    document
-      .querySelector("#theme-btn")
-      ?.setAttribute("aria-label", themeValue);
+    document.querySelector("#theme-btn")?.setAttribute("aria-label", theme);
   }
 
   // set early so no page flashes / CSS is made aware
-  reflectPreference();
-
-  // set on load so screen readers can get the latest value on the button
-  reflectPreference();
+  reflectPreference(getPreferTheme());
 
   // now this script can find and listen for clicks on the control
   document.querySelector("#theme-btn").addEventListener("click", () => {
-    themeValue = themeValue === "light" ? "dark" : "light";
-    setPreference();
+    setPreference(getPreferTheme() === "light" ? "dark" : "light");
   });
 
   // sync with system changes
   window
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", ({ matches: isDark }) => {
-      themeValue = isDark ? "dark" : "light";
-      setPreference();
+      setPreference(isDark ? "dark" : "light");
     });
 });
