@@ -2,8 +2,8 @@
 author: ezzabuzaid
 pubDatetime: 2023-09-10T17:23:56.283Z
 title: "Build a Typeahead Component Using RxJS"
-featured: true
-draft: true
+featured: false
+draft: false
 tags:
   - rxjs
   - angular

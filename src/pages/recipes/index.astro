@@ -6,6 +6,8 @@ import LinkButton from "@components/LinkButton.astro";
 import { SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
+import getPageNumbers from "@utils/getPageNumbers";
+import getSortedPosts from "@utils/getSortedPosts";
 import slugify from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
 
@@ -14,19 +16,27 @@ export interface Props {
   totalPages: number;
   posts: CollectionEntry<"blog">[];
 }
+const sortedPosts =( await getSortedPosts()).filter(post=>post.data.tags.includes( "receipe" ));
+const paginatedPosts = sortedPosts.slice(0, SITE.postPerPage);
 
-const { pageNum, totalPages, posts } = Astro.props;
 
+const totalPages = getPageNumbers(sortedPosts.length);
+const pageNum = 1;
 const prev = pageNum > 1 ? "" : "disabled";
 const next = pageNum < totalPages ? "" : "disabled";
+
+
 ---
 
-<Layout title={`Posts | ${SITE.title}`}>
+
+<Layout title={`Recipes | ${SITE.title}`}>
   <Header activeNav="posts" />
-  <Main pageTitle="Posts" pageDesc="All the articles I've posted.">
+  <Main pageTitle="Recipes" pageDesc="A collection of recipes I've tried and loved."
+
+  >
     <ul>
       {
-        posts.map(({ data }) => (
+        paginatedPosts.map(({ data }) => (
           <Card href={`/posts/${slugify(data)}`} frontmatter={data} />
         ))
       }
@@ -63,13 +73,3 @@ const next = pageNum < totalPages ? "" : "disabled";
   }
   <Footer noMarginTop={totalPages > 1} />
 </Layout>
-
-<!-- <style>
-
-  .disabled {
-    @apply pointer-events-none select-none opacity-50 hover:text-skin-base group-hover:fill-skin-base;
-  }
-  .disabled-svg {
-    @apply group-hover:!fill-skin-base;
-  }
-</style> -->

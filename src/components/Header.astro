@@ -7,7 +7,7 @@ import logoSVG from "/assets/logo.svg";
 import { Image } from "astro:assets";
 
 export interface Props {
-  activeNav?: "posts" | "tags" | "about" | "search";
+  activeNav?: "posts" | "tags" | "about" | "search" | "recipes";
 }
 
 const { activeNav } = Astro.props;
@@ -90,6 +90,15 @@ const { activeNav } = Astro.props;
               Tags
             </a>
           </li>
+          <li>
+            <a
+              rel="prefetch"
+              href="/recipes"
+              class={activeNav === "recipes" ? "active" : ""}
+            >
+              Recipes
+            </a>
+          </li>
           <!-- <li>
             <a
               rel="prefetch-intent"
@@ -141,7 +150,7 @@ const { activeNav } = Astro.props;
       </nav>
     </div>
   </div>
-  <Hr />
+  <Hr  />
 </header>
 
 <style>

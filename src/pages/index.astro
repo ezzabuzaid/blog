@@ -21,34 +21,16 @@ const socialCount = SOCIALS.filter(social => social.active).length;
   <Header />
   <main id="main-content">
     <section id="hero" class="py-6">
-      <!-- <h1 class="my-4 inline-block text-3xl font-bold sm:my-8 sm:text-5xl">Mingalaba</h1>
-      <a
-        target="_blank"
-        href="https://feeds.feedburner.com/techtextdev"
-        class="rss-link"
-        aria-label="rss feed"
-        title="RSS Feed"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="rss-icon"
-          ><path
-            d="M19 20.001C19 11.729 12.271 5 4 5v2c7.168 0 13 5.832 13 13.001h2z"
-          ></path><path
-            d="M12 20.001h2C14 14.486 9.514 10 4 10v2c4.411 0 8 3.589 8 8.001z"
-          ></path><circle cx="6" cy="18" r="2"></circle>
-        </svg>
-      </a> -->
 
       <p>
         I'm Senior Software Engineer and a Technical Writer with a keen interest in merging technology and communication. Passionate about software development and committed to reading and lifelong learning.
       </p>
       {
-        // only display if at least one social link is enabled
-        socialCount > 0 && (
+
           <div class="social-wrapper">
             <div class="social-links">Social Links:</div>
             <Socials />
           </div>
-        )
       }
     </section>
     <NewsLetter />
