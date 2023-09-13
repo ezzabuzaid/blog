@@ -6,6 +6,7 @@ featured: true
 tags:
   - rxjs
   - angular
+  - receipe
 description: "Learn how to implement infinite scrolling using RxJS. Improve user experience, optimize resource usage, and fetch data incrementally!"
 ---
 
@@ -80,7 +81,7 @@ const source$ = from([1, 2, 3, 4, 5]);
 source$.pipe(filter(event => event % 2)).subscribe(event => console.log(event));
 ```
 
-Say there's a possibility that the `source$` might emit a `null` value. You can use a `filter`` to stop it from passing through the rest of the sequence.
+Say there's a possibility that the `source$` might emit a `null` value. You can use a `filter` to stop it from passing through the rest of the sequence.
 
 ```ts
 const source$ = from([1, 2, 3, null, 5]);
@@ -328,7 +329,7 @@ The `wheel` event fires while an element or any of its children is being scrolle
 For the task at hand, the scroll event will be the primary focus. However, I've also outlined some additional events and properties to give you a well-rounded understanding. Now, let's look at the key size properties you'll need to know:
 
 - `element.clientWidth`: The inner width of the element, excluding borders and scrollbar.
-- `element.scrollWidth`: The width of the content, including content not visible on the screen. If the element is not horizontally scrollable then it'd be the same as ` clientWidth``.
+- `element.scrollWidth`: The width of the content, including content not visible on the screen. If the element is not horizontally scrollable then it'd be the same as `clientWidth`.
 - `element.clientHeight`: The inner height of the element, excluding borders and scrollbar.
 - `element.scrollHeight`: The height of the content, including content not visible on the screen. If the element is not vertically scrollable then it'd be the same as `clientHeight`.
 - `element.scrollTop`: The number of pixels that the content of an element is scrolled vertically.
@@ -531,7 +532,54 @@ In this specific case, you'll be focused on the event position or `index`. Check
 
 The last case might be off; usualy you might have `initialPageIndex` 0, but let's say you're scrolling the Twitter feed, and for some reason, the browser reloaded, so instead of loading data from the beginning, you decided to store the `pageIndex` in some state (URL query string) so in such cases only the data from the last `pageIndex` will be there so the experience continues as if nothing happened. _Prior data needs to be there as well either by loading it till the `pageIndex` or via implementing an opposite scroll direction data loading 🥲_
 
----
+## Example
+
+### Vertical Scrolling
+
+{% embed https://codepen.io/ezzabuzaid/embed/preview/BavLOLp %}
+
+### Horizontal Scrolling
+
+{% embed https://codepen.io/ezzabuzaid/embed/preview/oNJzPGN %}
+
+### RTL Horizontal Scrolling
+
+{% embed https://codepen.io/ezzabuzaid/embed/preview/gOZwdXg %}
+
+## UX and Accessibility Consideration
+
+Infinite scrolling isn't a magic fix. I know some folks who strongly advise against using it. Here's why:
+
+1. Bad for Keyboard Users: If you're using a keyboard to get around a website, infinite scrolling can mess that up and get you stuck.Especially if the infinity scrolling is the main way of navigating the website
+
+2. Hard to Pick Up Where You Left Off: Without page numbers, it's tough to go back to where you were. This makes it hard for users and a headache for developers to implement.
+
+3. Unreachable Content: Makes certain content like footers hard to reach.
+
+4. Confusing Screen Readers: If someone's using a screen reader, the constant loading can make the page structure confusing.
+
+5. Too Much, Too Fast: For some people, like those who get easily distracted, the never-ending flow of content can be overwhelming. _This one's just my take, but it's something to think about._
+
+When building an infinite scroll you've to consider important factors such as:
+
+1. Placing content correctly and making them accessible like footer, and contact information.
+2. Allowing users to return to their previous spot.
+3. Offering the ability to jump ahead.
+4. Ensuring the experience is navigable for users who rely solely on keyboards.
+
+I recognize that these tasks present significant developmental challenges. However, as the saying goes, quality comes at a cost.
+
+This isn't to say that infinite scrolling is bad; instead, the emphasis is on applying it with caution.
+
+## Other Pagination Strategies
+
+- Traditional Pagination: This approach uses a combination of numbered pagination and 'Previous'/'Next' buttons to offer both specific and sequential page access.
+
+- "Load More" Button: Includes a button at the end of the visible content; clicking it appends additional items to the list.
+
+- Content Segmentation: Utilizes tabs or filters to categorize content, enabling quick navigation to topic-specific data—e.g., segmenting tweets into categories like Science, Tech, Angular, 2021, etc.
+
+## Bonus: What About Other Flattening Operators?
 
 What about using [`mergeMap`](#mergemap), [`switchMap`](#switchmap), or [`concatMap`](#concatmap)? You might have thought about that already!
 
@@ -583,53 +631,6 @@ const fetchData = pipe(
 ```
 
 However, this approach has a limitation. Since `options.loading` is a user-defined observable, there's a risk that the user might change its value. If that happens, the issue will appear.
-
-## Example
-
-### Vertical Scrolling
-
-{% codepen <https://codepen.io/ezzabuzaid/embed/preview/BavLOLp?default-tab=js%2Cresult&editable=true> %}
-
-### Horizontal Scrolling
-
-{% codepen <https://codepen.io/ezzabuzaid/embed/preview/oNJzPGN?default-tab=js%2Cresult&editable=true> %}
-
-### RTL Horizontal Scrolling
-
-{% codepen <https://codepen.io/ezzabuzaid/embed/preview/gOZwdXg?default-tab=js%2Cresult&editable=true> %}
-
-## UX and Accessibility Consideration
-
-Infinite scrolling isn't a magic fix. I know some folks who strongly advise against using it. Here's why:
-
-1. Bad for Keyboard Users: If you're using a keyboard to get around a website, infinite scrolling can mess that up and get you stuck.Especially if the infinity scrolling is the main way of navigating the website
-
-2. Hard to Pick Up Where You Left Off: Without page numbers, it's tough to go back to where you were. This makes it hard for users and a headache for developers to implement.
-
-3. Unreachable Content: Makes certain content like footers hard to reach.
-
-4. Confusing Screen Readers: If someone's using a screen reader, the constant loading can make the page structure confusing.
-
-5. Too Much, Too Fast: For some people, like those who get easily distracted, the never-ending flow of content can be overwhelming. _This one's just my take, but it's something to think about._
-
-When building an infinite scroll you've to consider important factors such as:
-
-1. Placing content correctly and making them accessible like footer, and contact information.
-2. Allowing users to return to their previous spot.
-3. Offering the ability to jump ahead.
-4. Ensuring the experience is navigable for users who rely solely on keyboards.
-
-I recognize that these tasks present significant developmental challenges. However, as the saying goes, quality comes at a cost.
-
-This isn't to say that infinite scrolling is bad; instead, the emphasis is on applying it with caution.
-
-## Other Pagination Strategies
-
-- Traditional Pagination: This approach uses a combination of numbered pagination and 'Previous'/'Next' buttons to offer both specific and sequential page access.
-
-- "Load More" Button: Includes a button at the end of the visible content; clicking it appends additional items to the list.
-
-- Content Segmentation: Utilizes tabs or filters to categorize content, enabling quick navigation to topic-specific data—e.g., segmenting tweets into categories like Science, Tech, Angular, 2021, etc.
 
 ## Next Step
 

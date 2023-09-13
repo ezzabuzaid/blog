@@ -18,9 +18,9 @@ export default function remarkEmbed() {
       }
 
 
-    const platform=  extractPlatform(
+      const platform = extractPlatform(
         fullText
-      )
+      );
 
 
          if (platform) {
@@ -29,9 +29,9 @@ export default function remarkEmbed() {
 
           // Platform-specific iframe HTML
           let iframeValue;
-          if (platform === 'codepen') {
-            iframeValue = `<iframe src="${url}" style="width: 100%;" height="400" scrolling="no" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true"></iframe>`;
-          }
+            if(platform === 'embed') {
+             iframeValue = `<iframe src="${url}" style="width: 100%;" height="400" scrolling="no" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true"></iframe>`;
+           }
 
           // Insert the iframe HTML node
           const iframeNode = {
