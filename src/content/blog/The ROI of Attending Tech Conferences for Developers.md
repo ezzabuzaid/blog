@@ -28,9 +28,9 @@ You read a book about something, you watch a video about it, you listen to a pod
 
 This dynamic setting doesn't just provide know-how; it cultivates a refined form of expertise that comes from active interaction and practical application. It's the difference between knowing something in theory and understanding how to apply it in practice. That's the power of know-how you gain from a tech conference.
 
-### Workshops & Hackathons
+### Workshops
 
-Are you a hands-on learner? Do you prefer to learn by doing? Well, you're in luck. Tech conferences offer a variety of workshops and hackathons where you can get your hands dirty and learn by doing. You'll get to challenge yourself, test your skills, and see how you stack up against other developers.
+Are you a hands-on learner? Do you prefer to learn by doing? Well, you're in luck. Tech conferences offer a variety of workshops where you can get your hands dirty and learn by doing. You'll get to challenge yourself, test your skills, and see how you stack up against other developers.
 
 ## Keep Up With the Latest Trends & Technologies
 
