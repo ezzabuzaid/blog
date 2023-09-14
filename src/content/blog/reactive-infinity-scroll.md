@@ -186,7 +186,6 @@ Thanks to RxJS you can use `fromEvent` that will encapsulate that boilerplate, a
 I admit this one might be difficult to digest, it was for me. Taking the same previous example, Let's say that you have a form, an input, and a submit button. When the user clicks on the submit button you want to stop listening to the `timezoneInput` element `input` event. Yes, `takeUntil` as it sounds, it lets the subscribers take events until the provided observable emits at least once.
 
 ```ts
-const formSubmission$ = fromEvent(formEl, 'submit')
 
 const defaultTimezone = '+1'
 condt source$ = fromEvent(timezoneInput, 'input').pipe(
@@ -197,6 +196,7 @@ condt source$ = fromEvent(timezoneInput, 'input').pipe(
 source$.subscribe(event => console.log(event));
 
 // Now, once the submit button are clicked the subscriber subscription will be canceled
+const formSubmission$ = fromEvent(formEl, 'submit')
 source$
   .pipe(takeUntil(formSubmission))
   .subscribe(event => console.log(event));
@@ -243,7 +243,7 @@ source$
   .subscribe(event => console.log(event));
 ```
 
-In this sample, only the todo with id 5 will be logged because `switchMap` works by **switching** the priority to the recent event as explained above. `from([...])` will emit the events after each other immediately thereby `switchMap` will switch (subscribe) to the next event inner observable as soon as it arrives without regard to the previous event. The switch operation essentially means unsubscribing from the previous inner observable and subscribing to the new one.
+In this sample, only the todo with id 5 will be logged because `switchMap` works by **switching** the priority to the recent event as explained above. `from([...])` will emit the events after each other immediately thereby `switchMap` will switch (subscribe) to the next event inner observable as soon as it arrives without regard to the previous inner observable subscription. The switch operation essentially means unsubscribing from the previous inner observable and subscribing to the new one.
 
 #### concatMap
 
