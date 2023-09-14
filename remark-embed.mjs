@@ -31,6 +31,11 @@ export default function remarkEmbed() {
           let iframeValue;
             if(platform === 'embed') {
              iframeValue = `<iframe src="${url}" style="width: 100%;" height="400" scrolling="no" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true"></iframe>`;
+            } else if(
+              platform === 'twitter'
+            ) {
+             iframeValue = `<iframe src="https://twitframe.com/show?url=${url}" style="width: 100%;" height="400" scrolling="no" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true"></iframe>`;
+
            }
 
           // Insert the iframe HTML node

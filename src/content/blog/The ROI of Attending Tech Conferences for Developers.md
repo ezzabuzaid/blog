@@ -16,7 +16,7 @@ description: "How attending tech conferences can help you grow your career and i
 
 A space for learning, making professional contacts, and sharing know-how. It's a place where you can meet like-minded people, learn from experts and industry pros, get inspired and keep up with the latest trends in technology.
 
-But why should you attend a tech conference? What's in it for you? Well, there are array of reasons, from boosting your skills to expanding your network, meeting your heroes, getting inspired, and having fun. And that's just the tip of the iceberg.
+But why should you attend a tech conference? What's in it for you? Well, there are array of reasons, from boosting your skills to expanding your network, meeting your tech heroes, getting inspired, and having fun. And that's just the tip of the iceberg.
 
 ## Learning
 

@@ -151,3 +151,7 @@
     display: unset;
   }
 }
+
+iframe .brand {
+  display: none;
+}
