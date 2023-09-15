@@ -1,13 +1,14 @@
 ---
 author: ezzabuzaid
 pubDatetime: 2023-09-10T17:23:56.283Z
+pageTitle: Build Infinity Scroll Using RxJS
 title: Reactive Infinity Scroll
 featured: true
 tags:
   - rxjs
   - angular
   - receipe
-description: "Learn how to implement infinite scrolling using RxJS. Improve user experience, optimize resource usage, and fetch data incrementally!"
+description: "Learn how to build infinite scrolling using RxJS. Improve user experience, optimize resource usage, and fetch data incrementally!"
 ---
 
 Have you ever experienced slow loading or lag on a webpage while trying to load a large amount of data? If so, you're not alone. An effective solution to improve the experience is to use infinite scrolling, which works similarly to how your Twitter feed continuously loads more tweets as you scroll down.
@@ -17,6 +18,8 @@ Have you ever experienced slow loading or lag on a webpage while trying to load 
 > A web design technique where, as the user scrolls down a page, more content automatically and continuously loads at the bottom, eliminating the user’s need to click to the next page.
 
 Scroll down for the [result](#example), Or [see the complete code](https://gist.github.com/ezzabuzaid/b5f1f494200698845a5a76a315ad502d)
+
+Using Angular? [Here's a detailed implementation](/posts/implementing-infinity-scroll-in-angular)
 
 ## Table Of Content
 
@@ -649,7 +652,7 @@ This implementation is framework-agnostic, requiring only RxJS as a dependency. 
 
 Stay tuned for an upcoming post on **Virtual Scroll**. Subscribe to the newsletter to get notified when it's published. Your feedback and opinions are highly valued, so feel free to share them.
 
-## Resources
+## References
 
 - [Infinite Scroll Advantages and Disadvantages: When to Use It and When to Avoid It
   ](https://builtin.com/ux-design/infinite-scroll)
@@ -657,3 +660,5 @@ Stay tuned for an upcoming post on **Virtual Scroll**. Subscribe to the newslett
   ](https://www.smashingmagazine.com/2022/03/designing-better-infinite-scroll/)
 - [Infinite Scroll & Accessibility! Is It Any Good?
   ](https://www.digitala11y.com/infinite-scroll-accessibility-is-it-any-good/)
+- [RxJS Operators](https://rxjs.dev/guide/operators)
+- [Angular Implementation](/posts/implementing-infinity-scroll-in-angular)

@@ -24,7 +24,7 @@ Boosting your skills goes beyond just getting to know new tech tools or methods.
 
 ### Learning From Experts
 
-You read a book about something, you watch a video about it, you listen to a podcast about it, but nothing compares to the immersive experience of learning from an expert in person. You get to ask questions, get answers, and if you're like me, you'd debate as well 😉. It is an active learning experiance, you're not just consuming information, you're engaging with it.
+You read a book about something, you watch a video about it, you listen to a podcast, but nothing compares to the immersive experience of learning from an expert in person. You get to ask questions, get answers, and if you're like me, you'd debate as well 😉. It is an active learning experiance, you're not just consuming information, you're engaging with it.
 
 This dynamic setting doesn't just provide know-how; it cultivates a refined form of expertise that comes from active interaction and practical application. It's the difference between knowing something in theory and understanding how to apply it in practice. That's the power of know-how you gain from a tech conference.
 

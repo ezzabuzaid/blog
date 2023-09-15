@@ -1,13 +1,14 @@
 ---
 author: ezzabuzaid
 pubDatetime: 2023-09-03T00:00:00Z
+pageTitle: Implementing Infinity Scroll In Angular
 title: Implementing Infinity Scroll In Angular
 featured: false
 tags:
   - rxjs
   - angular
   - receipe
-description: "Learn All the ways to implement Infinity Scroll in Angular, and see the pros and cons of each approach."
+description: "Implement Infinity Scroll in Angular using Directive and Pipe and see the pros and cons of each approach."
 ---
 
 We already covered all about how to build [Reactive Infinite Scroll](/posts/reactive-infinity-scroll) in vanilla JavaScript, now let's see how to implement it in Angular.
@@ -210,7 +211,7 @@ The infinity scroll options are pretty much the same as the ones used in the van
 
 ### Demo
 
-{% embed https://codesandbox.io/p/sandbox/angular-infinityscroll-directive-l48xv6?embed=1 %}
+{% embed https://codesandbox.io/p/sandbox/elegant-breeze-l48xv6?file=/src/app/infinity-scroll.directive.ts %}
 
 ## Pipe
 
@@ -279,3 +280,12 @@ I wasn't able to round my head around how to implement it using signals due to t
 
 You've discovered how to implement Infinity Scroll in Angular using Directive and Pipe, and saw the pros and cons of each approach. Choose the one that suits your needs.
 Personally I'd go with the pipe approach, because it's more declarative.
+
+## References
+
+- [Angular Attribute Directives](https://angular.io/guide/attribute-directives)
+- [Angular Structural Directives](https://angular.io/guide/structural-directives)
+- [Angular Pipes](https://angular.io/guide/pipes)
+- [Reactive Infinite Scroll](/posts/reactive-infinity-scroll)
+- [Pipe Demo](https://codesandbox.io/s/sandbox/angular-infinityscroll-pipe-4td93z?embed=1)
+- [Directive Demo](https://codesandbox.io/s/sandbox/elegant-breeze-l48xv6?file=/src/app/infinity-scroll.directive.ts)
