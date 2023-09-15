@@ -1,6 +1,6 @@
 ---
 author: ezzabuzaid
-pubDatetime: 2023-09-20T00:00:00Z
+pubDatetime: 2023-09-15T00:00:00Z
 title: The ROI of Attending Tech Conferences for Developers
 featured: false
 draft: false

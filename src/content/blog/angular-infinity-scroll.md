@@ -1,6 +1,6 @@
 ---
 author: ezzabuzaid
-pubDatetime: 2023-09-03T00:00:00Z
+pubDatetime: 2023-09-15T00:00:00Z
 pageTitle: Implementing Infinity Scroll In Angular
 title: Implementing Infinity Scroll In Angular
 featured: false
