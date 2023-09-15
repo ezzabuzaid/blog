@@ -28,18 +28,16 @@ Before jumping into the code, let me tell you a story about Harvey.
 
 Harvey types slowly and is searching for the book "Harry Potter and the Philosopher's Stone." When he opens the search screen, he sees a list of books, but the one he wants isn't there.
 
-He begins typing "Harry," and the app sends a new request for every letter he types. Finally, the results appear, but they only show matches for the complete word "Harry." Not finding what he wants, Harvey adds the word "Potter" to his search. Without pausing, he also adds the word "Stone."
+He begins typing "Harry" and he's not finding what he wants. Frustrated, Harvey adds the word "Potter", stop for a moment then adds the word "Stone." The results still don't show the book he's looking for. Harvey starts removing each letter one by one until only "Harry" remains. He pauses for a moment and then removes the rest of the letters.
 
-The app shows the results for "Harry Potter" and then for "Harry Potter Stone." Harvey is frustrated; the book he wants is not there. He starts removing each letter one by one until only "Harry" remains. He pauses for a moment, then slowly removes the rest of the letters.
+Finally, he types out "Harry Potter and the Philosopher's Stone," and the results appear. Harvey is happy; he has found the book he was looking for.
 
-Lastly, he types "Harry Potter and the Philosopher's Stone," and the results appear. Harvey is happy; he has found the book he was looking for.
-
-## The Code
+## Prepare Requirements
 
 From Harvey store, you can observe the following scenarios:
 
 1. There was list of book initialy loaded, which might mean the server supports empty string as a valid search term.
-   - Possiple case is user clears the search box.
+   - Another case, user clears the search box.
    - Adding an option to allow empty string as a valid search term is a good idea.
 2. Typing "Harry" should only send one request for "Harry" and not for "H", "Ha", "Har", "Harr", "Harry".
 
@@ -54,12 +52,14 @@ From Harvey store, you can observe the following scenarios:
 
 4. Typing "Harry" and while the request is still in progress, adding "Potter" should cancel the previous request "Harry request" and send a new one for "Harry Potter".
 
-   - of course this will happen only if the query passed.
+   - of course this will happen only if the query passed
    - `switchMap` should do the job.
 
 - An edge case where the user types a search term and then types another search term less than the minimum length before the request is finished.
   - I know this is confusing, but think of it as the user types "Harry" and then types "Ha" before the request for "Harry" is finished, you need to cancel the request for "Harry". You should **not** send a new one for "Ha" if it doesn't satisfy the minimum length.
   - You might think that `switchMap` will do the job, but the search term in that case might not pass the debouncing time, if did, it might not pass the minmum length, in that case `switchMap` won't know about it in the first place to cancel the current request.
+
+## The Code
 
 ```ts
 interface ITypeaheadOperatorOptions {
