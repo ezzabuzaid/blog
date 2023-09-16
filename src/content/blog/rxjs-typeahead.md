@@ -1,10 +1,8 @@
 ---
 author: ezzabuzaid
 pubDatetime: 2023-09-10T17:23:56.283Z
-pageTitle: Build a Typeahead Component Using RxJS
 title: "Build a Typeahead Component Using RxJS"
-featured: false
-draft: false
+featured: true
 tags:
   - rxjs
   - angular
@@ -13,6 +11,8 @@ description: "Learn how to build a typeahead component using RxJS. Improve the u
 ---
 
 You know when you start typing in a search box and it starts suggesting things to you? That's called typeahead. It's a great way to help users find what they're looking for. In this article, we'll learn how to build a typeahead component using RxJS.
+
+## Table of Content
 
 ## Problem
 
@@ -30,41 +30,57 @@ Harvey types slowly and is searching for the book "Harry Potter and the Philosop
 
 He begins typing "Harry" and he's not finding what he wants. Frustrated, Harvey adds the word "Potter", stop for a moment then adds the word "Stone." The results still don't show the book he's looking for. Harvey starts removing each letter one by one until only "Harry" remains. He pauses for a moment and then removes the rest of the letters.
 
-Finally, he types out "Harry Potter and the Philosopher's Stone," and the results appear. Harvey is happy; he has found the book he was looking for.
-
 ## Prepare Requirements
 
 From Harvey store, you can observe the following scenarios:
 
-1. There was list of book initialy loaded, which might mean the server supports empty string as a valid search term.
-   - Another case, user clears the search box.
-   - Adding an option to allow empty string as a valid search term is a good idea.
-2. Typing "Harry" should only send one request for "Harry" and not for "H", "Ha", "Har", "Harr", "Harry".
+There was list of book initialy loaded, which might mean the server supports empty string as a valid search term.
 
-   - You need to give the user chance to type the whole word before sending a request.
-   - The user should type a search term respecting the minimum length.
-   - `debounceTime` should do the job.
+- Another case, user clears the search box.
+- You can add an option to allow empty string as a valid search term.
 
-3. Going back to the last resolved search term result should not send a request.
+Typing "Harry" should only send one request for "Harry" and not for "H", "Ha", "Har", "Harr", "Harry", same goes for removing letters.
 
-   - For example, if the user types "Harry", results are fetched. If user added "Potter" quickly and then removed it, we don't want to fetch the results for "Harry" again unless the `debounceTime` is up.
-   - `distinctUntilChanged` should do the job.
+- You need to give the user chance to type the whole word before sending a request.
+- The user should type a search term respecting the minimum length.
+- `debounceTime` operator waits for a certain amount of time before flowing the last value.
 
-4. Typing "Harry" and while the request is still in progress, adding "Potter" should cancel the previous request "Harry request" and send a new one for "Harry Potter".
+Going back to the last resolved search term result should not send a request.
 
-   - of course this will happen only if the query passed
-   - `switchMap` should do the job.
+- For example, if the user types "Harry", results are fetched. If user added "Potter" quickly and then removed it, we don't want to fetch the results for "Harry" again.
+- `distinctUntilChanged` operator prevents duplicate search terms from being flown.
 
-- An edge case where the user types a search term and then types another search term less than the minimum length before the request is finished.
-  - I know this is confusing, but think of it as the user types "Harry" and then types "Ha" before the request for "Harry" is finished, you need to cancel the request for "Harry". You should **not** send a new one for "Ha" if it doesn't satisfy the minimum length.
-  - You might think that `switchMap` will do the job, but the search term in that case might not pass the debouncing time, if did, it might not pass the minmum length, in that case `switchMap` won't know about it in the first place to cancel the current request.
+Typing "Harry" and while the request is still in progress, adding "Potter" should cancel the previous request "Harry request" and send a new one for "Harry Potter".
+
+- of course this will happen only if the query passed
+- `switchMap` operator cancels the previous observable and subscribe to the new one (cancels the current request and send a new one).
+
+An edge case where the user types a search term and then types another search term less than the minimum length before the request is finished.
+
+- I know this is confusing, but think of it as the user types "Harry" and then types "Ha" before the request for "Harry" is finished. You need to cancel the request for "Harry". You should **not** send a new one for "Ha" if it doesn't satisfy the minimum length.
+- You might think that `switchMap` is adequate, but the search term in that case might not pass the debouncing time, if did, it might not pass the minmum length, in that case `switchMap` won't know about it in the first place to cancel the current request.
+- [Jump to the code section](#edge-case) to see how to handle this case.
 
 ## The Code
 
+### Getting Started
+
+Before you start, you need to install RxJS.
+
+```bash
+npm install rxjs
+```
+
+_Note: I'm using TypeScript primarily for clarity in showing what options are available through types. You're free to omit them, but if you do want to use types, I'd suggest opting for a framework that has built-in TypeScript support._
+
+You'll write a custom operator that will take an object with the following properties:
+
+### Options Interface
+
 ```ts
-interface ITypeaheadOperatorOptions {
+interface ITypeaheadOperatorOptions<Out> {
   /**
-   * The minimum length of the search term.
+   * The minimum length of the allowed search term.
    */
   minLength: number;
   /**
@@ -73,7 +89,7 @@ interface ITypeaheadOperatorOptions {
   debounceTime: number;
   /**
    * Whether to allow empty string to be treated as a valid search term.
-   * Useful for when you want to show defaul results when the user clears the search box (as it was in the first place).
+   * Useful for when you want to show defaul results when the user clears the search box
    *
    * @default true
    */
@@ -84,12 +100,130 @@ interface ITypeaheadOperatorOptions {
    */
   loadFn: (searchTerm: string) => ObservableInput<Out>;
 }
+```
 
+### Typeahead Operator
+
+```ts
 export function typeahead<Out>(
   options: ITypeaheadOperatorOptions<Out>
 ): OperatorFunction<string, Out> {
   return source => {
-    let shouldAllowSameValue = false;
+    return source.pipe(
+      ...operators
+      // The implementation goes here
+    );
+  };
+}
+```
+
+The `typeahead` custom operator accepts options/config object and returns an operator function that takes an observable of "search term" and returns an observable of "result".
+
+The result is represented by the generic type `Out` which is the type of the result returned by the `loadFn` function.
+
+```ts
+return source.pipe(
+  debounceTime(options.debounceTime),
+  filter(value => typeof value === "string"),
+  filter(value => {
+    if (value === "") {
+      return options.allowEmptyString ?? true;
+    }
+    return value.length >= options.minLength;
+  })
+);
+```
+
+`debounceTime`: Think of it as sliding window. It will wait for a certain amount of time before emitting the last value. If a new value comes in before the time is up, it will reset the timer and the window will start over. This is useful for preventing requests with every keystroke.
+
+`filter`: The first filter will only pass values that are of type string, it might sound reddundant but it's necessary because the `debounceTime` operator might emit `null` when the source observable completes. The second filter will only pass values that are longer than the minimum length or empty string (if allowed).
+
+#### Edge Case
+
+That is the core of the operator. Let's talk about two possiple scenarios first:
+
+_Note: Valid search term is a search term that have been still for a certain amount of time (`debounceTime`) and satisfies the minimum length._
+
+1. Happy secnario:
+   - The user types valid search term and the request is sent.
+   - The user types a new valid search term before the current request is finished, the current request is canceled and a new one is sent with the new search term.
+   - The user types a valid search term then before the debounce time is up, the user reverts back to the previous search term, no request is sent.
+2. Worst case scenario:
+   - The user types a valid search term and the request is sent.
+   - The user types an invalid search term before the current request is finished, the current request is canceled.
+   - The user types a new valid search term, same as the previous one, request is sent.
+
+```ts
+let shouldAllowSameValue = false; // -> 1
+return source.pipe(
+  distinctUntilChanged((prev, current) => {
+    if (shouldAllowSameValue /** -> 3 */) {
+      shouldAllowSameValue = false;
+      return false;
+    }
+    return prev === current; // -> 4
+  }),
+  switchMap(searchTerm =>
+    // -> 5
+    from(options.loadFn(searchTerm)).pipe(
+      takeUntil(
+        source.pipe(
+          tap(() => {
+            shouldAllowSameValue = true; // -> 2
+          })
+        )
+      )
+    )
+  )
+);
+```
+
+Let's break it down (follow the numbers in the code comments):
+
+1. `shouldAllowSameValue` is a flag that will be used to allow the same value to pass through the `distinctUntilChanged` operator. It's set to `false` by default.
+2. `shouldAllowSameValue` is set to `true` when the user types an invalid search term before the current request is finished.
+3. If `shouldAllowSameValue` is `true`, it means that the user typed an invalid search term before the last request is finished. In that case, we want to allow the same value to pass through the `distinctUntilChanged` operator.
+4. This is the default behavior of `distinctUntilChanged`, it will only emit a value if it's different from the previous one.
+
+5. Converts the `loadFn` function to an observable, subscribes to it, and cancels it when the source observable emits a new value while the request is still in progress.
+
+`distinctUntilChanged`: It will only emit a value if it's different from the previous one (default behavior). This is useful for preventing requests with same search term (duplicate request). For example, if the user types "hello", results are fetched. If the user types "hello" again, we don't want to fetch the results again.
+
+`switchMap`: **Cancels** the previous observable and subscribe to the new one. If a user types new search term before the current request is finished, it will cancel the current request and start a new one.
+
+#### Happy Scenario
+
+In case you're only interseted in the happy scenario, you can use the following implementation:
+
+```ts
+export function typeahead<Out>(
+  options: ITypeaheadOperatorOptions<Out>
+): OperatorFunction<string, Out> {
+  return source => {
+    return source.pipe(
+      debounceTime(options.debounceTime),
+      filter(value => typeof value === "string"),
+      filter(value => {
+        if (value === "") {
+          return options.allowEmptyString ?? true;
+        }
+        return value.length >= options.minLength;
+      }),
+      distinctUntilChanged(),
+      switchMap(searchTerm => options.loadFn(searchTerm))
+    );
+  };
+}
+```
+
+#### Worst Case Scenario
+
+```ts
+export function typeahead<Out>(
+  options: ITypeaheadOperatorOptions<Out>
+): OperatorFunction<string, Out> {
+  let shouldAllowSameValue = false;
+  return source => {
     return source.pipe(
       debounceTime(options.debounceTime),
       filter(value => typeof value === "string"),
@@ -122,12 +256,6 @@ export function typeahead<Out>(
 }
 ```
 
-`debounceTime`: Think of it as sliding window. It will wait for a certain amount of time before emitting the last value. If a new value comes in before the time is up, it will reset the timer and the window will start over. This is useful for preventing requests with every keystroke.
-
-`filter`: The first filter will only pass values that are of type string, it might sound reddundant but it's necessary because the `debounceTime` operator might emit `null` when the source observable completes. The second filter will only pass values that are longer than the minimum length or empty string (if allowed).
-
-`distinctUntilChanged`: It will only emit a value if it's different from the previous one. This is useful for preventing requests with same search term (duplicate request). For example, if the user types "hello", results are fetched. If the user types "hello" again, we don't want to fetch the results again.
-
 ## Example
 
 ### Framework Agnostic Example
@@ -156,6 +284,7 @@ const search$ = fromEvent(searchInputEl, "input").pipe(
       );
     },
   }),
+  // convert the response to json
   switchMap(response => response.json())
 );
 
@@ -172,10 +301,6 @@ search$.subscribe(results => {
 ```
 
 Keep in mind that it's the practice to use `switchMap` and not other flattening operators like `mergeMap` or `concatMap` in this scenario.
-
-`switchMap`: **Cancels** the previous observable and subscribe to the new one. If a user types new search term before the current request is finished, it will cancel the current request and start a new one.
-
-You can make the `switchMap` part of the operator itself, but I prefer to keep it separate to better read the pipeline.
 
 _Note: I have deliberately left out the error handling for the sake of simplicity, you might want to implement retry logic or show an error message to the user._
 
