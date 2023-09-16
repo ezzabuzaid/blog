@@ -12,7 +12,7 @@ description: "How attending tech conferences can help you grow your career and i
 
 My theory is that the best way to learn is from the best, by surrounding yourself with smart people. But how do you access these individuals and cutting-edge information when technology is moving ridiculously fast? Have you checked the news lately? It's almost like missing a day can leave you years behind.
 
-Well, you can't solely rely on books, videos, or podcasts. You need to get out there and meet people, talk to them, and learn from them.
+Well, you can't solely rely on books, videos, or podcasts. You need to get out there and meet people, talk and learn from them.
 
 Welcome to your ultimate growth playground!
 
@@ -22,17 +22,17 @@ Welcome to your ultimate growth playground!
 
 A space for learning, making professional contacts, and sharing know-how. It's a place where you can meet like-minded people, learn from experts and industry pros, get inspired and keep up with the latest trends in technology.
 
-But why should you attend a tech conference? What's in it for you? Well, there are array of reasons, from boosting your skills to expanding your network, meeting your tech heroes, getting inspired, and having fun. And that's just the tip of the iceberg.
+But why should you attend a tech conference? What's in it for you? Well, there are array of reasons, from boosting your skills to expanding your network, meeting your tech heroes, getting inspired, and having fun. And that's the tip of the iceberg.
 
 ## Learning
 
-Boosting your skills goes beyond just getting to know new tech tools or methods. Adopt the way seasoned pros think and tackle problems. Learn from their mistakes and avoid the pitfalls they've encountered. See how they approach problems and solve them.
+Boosting your skills goes beyond getting to know new tech tools or methods. Adopt the way seasoned pros think and tackle problems. Learn from their mistakes and avoid the pitfalls they've encountered. See how they approach problems and solve them.
 
 ### Learning From Experts
 
-You read a book about something, you watch a video about it, you listen to a podcast, but nothing compares to the immersive experience of learning from an expert in person. You get to ask questions, get answers, and if you're like me, you'd debate as well 😉. It is an active learning experiance, you're not just consuming information, you're engaging with it.
+You read a book about something, you watch a video about it, you listen to a podcast, but nothing compares to the immersive experience of learning from an expert in person. You get to ask questions, get answers, and if you're like me, you'd debate as well 😉. It is an active learning experiance, you're not consuming information, you're engaging with it.
 
-This dynamic setting doesn't just provide know-how; it cultivates a refined form of expertise that comes from active interaction and practical application. It's the difference between knowing something in theory and understanding how to apply it in practice. That's the power of know-how you gain from a tech conference.
+This dynamic setting doesn't provide know-how; it cultivates a refined form of expertise that comes from active interaction and practical application. It's the difference between knowing something in theory and understanding how to apply it in practice. That's the power of know-how you gain from a tech conference.
 
 ### Workshops
 
@@ -86,13 +86,13 @@ Well, you could hire someone to do it for you, but that's expensive, You could t
 
 A tech conference is a great place to find a co-founder. You get to meet people with similar interests, share your ideas, and see if you're a good fit. Plus, you get to see how they think and talk, which is a good indicator of how they'll perform in a startup setting.
 
-That is just one goody, you can also find investors, partners, and even customers. It's all about being in the right place at the right time. And let's not forget the speakers, they have a lot of what you need, and they're there to share it with you. What they did, how they did it, and what they learned. All about the road to success, and the road to failure.
+That is one goody, you can also find investors, partners, and even customers. It's all about being in the right place at the right time. And let's not forget the speakers, they have a lot of what you need, and they're there to share it with you. What they did, how they did it, and what they learned. All about the road to success, and the road to failure.
 
 ### Creating an Open Source Project
 
 Developers are very helpful, in fact, they're so helpful that they're willing to work for free. That's right, I'm talking about open source projects. You've probably heard of them, maybe even used one or two. But have you ever thought about creating one yourself?
 
-Starting open source project is not walk in the park. It's a daunting task, you need to respond to issues, fix bugs, and add new features. And that's just the technical side. You also need to market your project, build a community around it, and keep it alive. It's a lot of work, but it can be rewarding too. It gives sense of purpose, a way to give back to the community, and a chance to make a name for yourself.
+Starting open source project is not walk in the park. It's a daunting task, you need to respond to issues, fix bugs, and add new features. And that's the technical side. You also need to market your project, build a community around it, and keep it alive. It's a lot of work, but it can be rewarding too. It gives sense of purpose, a way to give back to the community, and a chance to make a name for yourself.
 
 You can do it all by yourself, but it is not advisable, you need collaborators. The journey becomes more manageable and enjoyable when you find collaborators who resonate with your vision.
 
@@ -105,7 +105,7 @@ Writing is an overwhelming task. It's hard to get started, it's even harder to k
 
 The quote serves as a reminder that mastery in writing—or any craft—comes from both practice and learning from others. You get better by reading a lot to see how others do it, and you get better by writing a lot to find your own voice.
 
-The same goes for being a developer. You can't just code all day and expect to get better. You need to learn from others, see how they do it, and get inspired by their work.
+The same goes for being a developer. You can't code all day and expect to get better. You need to learn from others, see how they do it, and get inspired by their work.
 
 Attending tech conferences keeps your blade sharp. You're exposed to new ways of thinking, novel technologies, and innovative solutions to problems. Plus, let's not discount the burst of inspiration that can come from such gatherings. This inspiration can manifest in many forms: a unique problem-solving approach you've never considered, a new project idea, or a fresh perspective on your current work.
 
@@ -113,7 +113,7 @@ The first time I attended a tech conference, I was blown away by the energy in t
 
 ## Commincation
 
-People often undervalued the importance of communication. The ability to express your ideas clearly and persuasively is a skill that separates good developers from great ones. It's not just about writing code; it's about explaining how that code solves a problem, whether to your teammates, managers, or even to non-tech folks.
+People often undervalued the importance of communication. The ability to express your ideas clearly and persuasively is a skill that separates good developers from great ones. It's not about writing code; it's about explaining how that code solves a problem, whether to your teammates, managers, or even to non-tech folks.
 
 Tech conferences are not merely lectures and workshops; they're social environments where you can practice these soft skills in real-time. You'll find yourself in situations where you have to articulate your thoughts clearly and concisely, debate constructively, and absorb information critically. The experience can sharpen your communication skills, making you a more effective collaborator and problem-solver.
 
@@ -121,6 +121,6 @@ Tech conferences are not merely lectures and workshops; they're social environme
 
 Look, we're all in this field because we have a passion for technology, right? So, it only makes sense that gathering with like-minded folks to geek out about the latest trends and innovations would be, dare I say, enjoyable. Forget the stuffy corporate meetings and endless Zoom calls; this is where you can let your tech flag fly high.
 
-Whether it's participating in hackathons, joining in on interactive workshops, or simply having lively debates programming languages, tech conferences offer a variety of ways to have a good time while also expanding your horizons. Let's face it: where else can you find people who not only understand your tech jokes but will also laugh at them?
+Whether it's participating in hackathons, joining in on interactive workshops, or having lively debates programming languages, tech conferences offer a variety of ways to have a good time while also expanding your horizons. Let's face it: where else can you find people who not only understand your tech jokes but will also laugh at them?
 
 Why do programmers prefer dark mode? Because light attracts bugs 😂
