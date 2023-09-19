@@ -6,8 +6,8 @@
   :root,
   html.light {
     --color-fill: 240, 242, 244;
-    --color-text-base: 40, 39, 40;
-    --color-accent: 0, 108, 172;
+    --color-text-base: 0, 0, 0;
+    --color-accent: 0, 0, 0;
     --color-card: 230, 230, 230;
     --color-card-muted: 205, 205, 205;
     --color-border: 236, 233, 233;
