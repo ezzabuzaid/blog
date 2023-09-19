@@ -2,11 +2,9 @@
 import Card from "@components/Card";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
-import LinkButton from "@components/LinkButton.astro";
 import { SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
-import getPageNumbers from "@utils/getPageNumbers";
 import getSortedPosts from "@utils/getSortedPosts";
 import slugify from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
@@ -17,14 +15,6 @@ export interface Props {
   posts: CollectionEntry<"blog">[];
 }
 const sortedPosts =( await getSortedPosts()).filter(post=>post.data.tags.includes( "receipe" ));
-const paginatedPosts = sortedPosts.slice(0, SITE.postPerPage);
-
-
-const totalPages = getPageNumbers(sortedPosts.length);
-const pageNum = 1;
-const prev = pageNum > 1 ? "" : "disabled";
-const next = pageNum < totalPages ? "" : "disabled";
-
 
 ---
 
@@ -36,40 +26,13 @@ const next = pageNum < totalPages ? "" : "disabled";
   >
     <ul>
       {
-        paginatedPosts.map(({ data }) => (
+        sortedPosts.map(({ data }) => (
           <Card href={`/posts/${slugify(data)}`} frontmatter={data} />
         ))
       }
     </ul>
   </Main>
 
-  {
-    totalPages > 1 && (
-      <nav class="mb-8 mt-auto flex justify-center" aria-label="Pagination">
-        <LinkButton
-          disabled={prev === "disabled"}
-          href={`/posts${pageNum - 1 !== 1 ? "/" + (pageNum - 1) : ""}`}
-          className={`mr-4 select-none ${prev}`}
-          ariaLabel="Previous"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class={`${prev}-svg`}>
-            <path d="M12.707 17.293 8.414 13H18v-2H8.414l4.293-4.293-1.414-1.414L4.586 12l6.707 6.707z" />
-          </svg>
-          Prev
-        </LinkButton>
-        <LinkButton
-          disabled={next === "disabled"}
-          href={`/posts/${pageNum + 1}`}
-          className={`ml-4 select-none ${next}`}
-          ariaLabel="Next"
-        >
-          Next
-          <svg xmlns="http://www.w3.org/2000/svg" class={`${next}-svg`}>
-            <path d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z" />
-          </svg>
-        </LinkButton>
-      </nav>
-    )
-  }
-  <Footer noMarginTop={totalPages > 1} />
+
+  <Footer noMarginTop={true} />
 </Layout>

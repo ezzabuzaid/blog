@@ -7,7 +7,6 @@ export const SITE: Site = {
   title: "TechText",
   ogImage: "logo.svg",
   lightAndDarkMode: true,
-  postPerPage: 6,
 };
 
 export const LOCALE = ["en-EN"]; // set to [] to use the environment default

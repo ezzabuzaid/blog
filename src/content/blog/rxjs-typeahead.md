@@ -1,7 +1,7 @@
 ---
 author: ezzabuzaid
 pubDatetime: 2023-09-10T17:23:56.283Z
-title: "Build a Typeahead Component Using RxJS"
+title: "How To Build a Typeahead Component Using RxJS"
 featured: true
 tags:
   - rxjs
@@ -10,60 +10,37 @@ tags:
 description: "Learn how to build a typeahead component using RxJS. Improve the user experience and performance of your application."
 ---
 
-You know when you start typing in a search box and it starts suggesting things to you? That's called typeahead. It's a great way to help users find what they're looking for. In this article, we'll learn how to build a typeahead component using RxJS.
+You know when you start typing in a search box and it starts suggesting things to you? That's called typeahead. It's a great way to help users find what they're looking for. In this article, you'll learn how to build a typeahead component using RxJS.
 
 ## Table of Content
 
 ## Problem
 
-From end-user perspective, the problem is that they want to search for something and they want to see the results as they type. From developer perspective, the problem is that we need to make an HTTP request every time the user types something in the search box. This can be a lot of requests if the user is typing fast.
+From end-user perspective, the problem is that they want to search for something and they want to see the results as they type. From developer perspective, the problem is that you need to optimize the search logic to not pressure the server with too many requests.
 
 ## Solution
 
-To balance the user experience and the performance, we need to make sure that we don't make too many requests. We can do this by using RxJS to debounce the user input and only make a request when the user stops typing for a certain amount of time.
+To balance the user experience and the performance, you need to make sure that you don't make too many requests. That can be done using RxJS to debounce the user input and only make a request when the user stops typing for a certain amount of time.
 
-## Harvey, The Slow Typer
+Here is how it'll be used in the end:
 
-Before jumping into the code, let me tell you a story about Harvey.
+```ts
+const search$ = fromEvent(searchInputEl, "input").pipe(
+  map(event => event.target.value),
+  typeahead({
+    minLength: 3,
+    debounceTime: 250,
+    loadFn: searchTerm => {
+      const searchQuery = searchTerm ? `?title_like=^${searchTerm}` : "";
+      return fetch(`https://jsonplaceholder.typicode.com/posts${searchTerm}`);
+    },
+  }),
+  // convert the response to json
+  switchMap(response => response.json())
+);
+```
 
-Harvey types slowly and is searching for the book "Harry Potter and the Philosopher's Stone." When he opens the search screen, he sees a list of books, but the one he wants isn't there.
-
-He begins typing "Harry" and he's not finding what he wants. Frustrated, Harvey adds the word "Potter", stop for a moment then adds the word "Stone." The results still don't show the book he's looking for. Harvey starts removing each letter one by one until only "Harry" remains. He pauses for a moment and then removes the rest of the letters.
-
-## Prepare Requirements
-
-From Harvey store, you can observe the following scenarios:
-
-There was list of book initialy loaded, which might mean the server supports empty string as a valid search term.
-
-- Another case, user clears the search box.
-- You can add an option to allow empty string as a valid search term.
-
-Typing "Harry" should only send one request for "Harry" and not for "H", "Ha", "Har", "Harr", "Harry", same goes for removing letters.
-
-- You need to give the user chance to type the whole word before sending a request.
-- The user should type a search term respecting the minimum length.
-- `debounceTime` operator waits for a certain amount of time before flowing the last value.
-
-Going back to the last resolved search term result should not send a request.
-
-- For example, if the user types "Harry", results are fetched. If user added "Potter" quickly and then removed it, we don't want to fetch the results for "Harry" again.
-- `distinctUntilChanged` operator prevents duplicate search terms from being flown.
-
-Typing "Harry" and while the request is still in progress, adding "Potter" should cancel the previous request "Harry request" and send a new one for "Harry Potter".
-
-- of course this will happen only if the query passed
-- `switchMap` operator cancels the previous observable and subscribe to the new one (cancels the current request and send a new one).
-
-An edge case where the user types a search term and then types another search term less than the minimum length before the request is finished.
-
-- I know this is confusing, but think of it as the user types "Harry" and then types "Ha" before the request for "Harry" is finished. You need to cancel the request for "Harry". You should **not** send a new one for "Ha" if it doesn't satisfy the minimum length.
-- You might think that `switchMap` is adequate, but the search term in that case might not pass the debouncing time, if did, it might not pass the minmum length, in that case `switchMap` won't know about it in the first place to cancel the current request.
-- [Jump to the code section](#edge-case) to see how to handle this case.
-
-## The Code
-
-### Getting Started
+## Getting Started
 
 Before you start, you need to install RxJS.
 
@@ -73,7 +50,9 @@ npm install rxjs
 
 _Note: I'm using TypeScript primarily for clarity in showing what options are available through types. You're free to omit them, but if you do want to use types, I'd suggest opting for a framework that has built-in TypeScript support._
 
-You'll write a custom operator that will take an object with the following properties:
+## Typeahead Operator
+
+You'll write a custom operator that will take an object with the following properties:§
 
 ### Options Interface
 
@@ -121,6 +100,14 @@ The `typeahead` custom operator accepts options/config object and returns an ope
 
 The result is represented by the generic type `Out` which is the type of the result returned by the `loadFn` function.
 
+## Scenario 1: Typical Typeahead
+
+_Note: Valid search term is a search term that have been still for a certain amount of time (debounceTime) and satisfies the minimum length (e.g. at least 3 char)._
+
+- The user types valid search term and the request is sent.
+- The user types a new valid search term before the current request is finished, the current request is canceled and a new one is sent with the new search term.
+- The user types a valid search term then before the debounce time is up, the user reverts back to the previous search term, no request is sent.
+
 ```ts
 return source.pipe(
   debounceTime(options.debounceTime),
@@ -130,7 +117,9 @@ return source.pipe(
       return options.allowEmptyString ?? true;
     }
     return value.length >= options.minLength;
-  })
+  }),
+  distinctUntilChanged(),
+  switchMap(searchTerm => options.loadFn(searchTerm))
 );
 ```
 
@@ -138,20 +127,61 @@ return source.pipe(
 
 `filter`: The first filter will only pass values that are of type string, it might sound reddundant but it's necessary because the `debounceTime` operator might emit `null` when the source observable completes. The second filter will only pass values that are longer than the minimum length or empty string (if allowed).
 
-#### Edge Case
+_Note: You'll need empty string to be treated as a valid search term if you want to show default results when the user clears the search box or when the user opens the page/dropdown for the first time._
 
-That is the core of the operator. Let's talk about two possiple scenarios first:
+`distinctUntilChanged`: It will only emit a value if it's different from the previous one (default behavior). This is useful for preventing requests with same search term (duplicate request). For example, if the user types "rxjs", results are fetched. If the user types "rxjs" again, no need to fetch the results again.
 
-_Note: Valid search term is a search term that have been still for a certain amount of time (`debounceTime`) and satisfies the minimum length._
+`switchMap`: **Cancels** the previous observable and subscribe to the new one. If a user types new search term before the current request is finished, it will cancel the current request and start a new one.
 
-1. Happy secnario:
-   - The user types valid search term and the request is sent.
-   - The user types a new valid search term before the current request is finished, the current request is canceled and a new one is sent with the new search term.
-   - The user types a valid search term then before the debounce time is up, the user reverts back to the previous search term, no request is sent.
-2. Worst case scenario:
-   - The user types a valid search term and the request is sent.
-   - The user types an invalid search term before the current request is finished, the current request is canceled.
-   - The user types a new valid search term, same as the previous one, request is sent.
+For example, if the user types "Typeahead" and then types "Operator" before the request for "Typeahead" is finished, it will cancel the request for "Typeahead" and send a new one for "Typeahead Operator". Only in the case that the request for "Typeahead" took longer than the debounce time.
+
+## Scenario 2: Cache Results
+
+Most of the use cases I've personally seen might benefit from caching the results, especially if the results are not going to change frequently.
+
+You can do that by caching the in-flight observables using the `shareReplay` operator.
+
+```ts
+const cache: Record<string, Observable<Out>> = {};
+return source.pipe(
+  // ... same operators
+  switchMap(searchTerm => {
+    // Initialize Observable in cache if it doesn't exist
+    if (!cache[searchTerm]) {
+      cache[searchTerm] = options.loadFn(searchTerm).pipe(
+        shareReplay({
+          bufferSize: 1,
+          refCount: false,
+          windowTime: 5000,
+        })
+      );
+    }
+
+    // Return the cached observable
+    return cache[searchTerm];
+  })
+);
+```
+
+`shareReplay`: It will return the source observable (the request associated with the search term) if it exists in the cache, otherwise it will initialize it and cache it for future use.
+
+`bufferSize`: presuming you're doing HTTP calls, then it'll be one response.
+
+`windowTime`: essentially means that the cached observable will be removed from the cache after 5 seconds.
+
+There are two other optimizations techniques that I can think of:
+
+1. return the cached observable immediately after the user types the search term if it exists in the cache without having to go through the debounce time. I have deliberately decided not to do that so the user can have consistent experience. In my case the debounce time is 1.5s.
+
+2. Inspired by [stale-while-revalidate](https://web.dev/stale-while-revalidate/) strategy, you can return the cached observable immediately and then send a new request to update the cache. That can be done using [`concat`](https://www.learnrxjs.io/learn-rxjs/operators/combination/concat) operator.
+
+## Scenario 3: The Edge Case
+
+In most cases you'll be fine with the previous implementation, but there is an edge case that you might need to handle.
+
+- The user types a valid search term (Angular) and the request is sent.
+- The user types an invalid search term (Ng) before the current request is finished "(Angular) request". Since the search term is invalid, `switchMap` didn't get the chance to receive it, hence it didn't cancel the current request.
+- The user typed back (Angular) but the default behaviour of `distinctUntilChanged` won't allow it to pass through.
 
 ```ts
 let shouldAllowSameValue = false; // -> 1
@@ -191,32 +221,7 @@ Let's break it down (follow the numbers in the code comments):
 
 `switchMap`: **Cancels** the previous observable and subscribe to the new one. If a user types new search term before the current request is finished, it will cancel the current request and start a new one.
 
-#### Happy Scenario
-
-In case you're only interseted in the happy scenario, you can use the following implementation:
-
-```ts
-export function typeahead<Out>(
-  options: ITypeaheadOperatorOptions<Out>
-): OperatorFunction<string, Out> {
-  return source => {
-    return source.pipe(
-      debounceTime(options.debounceTime),
-      filter(value => typeof value === "string"),
-      filter(value => {
-        if (value === "") {
-          return options.allowEmptyString ?? true;
-        }
-        return value.length >= options.minLength;
-      }),
-      distinctUntilChanged(),
-      switchMap(searchTerm => options.loadFn(searchTerm))
-    );
-  };
-}
-```
-
-#### Worst Case Scenario
+Complete code
 
 ```ts
 export function typeahead<Out>(
@@ -279,9 +284,7 @@ const search$ = fromEvent(searchInputEl, "input").pipe(
     debounceTime: 1000,
     loadFn: searchTerm => {
       const searchQuery = searchTerm ? `?title_like=^${searchTerm}` : "";
-      return fetch(
-        `https://jsonplaceholder.typicode.com/posts?title=${searchTerm}`
-      );
+      return fetch(`https://jsonplaceholder.typicode.com/posts${searchTerm}`);
     },
   }),
   // convert the response to json
@@ -352,7 +355,7 @@ export class SearchBarComponent {
 
 ## Backpressure
 
-Simply put, it's the pressure of too much incoming data that our system can't handle at once. It's like trying to empty a swimming pool with a straw. You can't do it all at once, so you have to take it slow and steady.
+Simply put, it's the pressure of too much incoming data that our system can't handle at once. Think of conveyer belt in a factory, if the belt is moving too fast, the workers won't be able to keep up with the incoming products.
 
 In a typeahead scenario, If we let every keystroke from every user hit our server for query processing, we're going to overwhelm it faster than a JavaScript framework becomes outdated. In technical terms, this rapid influx of data can create a bottleneck, leading to increased latency and resource consumption.
 
@@ -361,3 +364,5 @@ This is less of a concern to the frontend developer, as their main focus is usua
 ## Conclusion
 
 In this article, we learned how to build a typeahead component using RxJS. We also learned about backpressure and how it can affect our application's performance. I hope you found this article helpful and that it will help you build better applications in the future.
+
+You can take this further and apply [Infinite Scroll](/posts/reactive-infinite-scroll) along with typeahead to have a unique user experience.

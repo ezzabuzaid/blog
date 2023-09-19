@@ -4,9 +4,7 @@ pubDatetime: 2021-08-06T00:00:00+00:00
 title: Advance Angular Dynamic Component
 tags:
   - angular
-  - dynamic component
-  - component loader
-  - dynamic component loader
+  - receipe
 description: "Create Angular Dynamic Components the correcy way"
 ---
 

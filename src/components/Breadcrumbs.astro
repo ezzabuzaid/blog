@@ -6,10 +6,6 @@ const currentUrlPath = Astro.url.pathname.replace(/\/+$/, "");
 // eg: /tags/tailwindcss => ['tags', 'tailwindcss']
 let breadcrumbList = currentUrlPath.split("/").slice(1);
 
-// if breadcrumb is Home > Posts > 1 <etc>
-// replace Posts with Posts (page number)
-breadcrumbList[0] === "posts" &&
-  breadcrumbList.splice(0, 2, "Home", `Posts (page ${breadcrumbList[1] || 1})`);
 
 if (breadcrumbList.length === 1) {
   breadcrumbList = [];
