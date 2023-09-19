@@ -1,6 +1,6 @@
 ---
 author: ezzabuzaid
-pubDatetime: 2023-09-10T17:23:56.283Z
+pubDatetime: 2023-09-19T17:00:00.00Z
 title: "How To Build a Typeahead Component Using RxJS"
 featured: true
 tags:

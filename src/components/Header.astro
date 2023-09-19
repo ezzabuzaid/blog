@@ -13,10 +13,10 @@ export interface Props {
 const { activeNav } = Astro.props;
 ---
 
-<header>
+<header class="sticky top-0 bg-inherit z-50 border-b mb-12">
   <a id="skip-to-content" href="#main-content">Skip to content</a>
   <div class="nav-container">
-    <div class="relative flex w-full items-center justify-between p-4 sm:py-8">
+    <div class="relative flex w-full items-center justify-between p-4 ">
       <a
         href="/"
         class="md:absolute relative py-1 text-xl font-semibold sm:static sm:text-2xl"
@@ -150,7 +150,6 @@ const { activeNav } = Astro.props;
       </nav>
     </div>
   </div>
-  <Hr  />
 </header>
 
 <style>
