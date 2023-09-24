@@ -5,7 +5,7 @@ import Header from "@components/Header.astro";
 import Hr from "@components/Hr.astro";
 import LinkButton from "@components/LinkButton.astro";
 import Socials from "@components/Socials.astro";
-import { SOCIALS } from "@config";
+import { SITE, SOCIALS } from "@config";
 import Layout from "@layouts/Layout.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import slugify from "@utils/slugify";
@@ -17,13 +17,13 @@ const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const socialCount = SOCIALS.filter(social => social.active).length;
 ---
 
-<Layout>
+<Layout title={SITE.title}>
   <Header />
   <main id="main-content">
     <section id="hero" class="py-6">
 
       <p>
-        I'm Senior Software Engineer and a Technical Writer with a keen interest in merging technology and communication. Passionate about software development and committed to reading and lifelong learning.
+        {SITE.desc}
       </p>
       {
 

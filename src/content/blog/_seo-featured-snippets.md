@@ -1,6 +1,6 @@
 ---
 author: ezzabuzaid
-pubDatetime: 2023-09-10T17:23:56.283Z
+pubDatetime: 2023-09-10T00:00:00.00Z
 title: The Developer's Guide to SEO - Featured Snippets
 featured: false
 tags:
