@@ -1,20 +1,22 @@
 ---
 author: ezzabuzaid
-pubDatetime: 2023-09-10T00:00:00.00Z
+pubDatetime: 2023-10-03T11:36:15.265Z
 title: Gentle Introduction To Typescript Compiler API
 featured: true
 draft: true
 tags:
   - typescript
   - guide
-description: "Learn how to use the Typescript Compiler API to build your own tools"
+description: Learn how to use the Typescript Compiler API to build your own tools
 ---
 
 TypeScript extends JavaScript by adding types, thereby enhancing code quality and understandability through static type checking. This enables developers to catch errors at compile-time rather than runtime, resulting in more robust and maintainable codebases.
 
-A compiler is used to process TypeScript type annotations and emit JavaScript code. The TypeScript team has built a compiler `tsc` that does this job. However, the compiler is not limited to just compiling TypeScript code to JavaScript. It can also be used to build tools and utilities around TypeScript.
+The TypeScript team has built a compiler `tsc` to process TypeScript type annotations and emit JavaScript code, however, the compiler is not limited to just compiling TypeScript code to JavaScript, it can also be used to build tools and utilities around TypeScript.
 
 In this article, you'll explore the TypeScript Compiler API, which is an integral part of the TypeScript compiler that exposes various functionalities, enabling you to interact with the compiler programmatically.
+
+The article is organized into different use cases. Each use case will introduce you to a new aspect of the Compiler API, and by the end of the article, you'll have a thorough understanding of how the Compiler API works and how to use it to build your own tools.
 
 ## Table of Content
 
@@ -114,7 +116,7 @@ I know what you're thinking, this is a lot of code. Let's break it down, there a
 - Node
 - Declaration
 
-## TypeScript Program
+### TypeScript Program
 
 When working with the TypeScript Compiler, one of the central elements you'll encounter is the **Program** object. This object serves as the starting point for many of the operations you might want to perform, like type checking, emitting output files, or transforming the source code. The Program is created using the `ts.createProgram` function, which can accept a variety of configuration options, such as
 
@@ -137,7 +139,7 @@ const program = ts.createProgram({
 
 In this sample, a TypeScript program is created from tsconfig parsing results.
 
-## Source File
+### Source File
 
 Writing code is actually writing text, you understand it because you know the language, the semantics, the syntax, etc. But the computer doesn't understand it, it's just a text.
 
@@ -147,7 +149,7 @@ A source file as a representation of a file in your project, it contains informa
 
 The AST is a tree-like data structure and as any tree, it has a root node. The root node is **Source File**.
 
-## Abstract Syntax Tree (AST)
+### Abstract Syntax Tree (AST)
 
 The code you write is essentially a text that isn't useful unless it can be parsed. That parsing process produces a tree data structure called AST, it contains a lot of information like the name, kind, and position of the node in the source code.
 
@@ -182,7 +184,7 @@ Will be transformed into the following AST:
 
 ![AST](../../assets/ast.png)
 
-## Node
+### Node
 
 In AST, the fundamental unit is called a Node.
 
@@ -198,7 +200,7 @@ The node object has more than just these properties but right now we're only int
 
 **Flags**: These are binary attributes stored as flags in the node. They can tell you various properties of the node, such as whether it's a read-only field if it has certain modifiers.
 
-## Declaration
+### Declaration
 
 Remember the use case you're trying to solve? enforce one class per file. To do that, you need to check if more than one class is **declared** in the file.
 
@@ -221,7 +223,7 @@ The key difference between a node and a declaration is that
 
 - A "Declaration" is a specific type of node that has a semantic role in the program: it introduces a new identifier and provides information about it.
 
-## Statement
+### Statement
 
 A statement is a node that represents a statement in the source code. A statement is a piece of code that performs some action. For example, a variable declaration is a statement that declares a variable.
 
@@ -231,7 +233,7 @@ let a = 1;
 
 In this example the variable declaration `let a = 1;` is a statement.
 
-## Expression
+### Expression
 
 An expression is a node in the code that evaluates to a value. For instance, in the variable declaration `let a = 1 + 2;`, the part `1 + 2` is an expression, specifically a binary expression. Another example would be `(a: number, b: number) => a + b`, which is as an arrow function expression.
 
@@ -306,7 +308,9 @@ const files = program.getSourceFiles();
 
 files
   .filter(file => !file.isDeclarationFile)
-  .forEach(file => ts.transform(file, [transformer(file)]));
+  .forEach(file =>
+    ts.transform(file, [transformer(file)], program.getCompilerOptions())
+  );
 ```
 
 I know this isn't like the first example, but it's similar.
@@ -319,13 +323,30 @@ Few key terms that you need to know:
 - Visitor
 - Context
 
-## Transformer
+### Transformer
 
-That transformer function is important because it provides context that happens to be needed to walk the AST. The transformer function is called for each file in the program, and it returns a function that is called for each node in the AST.
+That transformer function is important because it provides **context** that happens to be needed to walk the AST.
 
-As the name implies, the transformer function can transform the AST (the code) in any way you want. In this example, you're using it to enforce a rule, however, instead of throwing an error, you can transform the code to fix the error.
+As the name implies, the transformer function can transform the AST (the code) in any way you want. In this example, you're using it to enforce a rule, however, instead of throwing an error, you can transform the code to **fix** the error (more in the next use case)
 
-_Slowlly read the code 🐢_
+### Visitor
+
+I hope you noticed the `visit` function 😁, Let's talk about it, it is a simpler version of what is called the Visitor Pattern. An essential part of how the TypeScript Compiler API works. Actually, you'll see that design pattern whenever you work with AST, Hey at least I did!
+
+A "visitor" is basically a function you define to be invoked for each node in the AST during the traversal. The function is called with the current node and has few return choices.
+
+- Return the node as is (no changes).
+- Return a new node of the same kind (otherwise might disrupt the AST) to replace it.
+- Return undefined to remove the node entirely.
+- Return a visitor `ts.visitEachChild(node, visit, context)` which will visit the node children if have.
+
+### Context
+
+The context -`TransformationContext`- is an object that contains information about the current transformation and has a few methods that you can use to perform various operations like `hoistFunctionDeclaration` and `startLexicalEnvironment`. You'll learn more about it in the next use case.
+
+## Use Case: Replace Function Expression With Function Declaration
+
+Same as the previous use case, but instead of throwing an error, you're going to transform function expression to function declaration.
 
 _[See how the AST for the function expression looks like](https://ts-ast-viewer.com/#code/DYUwLgBAhgJjEF4IDMCuA7AxmAlge3WjgDF0AKKALgnVQFsAjEAJwBoIHrbGWBKCAN4AoCKNHNwqZoSgQA1BwDcQgL5A)_
 
@@ -333,9 +354,7 @@ _[See how the AST for the function expression looks like](https://ts-ast-viewer.
 const transformer: (
   file: ts.SourceFile
 ) => ts.TransformerFactory<ts.SourceFile> = function (file) {
-  let fixes: ts.Statement[] = [];
   return function (context) {
-    // The visit function
     const visit: ts.Visitor = node => {
       if (ts.isVariableStatement(node)) {
         const varList: ts.VariableDeclaration[] = [];
@@ -343,6 +362,7 @@ const transformer: (
 
         // collect function expression and variable declaration
         for (const declaration of node.declarationList.declarations) {
+          // the initializer is expression after assignment operator
           if (declaration.initializer) {
             if (ts.isFunctionExpression(declaration.initializer)) {
               functionList.push(declaration.initializer);
@@ -352,33 +372,35 @@ const transformer: (
           }
         }
 
-        // create function declaration out of function expression
-        fixes.push(
-          ...functionList.map(initializer =>
-            ts.factory.createFunctionDeclaration(
-              initializer.modifiers,
-              initializer.asteriskToken,
-              initializer.name as ts.Identifier,
-              initializer.typeParameters,
-              initializer.parameters,
-              initializer.type,
-              initializer.body
-            )
-          )
-        );
+        for (const functionExpression of functionList) {
+          // create function declaration out of function expression
+          const functionDeclaration = ts.factory.createFunctionDeclaration(
+            functionExpression.modifiers,
+            functionExpression.asteriskToken,
+            functionExpression.name as ts.Identifier,
+            functionExpression.typeParameters,
+            functionExpression.parameters,
+            functionExpression.type,
+            functionExpression.body
+          );
 
-        // if variable declaration is empty, remove the variable list statement
-        if (varList.length === 0) {
-          return undefined;
+          // hoist the function declaration to the top of the containing scope (file)
+          context.hoistFunctionDeclaration(functionDeclaration);
         }
 
-        // if variable declaration is equal to the total number of declarations
-        // it means no function expression found, return the node as is
+        // if the varList (non function expression) is same as the original variable statement, return the node as is.
+        // it means there is no function expression in the variable statement
         if (varList.length === node.declarationList.declarations.length) {
           return node;
         }
 
-        return ts.factory.createVariableStatement(
+        // if the varList (non function expression) is empty, return undefined to remove the variable statement node
+        if (varList.length === 0) {
+          return undefined;
+        }
+
+        return ts.factory.updateVariableStatement(
+          node,
           node.modifiers,
           ts.factory.createVariableDeclarationList(varList)
         );
@@ -388,11 +410,15 @@ const transformer: (
     };
 
     return node => {
-      const updatedNode = ts.visitEachChild(node, visit, context);
-      const statements = [...fixes, ...updatedNode.statements];
+      // Start a new lexical environment when beginning to process the source file.
+      context.startLexicalEnvironment();
 
-      // Reset fixes for the next file
-      fixes = [];
+      // visit each node in the file.
+      const updatedNode = ts.visitEachChild(node, visit, context);
+
+      // End the lexical environment and collect any declarations (function declarations, variable declarations, etc) that were added.
+      const declarations = context.endLexicalEnvironment() ?? [];
+      const statements = [...declarations, ...updatedNode.statements];
 
       return ts.factory.updateSourceFile(
         node,
@@ -408,18 +434,33 @@ const transformer: (
 };
 ```
 
-## Visitor
+Few key terms that you need to know:
 
-I hope you noticed the `visit` function 😁, Let's talk about it, it is a simpler version of what is called the Visitor Pattern. An essential part of how the TypeScript Compiler API works. Actually, you'll see that design pattern whenever you work with AST, Hey at least I did!
+- Factory
+- Lexical Environment
+- Hoisting
 
-A "visitor" is basically a function you define to be invoked for each node in the AST during the traversal. The function is called with the current node and has few return choices.
+### Factory
 
-- Return the node as is (no changes).
-- Return a new node of the same kind (otherwise might disrupt the AST) to replace it.
-- Return undefined to remove the node entirely.
-- Return a visitor `ts.visitEachChild(node, visit, context)` which will visit the node children if have.
+The `ts.factory` object contains a set of factory functions that can be used to create new nodes or update existing ones. You used `ts.factory.createFunctionDeclaration` to create a new function declaration node using the information from the function expression node and `ts.factory.updateSourceFile` to update the source file node statements while keeping the other properties intact.
 
-## Context
+The factory functions are useful to manipulate the AST in a safe way, without worrying about the details of the AST structure.
+
+### Lexical Environment
+
+The lexical environment refers to the scope or context in which variables and function declarations are hoisted and managed during the transformation process.
+
+Here are the key points regarding the lexical environment in your transformer function:
+
+- Scope Management: The lexical environment helps in managing the scope of variables and function declarations. When you start a new lexical environment with `context.startLexicalEnvironment()`, you are essentially marking the beginning of a new scope. When you end it with `context.endLexicalEnvironment()`, you are closing off that scope and collecting any declarations that were hoisted to this scope during the transformation process.
+
+- Hoisting: The lexical environment provides the facilities for hoisting function declarations using `context.hoistFunctionDeclaration()`. Hoisting in this scenario means moving function declarations to the appropriate scope in the source file (the current running scope). For instance, if you have a function declaration inside a function, it will be hoisted to the top of the function, if you have a function declaration inside a class, it will be hoisted to the top of the class.
+
+  _The previous code only handles the function expression at the top level_
+
+- Declaration Collection: The lexical environment also collect the hoisted declarations through `context.endLexicalEnvironment()`. This method returns an array of Statement nodes that represent the declarations hoisted to the current lexical environment, which can then be included in the `SourceFile` node.
+
+These methods ensure that the transformer has a mechanism to correctly manage scope and collect hoisted declarations, which is crucial for accurately transforming code while maintaining correct scoping and semantics.
 
 ## Use Case: Detect Third-Party Classes Used as Superclasses
 
@@ -564,3 +605,4 @@ export function createSymbolTable(symbols?: readonly Symbol[]): SymbolTable {
 
 - [Codebase Compiler Binder](https://github.com/microsoft/TypeScript/wiki/Codebase-Compiler-Binder#binder)
 - [TypeScript Compiler Notes](https://github.com/microsoft/TypeScript-Compiler-Notes)
+- [TypeScript Transformer Handbook](https://github.com/itsdouges/typescript-transformer-handbook)

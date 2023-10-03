@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "astro dev",
+    "dev": "astro dev",
     "build": "astro build && jampack ./dist",
     "preview": "astro preview",
     "sync": "astro sync",
