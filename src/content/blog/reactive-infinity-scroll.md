@@ -25,6 +25,8 @@ Using Angular? [Here's a detailed implementation](/posts/implementing-infinity-s
 
 ## Problem
 
+<!-- {% problem %} -->
+
 Infinite scrolling is often used for a few key reasons:
 
 - Data Fetching: Loading large data sets all at once can lead to latency issues or even browser crashes.

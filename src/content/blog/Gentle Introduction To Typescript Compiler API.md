@@ -3,20 +3,20 @@ author: ezzabuzaid
 pubDatetime: 2023-10-03T11:36:15.265Z
 title: Gentle Introduction To Typescript Compiler API
 featured: true
-draft: true
+draft: false
 tags:
   - typescript
   - guide
 description: Learn how to use the Typescript Compiler API to build your own tools
 ---
 
-TypeScript extends JavaScript by adding types, thereby enhancing code quality and understandability through static type checking. This enables developers to catch errors at compile-time rather than runtime, resulting in more robust and maintainable codebases.
+TypeScript extends JavaScript by adding types, thereby enhancing code quality and understandability through static type checking which enables developers to catch errors at compile-time rather than runtime, resulting in more robust and maintainable codebases.
 
 The TypeScript team has built a compiler `tsc` to process TypeScript type annotations and emit JavaScript code, however, the compiler is not limited to just compiling TypeScript code to JavaScript, it can also be used to build tools and utilities around TypeScript.
 
 In this article, you'll explore the TypeScript Compiler API, which is an integral part of the TypeScript compiler that exposes various functionalities, enabling you to interact with the compiler programmatically.
 
-The article is organized into different use cases. Each use case will introduce you to a new aspect of the Compiler API, and by the end of the article, you'll have a thorough understanding of how the Compiler API works and how to use it to build your own tools.
+> The article is organized into different use cases. Each use case will introduce you to a new aspect of the Compiler API, and by the end of the article, you'll have a thorough understanding of how the Compiler API works and how to use it to build your own tools.
 
 ## Table of Content
 
@@ -24,29 +24,70 @@ The article is organized into different use cases. Each use case will introduce 
 
 A compiler is a specialized software program that **translates** source code written in one programming language into another language, usually machine code or an intermediate form. Compilers perform several tasks including lexical analysis, syntax analysis, semantic analysis, code generation and more.
 
-Compilers come in various forms, serving different needs, to my understand TypeScript is a [Source-to-source](https://en.wikipedia.org/wiki/Source-to-source_compiler) compiler, which means it takes TypeScript code and compiles it into JavaScript code.
+Compilers come in various forms, serving different needs, to my understanding TypeScript is a [Source-to-source](https://en.wikipedia.org/wiki/Source-to-source_compiler) compiler, which means it takes TypeScript code and compiles it into JavaScript code.
 
 ### What is The TypeScript Compiler?
 
-The TypeScript Compiler (tsc) takes TypeScript code, which includes type information, and compiles it into plain JavaScript. It also performs type checking to catch errors at compile time rather than at runtime. The compiler utilizes an Abstract Syntax Tree (AST) to understand and transform the source code.
+The TypeScript Compiler (tsc) takes TypeScript code (JavaScript and type information), and compiles it into plain JavaScript as the end result while in the process it performs type checking to catch errors at compile time rather than at runtime.
 
-For the compilation to happen you need TypeScript file/code and TypeScript configuration file (tsconfig.json). The compiler will then read the configuration file and output based on the configuration:
+For the compilation to happen you need to feed the compiler a TypeScript file/code and TypeScript configuration file (tsconfig.json) to guide the compiler on how to behave.
+
+```ts
+// file.ts
+function IAmAwesome() {}
+```
+
+<br />
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true
+  }
+}
+```
+
+<br />
+
+Run the following command to compile the code:
+
+```bash
+tsc file.ts --project tsconfig.json
+```
+
+Depending on the configuration, the compiler will generate the following files:
+
+```bash
+dist
+├── file.js
+├── file.js.map
+├── file.d.ts
+```
 
 - JavaScript code: The compiler will output JavaScript code that can be executed later on.
 - Source map: A source map is a file that maps the code within a compressed file back to its original position in a source file to aid debugging. It is mostly used by the browser to map the code it executes back to its original location in the source file.
-- Declaration file: A declaration file is a file that provides type information about existing JavaScript code. This enables other programs to use the values defined in the file without having to guess what they are. The TypeScript compiler generates declaration files for all the code it compiles, and you can also write your own declaration files for existing JavaScript libraries.
+- Declaration file: A declaration file is a file that provides type information about existing JavaScript code to enables other programs to use the values (functions, variables, ...) defined in the file without having to guess what they are.
+
+> The TypeScript compiler generates declaration files for all the code it compiles if enabled in tsconfig, and you can also write your own declaration files for existing JavaScript libraries.
 
 ![How TypeScript Compiler Works](../../assets/how-typescript-compiler-works.excalidraw.svg)
 
 ### What is The TypeScript Compiler API?
 
-The TypeScript Compiler API is an integral part of the TypeScript compiler that exposes various functionalities, enabling you to interact with the compiler programmatically. With this API, you can conduct type checking, code generation, and even transform TypeScript code at a granular level. It provides a range of interfaces, functions, and classes for these interactions.
+The TypeScript Compiler API is an integral part of the TypeScript compiler that exposes various functionalities, enabling you to interact with the compiler programmatically that allows you to do type checking, code generation, and even transform TypeScript code at a granular level.
+
+> It is a lot of interfaces, functions, and classes.
 
 ### Why would you use the Typescript Compiler API?
 
 Using the TypeScript Compiler API has several benefits, particularly for those interested in building tools around TypeScript. You could utilize the API in a VsCode extension, [Static Code Analysis](https://snyk.io/learn/open-source-static-code-analysis/), or even to build a [DSL (Domain Specific Language)](https://martinfowler.com/dsl.html).
 
-Personally, I used it few times to create pre-build scripts, migration scripts. For example, Angular recently introduced the [Standalone Components](https://angular.io/guide/standalone-components), which is a new way to write Angular components without the need to create a module. I had a lot of components that I wanted to migrate to this new way. Imagine doing this manually, it would take a lot of time and effort. [Angular team created a migration script](https://github.com/angular/angular/blob/main/packages/core/schematics/ng-generate/standalone-migration/to-standalone.ts) that does this automatically, and it's using the Typescript Compiler API.
+Personally, I used it few times to create pre-build scripts and migration scripts. For example, Angular recently introduced the [Standalone Components](https://angular.io/guide/standalone-components), which is a new way to write Angular components without the need to create a module.
+_There was a lot of components that had to be migrated to be standalone, imagine doing this manually, it would take a lot of time and effort._ [Angular team created a migration script](https://github.com/angular/angular/blob/main/packages/core/schematics/ng-generate/standalone-migration/to-standalone.ts) that does this automatically, and it's using the Typescript Compiler API.
 
 There are few interesting projects that utilize the Typescript Compiler API, such as:
 
@@ -54,15 +95,11 @@ There are few interesting projects that utilize the Typescript Compiler API, suc
 - [TypeScript AST Viewer](https://ts-ast-viewer.com/)
 - [TypeScript API generator via Swagger scheme](https://github.com/acacode/swagger-typescript-api)
 
-In case you want build rules to enforce on your codebase, you can use [ESLint](https://eslint.org/) instead. [I have wrote a guide for you](https://techtext.dev/posts/gentle-introduction-to-eslint-rules)
-
-_So you don't get confused, Using ESLint is a better option if you want to enforce rules on your codebase due to the fact that it's specifically built for that purpose. However, if you want to build a tool that does something more complex, then the Typescript Compiler API is the way to go._
-
 ## Use Case: Enforce One Class Per File
 
 Let's stop talking and start coding. You're going to use the Typescript Compiler API to enforce one class per file. This is a common rule that is used in many codebases.
 
-_Don't worry if you don't understand the code, You'll continue learning about the compiler API in the next section._
+It might be a bit confusing at first, but don't worry, you'll start to understand it as you go.
 
 _Hint: I strongly recommend you check the code again before going to the next use case._
 
@@ -82,7 +119,8 @@ const program = ts.createProgram({
 function classPerFile(file: ts.SourceFile) {
   const classList: ts.ClassDeclaration[] = [];
 
-  // file.forEachChild is a function that takes a callback and calls it for each direct child of the node
+  // file.forEachChild is a function that takes a callback and
+  // calls it for each direct child of the node
 
   // Loops over all nodes in the file and push classes to classList
   file.forEachChild(node => {
@@ -109,7 +147,9 @@ files
   .forEach(file => classPerFile(file));
 ```
 
-I know what you're thinking, this is a lot of code. Let's break it down, there are few key terms that you need to know:
+I know what you're thinking, this is a lot of code.
+
+Let's break it down, there are few key terms that you need to know:
 
 - Program
 - Source File
@@ -118,10 +158,12 @@ I know what you're thinking, this is a lot of code. Let's break it down, there a
 
 ### TypeScript Program
 
-When working with the TypeScript Compiler, one of the central elements you'll encounter is the **Program** object. This object serves as the starting point for many of the operations you might want to perform, like type checking, emitting output files, or transforming the source code. The Program is created using the `ts.createProgram` function, which can accept a variety of configuration options, such as
+When working with the TypeScript Compiler, one of the central elements you'll encounter is the **Program** object. This object serves as the starting point for many of the operations you might want to perform, like type checking, emitting output files, or transforming the source code.
+
+The Program is created using the `ts.createProgram` function, which can accept a variety of configuration options, such as
 
 - `options`: These are the compiler options that guide how the TypeScript Compiler will behave. This could include settings like the target ECMAScript version, module resolution strategy, and whether to include type-checking errors, among others.
-- `rootNames`: This property specifies the entry files for the program. It usually contains an array of filenames that act as the roots from which the TypeScript Compiler will begin its operations. These are often the .ts or .tsx files that serve as entry points to your application or library.
+- `rootNames`: This property specifies the entry files for the program. It an array of filenames (.ts) that act as the roots from which the TypeScript Compiler will begin its operations.
 - `projectReferences`: If your TypeScript project consists of multiple sub-projects that reference each other, this property is used to manage those relationships.
 - `configFileParsingDiagnostics`: This property is an array that will capture any diagnostic information or errors that arise when parsing the tsconfig.json file.
 
@@ -237,9 +279,17 @@ In this example the variable declaration `let a = 1;` is a statement.
 
 An expression is a node in the code that evaluates to a value. For instance, in the variable declaration `let a = 1 + 2;`, the part `1 + 2` is an expression, specifically a binary expression. Another example would be `(a: number, b: number) => a + b`, which is as an arrow function expression.
 
-- `let a = 1 + 2;` : 1 + 2 is an expression, specifically a binary expression
+```ts
+let a = 1 + 2;
+```
 
-- `const add = function addFn(a: number, b: number) { }`: `function ...` is an expression, specifically a function expression.
+1 + 2 is an expression, specifically a binary expression
+
+```ts
+const add = function addFn(a: number, b: number) {};
+```
+
+`function ...` is an expression, specifically a function expression.
 
 Let's break down the following code:
 
@@ -250,7 +300,6 @@ const first = 1,
 ```
 
 - The whole code is a `VariableStatement` node.
-- `const first = 1, second = 2 + 3, third = whatIsThird();` is a `VariableDeclarationList` node.
 - `first = 1`, `second = 2 + 3` and `third = whatIsThird()` are a `VariableDeclaration` nodes.
 - `first`, `second`, and `third` are `Identifier` nodes.
 - `1`, `2 + 3`, and `whatIsThird()` are `NumericLiteral`, `BinaryExpression`, and `CallExpression` nodes respectively.
@@ -464,6 +513,178 @@ These methods ensure that the transformer has a mechanism to correctly manage sc
 
 ## Use Case: Detect Third-Party Classes Used as Superclasses
 
+The last use case is a bit more complex, you're going to use the Typescript Compiler API to detect third-party classes used as superclasses. Not to do anything about it, just detect them.
+
+```ts
+const trackThirdPartyClassesUsedAsSuperClass: () => ts.TransformerFactory<ts.SourceFile> =
+  function () {
+    return function (context) {
+      const visit: ts.Visitor = node => {
+        if (ts.isClassDeclaration(node)) {
+          const hasSuperClass = node.heritageClauses?.some(
+            heritageClause =>
+              heritageClause.token === ts.SyntaxKind.ExtendsKeyword
+          );
+
+          if (!hasSuperClass) {
+            // Not intrested in classes that don't have super class.
+            return node;
+          }
+
+          const typeChecker = program.getTypeChecker();
+          const [superClass] = node.heritageClauses ?? [];
+          const superClassType = superClass.types[0];
+          const type = typeChecker.getTypeAtLocation(node);
+          const symbol = type.symbol;
+          const valueDeclaration = symbol.valueDeclaration;
+
+          if (!valueDeclaration) {
+            // In this case this should never happen (more on that later),
+            // but it's here just to satisfy typescript.
+            return node;
+          }
+
+          const thisSourceCodeFile = node.getSourceFile();
+          const sourceCodeInfo = {
+            fileName: thisSourceCodeFile.fileName,
+            className: node.name?.text,
+            ...ts.getLineAndCharacterOfPosition(thisSourceCodeFile, node.pos),
+          };
+          const thirdPartyCodeInfo = {
+            fileName: valueDeclaration.getSourceFile().fileName,
+            className: superClassType.expression.getText(),
+          };
+          const message = `
+							Class: "${sourceCodeInfo.className}"
+							Filename: "${sourceCodeInfo.fileName}"
+							SuperClass: "${thirdPartyCodeInfo.className}"
+							Filename: "${thirdPartyCodeInfo.fileName}"
+							Line: "${sourceCodeInfo.line}"
+							Column: "${sourceCodeInfo.character}"
+						`;
+          console.log(message);
+        }
+
+        return ts.visitEachChild(node, visit, context);
+      };
+
+      return node => ts.visitEachChild(node, visit, context);
+    };
+  };
+```
+
+Key terms that you need to know:
+
+- HeritageClauses
+- Type
+- Type Checker
+- Symbol
+
+### HeritageClauses
+
+When you extend a class or implement an interface, you use a clause called a heritage clause and it's represented by the `HeritageClause` interface.
+
+```ts
+interface HeritageClause {
+  readonly token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword;
+  readonly types: NodeArray<ExpressionWithTypeArguments>;
+}
+```
+
+_ `token` is the keyword used in the clause, it can be `extends` or `implements`._
+_ `types` is an array of `ExpressionWithTypeArguments` nodes, which represents the types specified in the clause._
+
+`types` will have single item if you're extending a class or multiple items if you're implementing interfaces.
+
+In this example, you're only interested in the `extends` hence `const [superClass] = node.heritageClauses`
+
+### Type
+
+It is the "Type" part in **TypeScript** 😏, representing the type information of a particular symbol in the AST.
+
+A `Type` object is assoicated with a `Symbol` to represent the type of the symbol (named entity).
+
+```ts
+interface Type {
+  flags: TypeFlags;
+  symbol: Symbol;
+}
+```
+
+- `flags`: The flags associated with the type which can be used to determine the kind of type -number, string, boolean, etc.-
+
+- `symbol`: The symbol associated with the type (scroll a bit to read about symbols)
+
+### Type Checker
+
+It is an essential part of the TypeScript Compiler API, acting as the engine that powers the type system in TypeScript. The Type Checker traverse the AST, examining the **Type** and **Symbol** of nodes to ensure they adhere to the type annotations and constraints defined in the code. The Type Checker can be accessed via the `program` object, and it provides a rich set of methods to retrieve type information, check types, and obtain symbol information, among other functionalities.
+
+```ts
+const typeChecker = program.getTypeChecker();
+```
+
+In this use case, you used typeChecker to get the type of the class declaration node and the symbol associated with it, which you then used to get the value declaration of the symbol.
+
+```ts
+const type = typeChecker.getTypeAtLocation(node);
+const symbol = type.symbol;
+const valueDeclaration = symbol.valueDeclaration;
+```
+
+TypeChecker have a lot of methods to facilitate working with types, symbols, and nodes.
+
+### Symbol
+
+The term "symbol" refers to a **named entity** in the source code that could represent variables, functions, classes, and so forth.
+
+> _**named entity** is a name that is used to identify something. It could be a variable name, function name, class name, etc. In other words any Identifier Node._
+
+A symbol is represented by the `Symbol` interface, which has the following properties:
+
+```ts
+interface Symbol {
+  flags: SymbolFlags;
+  escapedName: __String;
+  declarations?: Declaration[];
+  valueDeclaration?: Declaration;
+  members?: SymbolTable;
+  exports?: SymbolTable;
+  globalExports?: SymbolTable;
+}
+```
+
+- `flags`: The flags associated with the symbol which can be used to determine the type of symbol -variable, function, class, interface, etc.-
+- `escapedName`: The name of declaration associated with the symbol.
+- `declarations`: List of declarations associated with the symbol, think of function/method override.
+- `valueDeclaration`: Points to the declaration that serves as the "primary" or "canonical" declaration of the symbol. In simpler terms, it's the declaration that gives the symbol its "value" or "meaning" within the code. For example, if you have a variable initialized with a function, the valueDeclaration would point to that function expression.
+- `members`: Symbol table that contains information about the properties or members of the symbol. For instance, if the symbol represents a class, members would contain symbols for each of the class's methods and properties.
+- `exports`: Similar to members, but this is more relevant for modules. It contains the symbols that are exported from the module.
+- `globalExports`: This is another symbol table but it's used for global scope exports.
+
+Let's take the following example
+
+```ts
+class Test {
+  runner: string = "jest";
+}
+```
+
+The symbol for class "Test" will have the following properties:
+
+```ts
+const classTestSymbol = {
+  flags: 32,
+  escapedName: "Test",
+  declarations: [ClassDeclaration],
+  valueDeclaration: ClassDeclaration,
+  members: {
+    runner: // Symbol for runner property
+  },
+};
+```
+
+Symbols let the type checker look up names and then check their declarations to determine types. It also contains a small summary of what kind of declaration it is -- mainly whether it is a value, a type, or a namespace.
+
 ## How The Compiler Works
 
 Before starting with API, you have to know how the compiler works.
@@ -499,7 +720,7 @@ The part of the compiler that does this is called the **Parser**. The parser is 
 
 ### Semantic Analysis
 
-The third stage of the compiler pipeline is the semantic analysis stage. In this stage, the compiler takes the AST generated in the previous stage and uses it to perform type checking and other semantic checks. It also builds a symbol table using the Binder component.
+The third stage of the compiler pipeline is the semantic analysis stage. In this stage, the compiler takes the AST generated in the previous stage and uses it to perform type checking and builds a symbol table using the **Binder** component.
 
 #### Type Checking
 
@@ -519,62 +740,10 @@ The binder is a part of the compiler responsible for associating identifiers -de
 - For each declaration that it finds, it creates a **Symbol** that records its location and kind of declaration.
 - Stores that symbol in a **SymbolTable** in the containing node, like a function, block or module file, that is the current scope.
 
-Symbols let the type checker look up names and then check their declarations to determine types. It also contains a small summary of what kind of declaration it is -- mainly whether it is a value, a type, or a namespace.
-
-#### Symbol
-
-The term "symbol" refers to a **named entity** in the source code. Symbols could represent variables, functions, classes, and so forth. During the semantic analysis stage, each of these named entities is analyzed to understand its context and usage within the code.
-
-_**named entity** is a name that is used to identify something. It could be a variable name, function name, class name, etc. In other words any Identifier Node._
-
-A symbol is represented by the `Symbol` interface, which has the following properties:
-
-```ts
-interface Symbol {
-  flags: SymbolFlags;
-  escapedName: __String;
-  declarations?: Declaration[];
-  valueDeclaration?: Declaration;
-  members?: SymbolTable;
-  exports?: SymbolTable;
-  globalExports?: SymbolTable;
-}
-```
-
-- `flags`: The flags associated with the symbol which can be used to determine the type of symbol -variable, function, class, interface, etc.-
-- `escapedName`: The name of declaration associated with the symbol.
-- `declarations`: List of declarations associated with the symbol, think of function/method override.
-- `valueDeclaration`: Points to the declaration that serves as the "primary" or "canonical" declaration of the symbol. In simpler terms, it's the declaration that gives the symbol its "value" or "meaning" within the code. For example, if you have a variable initialized with a function, the valueDeclaration would point to that function expression.
-- `members`: Symbol table that contains information about the properties or members of the symbol. For instance, if the symbol represents a class, members would contain symbols for each of the class's methods and properties.
-- `exports`: Similar to members, but this is more relevant for modules. It contains the symbols that are exported from the module.
-- `globalExports`: This is another symbol table but it's used for global scope exports.
-
 `SymbolTable` is a map of symbols, where the key is the name of the symbol and the value is the symbol itself.
 
 ```ts
 type SymbolTable = Map<__String, Symbol>;
-```
-
-Let's take the following example
-
-```ts
-class Test {
-  runner: string = "jest";
-}
-```
-
-The symbol for class "Test" will have the following properties:
-
-```ts
-const classTestSymbol = {
-  flags: 32,
-  escapedName: "Test",
-  declarations: [ClassDeclaration],
-  valueDeclaration: ClassDeclaration,
-  members: {
-    runner: // Symbol for runner property
-  },
-};
 ```
 
 #### Symbol Table
@@ -597,7 +766,11 @@ export function createSymbolTable(symbols?: readonly Symbol[]): SymbolTable {
 
 ![Symbol Table](../../assets/symbol-table.png)
 
-## Conclusion
+## ESLint
+
+Using [ESLint](https://eslint.org/) is a better option if you want to enforce rules on your codebase due to the fact that it's specifically built for that purpose. However, if you want to build a tool that does something more complex, then the Typescript Compiler API is the way to go.
+
+[I have wrote a guide for you](https://techtext.dev/posts/gentle-introduction-to-eslint-rules) to learn more.
 
 ## Next Steps
 

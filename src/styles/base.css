@@ -31,8 +31,7 @@
   body {
     @apply flex min-h-screen flex-col bg-skin-fill font-mono text-skin-base selection:bg-skin-accent selection:bg-opacity-70 selection:text-skin-inverted;
   }
-  section,
-  footer {
+  section {
     @apply mx-auto max-w-3xl px-4;
   }
   a {
@@ -47,30 +46,7 @@
     stroke-current stroke-2 opacity-90 group-hover:fill-transparent
     sm:scale-110;
   }
-  .prose {
-    @apply prose-headings:!mb-3 prose-headings:!text-skin-base
-    prose-h3:italic prose-p:!text-skin-base
-    prose-a:!text-skin-base prose-a:!decoration-dashed prose-a:underline-offset-8
-    hover:prose-a:text-skin-accent prose-blockquote:!border-l-skin-accent
-    prose-blockquote:border-opacity-50 prose-blockquote:opacity-80
-    prose-figcaption:!text-skin-base prose-figcaption:opacity-70
-    prose-strong:!text-skin-base
 
-
-    prose-code:rounded prose-code:bg-skin-card
-    prose-code:bg-opacity-75 prose-code:p-1 prose-code:!text-skin-base
-    prose-code:before:!content-[''] prose-code:after:!content-['']
-    prose-pre:!text-skin-base prose-ol:!text-skin-base
-    prose-ul:overflow-x-clip prose-ul:!text-skin-base prose-li:marker:!text-skin-accent
-    prose-table:text-skin-base prose-th:border
-    prose-th:border-skin-line prose-td:border
-    prose-td:border-skin-line prose-img:mx-auto
-    prose-img:!mt-2 prose-img:border-2
-    prose-img:border-skin-line prose-hr:!border-skin-line;
-  }
-  .prose a {
-    @apply hover:!text-skin-accent;
-  }
   .prose thead th:first-child,
   tbody td:first-child,
   tfoot td:first-child {
@@ -155,4 +131,33 @@
 
 iframe .brand {
   display: none;
+}
+
+#table-of-content {
+  display: none;
+}
+#table-of-content + ul {
+  @apply lg:block hidden;
+  @apply absolute right-0 pl-0 w-1/4 list-inside top-0 text-sm text-gray-700 transition-[margin-top];
+  margin-top: var(--table-of-content-top);
+}
+#article > * {
+  @apply xl:max-w-2xl lg:max-w-xl w-full;
+}
+
+#table-of-content + ul li {
+  @apply m-0;
+}
+#table-of-content + ul ul {
+  @apply my-1;
+}
+#table-of-content + ul > li > a {
+  @apply font-medium;
+}
+
+#table-of-content + ul a {
+  @apply no-underline font-normal text-gray-700;
+}
+#table-of-content + ul a.active {
+  @apply text-lime-500;
 }

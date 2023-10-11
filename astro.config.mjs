@@ -4,20 +4,21 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeExternalLinks from "rehype-external-links";
-import remarkCollapse from "remark-collapse";
+import rehypeSlug from "rehype-slug";
 import remarkToc from "remark-toc";
 import remarkEmbed from "./remark-embed.mjs";
 import { remarkReadingTime } from "./remark-reading-time.mjs";
 
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeSlug from "rehype-slug";
+import expressiveCode from "astro-expressive-code";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://techtext.dev/",
   integrations: [
     prefetch(),
+    expressiveCode(),
     mdx(),
     tailwind({
       applyBaseStyles: false,
@@ -30,21 +31,24 @@ export default defineConfig({
       rehypeSlug,
       [
         rehypeExternalLinks,
-        { rel: ["noopener", "noreferrer"], target: "_blank" },
+        {
+          rel: ["noopener", "noreferrer"],
+          target: "_blank",
+        },
       ],
-      [rehypeAutolinkHeadings, { behavior: "prepend" }],
+      [
+        rehypeAutolinkHeadings,
+        {
+          behavior: "prepend",
+        },
+      ],
     ],
     remarkPlugins: [
       remarkReadingTime,
       remarkEmbed,
-      remarkToc,
-      [
-        remarkCollapse,
-        {
-          test: "Table Of Content",
-        },
-      ],
+      [remarkToc, { tight: true }],
     ],
+    syntaxHighlight: "shiki",
     shikiConfig: {
       theme: "one-dark-pro",
       wrap: true,

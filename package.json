@@ -20,6 +20,7 @@
     "@astrojs/rss": "^3.0.0",
     "@astrolib/seo": "^0.6.0",
     "@resvg/resvg-js": "^2.4.1",
+    "astro-expressive-code": "^0.26.1",
     "canvas-confetti": "^1.6.0",
     "fuse.js": "^6.6.2",
     "github-slugger": "^2.0.0",
@@ -31,6 +32,7 @@
     "remark-collapse": "^0.1.2",
     "remark-toc": "^8.0.1",
     "satori": "^0.10.3",
+    "sidebarjs": "^10.0.0",
     "tailwind": "^4.0.0",
     "tailwindcss": "^3.3.2"
   },
@@ -51,8 +53,9 @@
     "eslint-plugin-astro": "^0.27.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
-    "prettier": "^2.8.8",
-    "prettier-plugin-tailwindcss": "^0.2.8",
+    "prettier": "^3.0.3",
+    "prettier-plugin-astro": "^0.12.0",
+    "prettier-plugin-tailwindcss": "^0.5.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "unist-builder": "^4.0.0"

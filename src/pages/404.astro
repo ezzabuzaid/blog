@@ -1,18 +1,18 @@
 ---
-import Footer from "@components/Footer.astro";
-import Header from "@components/Header.astro";
-import LinkButton from "@components/LinkButton.astro";
-import { SITE } from "@config";
-import Layout from "@layouts/Layout.astro";
+import Footer from '@components/Footer.astro';
+import Header from '@components/Header.astro';
+import LinkButton from '@components/LinkButton.astro';
+import { SITE } from '@config';
+import Layout from '@layouts/Layout.astro';
 ---
 
-<script>document.addEventListener('DOMContentLoaded', function () { window.plausible('404', { props: { path: document.location.pathname } }); });</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.plausible('404', { props: { path: document.location.pathname } });
+  });
+</script>
 <Layout title={`404 Not Found | ${SITE.title}`}>
-  <Header />
-
-
-
-  <main id="main-content">
+  <main  >
     <div class="not-found-wrapper">
       <h1 aria-label="404 Not Found">404</h1>
       <span aria-hidden="true">¯\_(ツ)_/¯</span>

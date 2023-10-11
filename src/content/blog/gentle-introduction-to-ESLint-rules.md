@@ -4,14 +4,13 @@ pubDatetime: 2022-07-07T12:34:56+00:00
 title: Gentle Introduction To ESLint Rules
 featured: true
 tags:
-  - eslint
-  - javascript
-  - static analysis
-  - linter
-  - eslint plugin
-  - eslint plugins
   - custom eslint rules
-description: "Unlock the power of custom linting by learning how to write your own ESLint rules tailored for your specific coding requirements."
+  - eslint
+  - eslint plugin
+  - javascript
+  - linter
+  - static analysis
+description: Unlock the power of custom linting by learning how to write your own ESLint rules tailored for your specific coding requirements.
 ---
 
 Have you ever wondered how your editor can know if you used `var` instead of `let`? or that you missed adding `alt` to the `img` tag? Yes, that is **ESLint** ladies and gentlemen.

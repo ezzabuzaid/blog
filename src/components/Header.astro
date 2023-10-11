@@ -6,20 +6,16 @@ import LinkButton from "./LinkButton.astro";
 import logoSVG from "/assets/logo.svg";
 import { Image } from "astro:assets";
 
-export interface Props {
-  activeNav?: "posts" | "tags" | "about" | "search" | "recipes";
-}
-
-const { activeNav } = Astro.props;
+const activeNav = Astro.url.pathname.split("/")[1];
 ---
 
-<header class="sticky top-0 bg-inherit z-50 border-b mb-12">
+<header id="header" class="sticky top-0 bg-inherit z-50 border-b mb-12">
   <a id="skip-to-content" href="#main-content">Skip to content</a>
   <div class="nav-container">
-    <div class="relative flex w-full items-center justify-between p-4 ">
+    <div class="relative flex w-full items-center justify-between p-4">
       <a
         href="/"
-        class="md:absolute relative py-1 text-xl font-semibold sm:static sm:text-2xl"
+        class="relative py-1 text-xl font-semibold sm:static sm:text-2xl"
       >
         {
           LOGO_IMAGE.enable ? (

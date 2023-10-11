@@ -1,28 +1,27 @@
 ---
-import Card from "@components/Card";
-import Footer from "@components/Footer.astro";
-import Header from "@components/Header.astro";
-import { SITE } from "@config";
-import Layout from "@layouts/Layout.astro";
-import Main from "@layouts/Main.astro";
-import getSortedPosts from "@utils/getSortedPosts";
-import slugify from "@utils/slugify";
-import type { CollectionEntry } from "astro:content";
+import Card from '@components/Card';
+import Footer from '@components/Footer.astro';
+import { SITE } from '@config';
+import Layout from '@layouts/Layout.astro';
+import Main from '@layouts/Main.astro';
+import getSortedPosts from '@utils/getSortedPosts';
+import slugify from '@utils/slugify';
+import type { CollectionEntry } from 'astro:content';
 
 export interface Props {
   pageNum: number;
   totalPages: number;
-  posts: CollectionEntry<"blog">[];
+  posts: CollectionEntry<'blog'>[];
 }
-const sortedPosts =( await getSortedPosts()).filter(post=>post.data.tags.includes( "receipe" ));
-
+const sortedPosts = (await getSortedPosts()).filter((post) =>
+  post.data.tags.includes('receipe'),
+);
 ---
 
-
 <Layout title={`Recipes | ${SITE.title}`}>
-  <Header activeNav="posts" />
-  <Main pageTitle="Recipes" pageDesc="A collection of recipes I've tried and loved."
-
+  <Main
+    pageTitle="Recipes"
+    pageDesc="A collection of recipes I've tried and loved."
   >
     <ul>
       {
@@ -32,7 +31,6 @@ const sortedPosts =( await getSortedPosts()).filter(post=>post.data.tags.include
       }
     </ul>
   </Main>
-
 
   <Footer noMarginTop={true} />
 </Layout>
