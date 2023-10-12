@@ -138,7 +138,7 @@ iframe .brand {
 }
 #table-of-content + ul {
   @apply lg:block hidden;
-  @apply absolute right-0 pl-0 w-1/4 list-inside top-0 text-sm text-gray-700 transition-[margin-top];
+  @apply absolute right-12 pl-0 w-1/4 list-inside top-0 text-sm text-gray-700 transition-[margin-top];
   margin-top: var(--table-of-content-top);
 }
 #article > * {
