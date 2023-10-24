@@ -1,8 +1,8 @@
 window.addEventListener("DOMContentLoaded", () => {
   const primaryColorScheme = ""; // "light" | "dark"
-
+  const themeBtn = document.querySelector("#theme-btn");
   // Get theme data from local storage
-
+  if (!themeBtn) return;
   function getPreferTheme() {
     const currentTheme = localStorage.getItem("theme");
     // return theme value in local storage if it is set
@@ -26,14 +26,14 @@ window.addEventListener("DOMContentLoaded", () => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.classList.toggle("light", theme === "light");
 
-    document.querySelector("#theme-btn")?.setAttribute("aria-label", theme);
+    themeBtn.setAttribute("aria-label", theme);
   }
 
   // set early so no page flashes / CSS is made aware
   reflectPreference(getPreferTheme());
 
   // now this script can find and listen for clicks on the control
-  document.querySelector("#theme-btn").addEventListener("click", () => {
+  themeBtn.addEventListener("click", () => {
     setPreference(getPreferTheme() === "light" ? "dark" : "light");
   });
 

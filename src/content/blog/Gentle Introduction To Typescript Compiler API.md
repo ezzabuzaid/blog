@@ -10,7 +10,7 @@ tags:
 description: Learn how to use the Typescript Compiler API to build your own tools
 ---
 
-TypeScript extends JavaScript by adding types, thereby enhancing code quality and understandability through static type checking which enables developers to catch errors at compile-time rather than runtime, resulting in more robust and maintainable codebases.
+TypeScript extends JavaScript by adding types, thereby enhancing code quality and understandability through static type checking which enables developers to catch errors at compile-time rather than runtime.
 
 The TypeScript team has built a compiler `tsc` to process TypeScript type annotations and emit JavaScript code, however, the compiler is not limited to just compiling TypeScript code to JavaScript, it can also be used to build tools and utilities around TypeScript.
 
@@ -78,16 +78,27 @@ dist
 
 ### What is The TypeScript Compiler API?
 
-The TypeScript Compiler API is an integral part of the TypeScript compiler that exposes various functionalities, enabling you to interact with the compiler programmatically that allows you to do type checking, code generation, and even transform TypeScript code at a granular level.
+The TypeScript Compiler API is an integral part of the TypeScript compiler that exposes various functionalities, enabling you to interact with the compiler programmatically to do stuff like
 
-> It is a lot of interfaces, functions, and classes.
+1. Manual type checking.
+2. Code generation.
+3. Transform TypeScript code at a granular level.
+
+and more.
+
+> TypeScript Compiler API is a lot of interfaces, functions, and classes.
 
 ### Why would you use the Typescript Compiler API?
 
-Using the TypeScript Compiler API has several benefits, particularly for those interested in building tools around TypeScript. You could utilize the API in a VsCode extension, [Static Code Analysis](https://snyk.io/learn/open-source-static-code-analysis/), or even to build a [DSL (Domain Specific Language)](https://martinfowler.com/dsl.html).
+Using the TypeScript Compiler API has several benefits, particularly for those interested in building tools around TypeScript. You could utilize the API
 
-Personally, I used it few times to create pre-build scripts and migration scripts. For example, Angular recently introduced the [Standalone Components](https://angular.io/guide/standalone-components), which is a new way to write Angular components without the need to create a module.
-_There was a lot of components that had to be migrated to be standalone, imagine doing this manually, it would take a lot of time and effort._ [Angular team created a migration script](https://github.com/angular/angular/blob/main/packages/core/schematics/ng-generate/standalone-migration/to-standalone.ts) that does this automatically, and it's using the Typescript Compiler API.
+1. In a VsCode extension
+2. To do [Static Code Analysis](https://snyk.io/learn/open-source-static-code-analysis/)
+3. Or even to build a [DSL (Domain Specific Language)](https://martinfowler.com/dsl.html).
+4. Custom Pre/Post build scripts.
+5. Code Migration.
+
+> Angular recently introduced the [Standalone Components](https://angular.io/guide/standalone-components), which is a new way to write Angular components without the need to create a module. [Angular team created a migration script](https://github.com/angular/angular/blob/main/packages/core/schematics/ng-generate/standalone-migration/to-standalone.ts) that does this automatically, and it's using the Typescript Compiler API.
 
 There are few interesting projects that utilize the Typescript Compiler API, such as:
 
@@ -97,9 +108,9 @@ There are few interesting projects that utilize the Typescript Compiler API, suc
 
 ## Use Case: Enforce One Class Per File
 
-Let's stop talking and start coding. You're going to use the Typescript Compiler API to enforce one class per file. This is a common rule that is used in many codebases.
+You're going to use the Typescript Compiler API to enforce one class per file. This is a common rule that is used in many codebases.
 
-It might be a bit confusing at first, but don't worry, you'll start to understand it as you go.
+It might be a bit confusing at first, but don't worry, It'll get simpler as you go.
 
 _Hint: I strongly recommend you check the code again before going to the next use case._
 
@@ -147,7 +158,11 @@ files
   .forEach(file => classPerFile(file));
 ```
 
-I know what you're thinking, this is a lot of code.
+In this code you're doing the following:
+
+1. Create a [program](#typescript-program) from tsconfig so you've access to all files in the project.
+2. Loop over all files in the program and apply the rule.
+3. The rule is simple, if there is more than one class in the file, throw an error.
 
 Let's break it down, there are few key terms that you need to know:
 
@@ -246,7 +261,7 @@ The node object has more than just these properties but right now we're only int
 
 Remember the use case you're trying to solve? enforce one class per file. To do that, you need to check if more than one class is **declared** in the file.
 
-A declaration is node that declares something, it could be a variable, function, class, etc.
+A declaration is a node that declares something, it could be a variable, function, class, etc.
 
 ```ts
 class Test {
@@ -265,6 +280,8 @@ The key difference between a node and a declaration is that
 
 - A "Declaration" is a specific type of node that has a semantic role in the program: it introduces a new identifier and provides information about it.
 
+> Creating a variable `const a = 1;` is like saying "Hey compiler, I'm creating `VariableDeclaration` node with name `a` and value `1`"
+
 ### Statement
 
 A statement is a node that represents a statement in the source code. A statement is a piece of code that performs some action. For example, a variable declaration is a statement that declares a variable.
@@ -277,13 +294,15 @@ In this example the variable declaration `let a = 1;` is a statement.
 
 ### Expression
 
-An expression is a node in the code that evaluates to a value. For instance, in the variable declaration `let a = 1 + 2;`, the part `1 + 2` is an expression, specifically a binary expression. Another example would be `(a: number, b: number) => a + b`, which is as an arrow function expression.
+An expression is a node in the code that evaluates to a value. For example
 
 ```ts
 let a = 1 + 2;
 ```
 
-1 + 2 is an expression, specifically a binary expression
+the part `1 + 2` is an expression, specifically a binary expression
+
+Another example
 
 ```ts
 const add = function addFn(a: number, b: number) {};
@@ -291,7 +310,7 @@ const add = function addFn(a: number, b: number) {};
 
 `function ...` is an expression, specifically a function expression.
 
-Let's break down the following code:
+More advanced example
 
 ```ts
 const first = 1,
@@ -310,7 +329,7 @@ const first = 1,
 
 Let's take another example to recap what you've learned so far. You're going to use the Typescript Compiler API to enforce no function expression.
 
-- Function declaration:
+- Function Declaration:
 
 ```ts
 function addFn(a: number, b: number) {
@@ -329,9 +348,7 @@ let add = function addFn(a: number, b: number) {
 You need to ensure only the first one is allowed.
 
 ```ts
-const transformer: (
-  file: ts.SourceFile
-) => ts.TransformerFactory<ts.SourceFile> = function (file) {
+const transformer: () => ts.TransformerFactory<ts.SourceFile> = () => {
   return function (context) {
     const visit: ts.Visitor = node => {
       if (ts.isVariableDeclaration(node)) {
@@ -344,7 +361,7 @@ const transformer: (
         }
       }
 
-      // visit each child node
+      // visit each child in this node (look at the visitor node parameter)
       return ts.visitEachChild(node, visit, context);
     };
 
@@ -364,7 +381,11 @@ files
 
 I know this isn't like the first example, but it's similar.
 
-In the first use case, it was enough to loop over the first level nodes in the file, but in this use case, you need to loop over all nodes in the file, the nested ones as well.
+> In the first use case, it was enough to loop over the first level nodes in the file, but in this use case, you need to loop over all nodes in the file, the nested ones as well.
+
+The main logic is within the `visit` function, it checks if the node is a `VariableDeclaration` and whether its initializer is a `FunctionExpression`, if so, then throw an error.
+
+The looping over the files is the same but with a slight difference, you're using `ts.transform` API.
 
 Few key terms that you need to know:
 
@@ -380,7 +401,7 @@ As the name implies, the transformer function can transform the AST (the code) i
 
 ### Visitor
 
-I hope you noticed the `visit` function 😁, Let's talk about it, it is a simpler version of what is called the Visitor Pattern. An essential part of how the TypeScript Compiler API works. Actually, you'll see that design pattern whenever you work with AST, Hey at least I did!
+The `visit` function is a simpler version of what is called the Visitor Pattern, an essential part of how the TypeScript Compiler API works. Actually, you'll see that design pattern whenever you work with AST, Hey at least I did!
 
 A "visitor" is basically a function you define to be invoked for each node in the AST during the traversal. The function is called with the current node and has few return choices.
 
@@ -685,6 +706,25 @@ const classTestSymbol = {
 
 Symbols let the type checker look up names and then check their declarations to determine types. It also contains a small summary of what kind of declaration it is -- mainly whether it is a value, a type, or a namespace.
 
+## Printer
+
+```ts
+function printNode(
+  file: ts.Node,
+  result: ts.TransformationResult<ts.SourceFile>
+) {
+  const printer = ts.createPrinter({
+    newLine: ts.NewLineKind.LineFeed,
+  });
+  const transformedSource = printer.printNode(
+    ts.EmitHint.Unspecified,
+    result.transformed[0],
+    file
+  );
+  return transformedSource;
+}
+```
+
 ## How The Compiler Works
 
 Before starting with API, you have to know how the compiler works.
@@ -772,10 +812,25 @@ Using [ESLint](https://eslint.org/) is a better option if you want to enforce ru
 
 [I have wrote a guide for you](https://techtext.dev/posts/gentle-introduction-to-eslint-rules) to learn more.
 
+## Conclusion
+
+The TypeScript Compiler API is a powerful tool that can be used to build tools around TypeScript. It provides a rich set of functionalities that can be used to perform various operations on the source code, such as type checking, code generation, and AST transformation.
+
+It's a bit confusing at first, but once you get the hang of it, you'll be able to build some cool stuff.
+
+You can also generate TypeScript code using the API, think of protobuf to TypeScript code generator.
+
 ## Next Steps
+
+Practice, practice, practice. The best way to learn is to practice what you've learned here. Try to build a tool that does something useful for you or your team.
+
+Think of manual tasks -typescript related- that you do often and try to automate them. Stuff that are error prone, time consuming, or just boring.
+
+I'm writing few other blog posts that will help you get started with the Typescript Compiler API, follow me on [Twitter](https://twitter.com/ezzabuzaid) to get notified when they're out.
 
 ## References
 
 - [Codebase Compiler Binder](https://github.com/microsoft/TypeScript/wiki/Codebase-Compiler-Binder#binder)
 - [TypeScript Compiler Notes](https://github.com/microsoft/TypeScript-Compiler-Notes)
 - [TypeScript Transformer Handbook](https://github.com/itsdouges/typescript-transformer-handbook)
+- [TypeScript Source Code](https://github.dev/microsoft/TypeScript/tree/main/src/compiler)

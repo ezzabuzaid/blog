@@ -5,7 +5,7 @@ import Tag from "@components/Tag.astro";
 import Layout from "@layouts/Layout.astro";
 import { slugifyStr } from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
-import "sidebarjs/lib/sidebarjs.css";
+import Chat from "./Chat.tsx";
 
 export interface Props {
   post: CollectionEntry<"blog">;
@@ -27,8 +27,10 @@ const {
 const { Content } = await post.render();
 const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
   .href;
+const devMode = import.meta.env.DEV;
 ---
 
+<!-- <Chat client:only post={post.slug} /> -->
 <Layout
   title={title}
   author={author}
@@ -42,7 +44,7 @@ const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
     section: "Technology",
   }}
 >
-  <main class="w-full 2xl:px-64 lg:px-12 px-[var(--center-padding)]">
+  <main class="w-full px-12 2xl:pl-64">
     <Datetime
       datetime={pubDatetime}
       minutesRead={minutesRead}
@@ -50,30 +52,34 @@ const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
       className="my-2 max-w-2xl"
     />
     <h1
-      class="md:text-6xl mt-4 text-6xl font-semibold text-skin-accent max-w-2xl"
+      class="mt-4 max-w-2xl text-6xl font-semibold text-skin-accent md:text-6xl"
     >
       {title}
     </h1>
-    <p class="md:text-xl text-lg my-4 text-slate-500 max-w-2xl">
+    <p class="my-4 max-w-2xl text-lg text-slate-500 md:text-xl">
       {description}
     </p>
 
+    <div class="mt-20"></div>
     <article
       id="article"
       role="article"
-      class="[word-spacing:.08em] prose prose-code:font-[monospace] mt-20 max-w-full"
+      class="prose flex max-w-full justify-between [word-spacing:.08em] prose-code:font-[monospace]"
     >
-      <div>
+      <div class="w-full lg:max-w-xl xl:max-w-2xl">
         <Content />
       </div>
-      <aside></aside>
+      <aside
+        class="relative hidden w-1/3 list-inside pl-0 text-sm text-gray-700 transition-[margin-top] lg:block"
+      >
+      </aside>
     </article>
 
     <ul class="my-8">
       {tags.map(tag => <Tag name={slugifyStr(tag)} />)}
     </ul>
     <!-- <NewsLetter /> -->
-    <div class="fixed right-4 bottom-8 flex flex-col space-y-4 mb-12">
+    <div class="fixed bottom-8 right-4 mb-12 flex flex-col space-y-4">
       <!-- <a
       href="#"
       class="filter grayscale flex transform items-center justify-center rounded-md transition duration-200 ease-out hover:-translate-y-1"
@@ -84,7 +90,7 @@ const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
     </a> -->
       <button
         id="subscribe-button"
-        class="shadow-xl uppercase bg-blue-700 font-medium flex items-center text-white px-3.5 py-2.5 rounded-full hover:bg-blue-600 focus:outline-none focus:bg-blue-700"
+        class="flex items-center rounded-full bg-blue-700 px-3.5 py-2.5 font-medium uppercase text-white shadow-xl hover:bg-blue-600 focus:bg-blue-700 focus:outline-none"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +119,6 @@ const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
           link.startsWith("http") && !link.startsWith(window.location.origin);
         const eventName = isOutboundLink ? "OutboundLink" : "InternalLink";
         anchorEl.addEventListener("click", () => {
-          console.log(eventName, link);
           window.plausible(eventName, {
             props: {
               href: link,
@@ -139,61 +144,68 @@ const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
         });
     });
   </script>
-  <!-- <script is:inline>
-    console.log(document.querySelector(`aside`));
-    document
-      .querySelector(`aside`)
-      .appendChild(document.querySelector(`#table-of-content`));
-  </script> -->
-  <script is:inline>
+  <script is:inline type="module">
+    const asideEl = document.querySelector(`aside`);
+    if (asideEl) {
+      const tableOfContentHeadingEl =
+        document.querySelector(`#table-of-content`);
+      const tableOfContentEl = document.querySelector(`#table-of-content + ul`);
+      if (tableOfContentHeadingEl && tableOfContentEl) {
+        asideEl.appendChild(tableOfContentHeadingEl);
+        asideEl.appendChild(tableOfContentEl);
+      }
+    }
+  </script>
+  <script is:inline type="module">
+    const tableOfContent = document.querySelector(`aside`);
     function setTableOfContentPosition() {
-      const article = document.querySelector(`#article`);
-      const header = document.querySelector(`#header`);
-      const tableOfContent = document.querySelector(`#table-of-content + ul`);
-      if (!tableOfContent) return;
-      const marginTop = 24;
+      const article = document.getElementById(`article`);
+      const header = document.getElementById(`header`);
+      if (!article || !header || !tableOfContent) return;
 
       const scrollPosition = document.documentElement.scrollTop;
       const articleDistanceToTop = article.offsetTop - header.clientHeight;
       const scrollReachedArticle = scrollPosition > articleDistanceToTop;
 
       const articleOffsetToTop = scrollReachedArticle
-        ? scrollPosition + header.clientHeight
-        : article.offsetTop;
-      // 0;
-
-      // if (!scrollReachedArticle) {
-      //   article.style.setProperty("position", "relative");
-      // } else {
-      //   article.style.setProperty("position", "static");
-      // }
+        ? scrollPosition + header.clientHeight - article.offsetTop
+        : 0;
 
       tableOfContent.style.setProperty(
         "--table-of-content-top",
-        scrollReachedArticle ? `1.5rem` : 0
+        scrollReachedArticle ? `1.5rem` : "0"
       );
-
-      tableOfContent.style.transform = `translate(0, ${articleOffsetToTop}px)`;
+      tableOfContent.style.top = `${articleOffsetToTop}px`;
     }
-    setTableOfContentPosition();
 
-    window.addEventListener("scroll", () => {
-      setTableOfContentPosition();
-    });
+    setTableOfContentPosition();
+    window.addEventListener("scroll", setTableOfContentPosition);
 
     window.addEventListener("DOMContentLoaded", () => {
       const observer = new IntersectionObserver(entries => {
         let lastEl = null;
+        const tableOfContent = document.querySelector(`#table-of-content + ul`);
+        const children = tableOfContent.querySelectorAll(`li a`);
         entries.forEach(entry => {
-          const tableOfContent = document.querySelector(
-            `#table-of-content + ul`
-          );
           const id = entry.target.getAttribute("id");
           const element = tableOfContent.querySelector(`li a[href="#${id}"]`);
-          const children = tableOfContent.querySelectorAll(`li a`);
+          const heading = entry.target;
 
           if (!element) return;
           if (!entry.isIntersecting) return;
+
+          // TODO: move this logic to use scroll event instead of intersection observer
+          // because the intersection observer only fires when the element is visible/intersected and otherwise
+
+          // const center = window.innerHeight / 2;
+          // const headingTop = heading.getBoundingClientRect().top;
+          // const headingBottom = heading.getBoundingClientRect().bottom;
+          // const headingCenter = headingTop + (headingBottom - headingTop) / 2;
+
+          // // if the intersected heading is not in the center
+          // // of the screen then keep the last heading active.
+
+          // if (headingCenter > center) return;
 
           children.forEach(child => {
             if (child !== element) {
@@ -209,16 +221,5 @@ const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
         observer.observe(section);
       });
     });
-  </script>
-  <script is:inline>
-    function setPadding() {
-      const padding = window.innerWidth / 2 / 2 / 2;
-      document.documentElement.style.setProperty(
-        "--center-padding",
-        `${Math.floor(padding / 16)}rem`
-      );
-    }
-    setPadding();
-    window.addEventListener("resize", setPadding);
   </script>
 </Layout>

@@ -1,11 +1,5 @@
 {
-	"grammarly.selectors": [
 
-		{
-			"language": "markdown",
-			"scheme": "file"
-		}
-	],
 	"[markdown]": {
 		"editor.fontSize": 14,
 		"editor.lineHeight": 26,
@@ -19,5 +13,12 @@
 		},
 		"editor.minimap.enabled": false
 	},
-	"angular.forceStrictTemplates": true
+	"angular.forceStrictTemplates": true,
+	"grammarly.selectors": [
+		{
+			"language": "markdown",
+			"scheme": "file",
+			"pattern": "src/content/blog/how-to-stream-openai-response.md"
+		}
+	]
 }

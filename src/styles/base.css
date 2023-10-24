@@ -5,7 +5,7 @@
 @layer base {
   :root,
   html.light {
-    --color-fill: 255, 255, 255;
+    --color-fill: 242, 242, 242;
     --color-text-base: 0, 0, 0;
     --color-accent: 0, 0, 0;
     --color-card: 230, 230, 230;
@@ -31,9 +31,7 @@
   body {
     @apply flex min-h-screen flex-col bg-skin-fill font-mono text-skin-base selection:bg-skin-accent selection:bg-opacity-70 selection:text-skin-inverted;
   }
-  section {
-    @apply mx-auto max-w-3xl px-4;
-  }
+
   a {
     @apply outline-2 outline-offset-1 outline-skin-fill
     focus-visible:no-underline focus-visible:outline-dashed;
@@ -51,18 +49,6 @@
   tbody td:first-child,
   tfoot td:first-child {
     padding-left: 0.5714286em;
-  }
-  .prose h2#table-of-contents {
-    @apply mb-2;
-  }
-  .prose details {
-    @apply inline-block cursor-pointer select-none text-skin-base;
-  }
-  .prose summary {
-    @apply focus-outline;
-  }
-  .prose h2#table-of-contents + p {
-    @apply hidden;
   }
 
   /* ===== scrollbar ===== */
@@ -88,11 +74,6 @@
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-skin-card-muted;
-  }
-
-  code {
-    white-space: pre;
-    overflow: scroll;
   }
 }
 
@@ -135,14 +116,6 @@ iframe .brand {
 
 #table-of-content {
   display: none;
-}
-#table-of-content + ul {
-  @apply lg:block hidden;
-  @apply absolute right-12 pl-0 w-1/4 list-inside top-0 text-sm text-gray-700 transition-[margin-top];
-  margin-top: var(--table-of-content-top);
-}
-#article > * {
-  @apply xl:max-w-2xl lg:max-w-xl w-full;
 }
 
 #table-of-content + ul li {

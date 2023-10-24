@@ -4,9 +4,9 @@ export const SITE: Site = {
   website: "https://techtext.dev/",
   author: "Ezzabuzaid",
   desc: "I'm Senior Software Engineer and a Technical Writer with a keen interest in merging technology and communication. Passionate about software development and committed to reading and lifelong learning.",
-  title: "TechText - Software Engineering Blog",
+  title: "Writer.sh - Software Engineering Blog",
   ogImage: "logo.svg",
-  lightAndDarkMode: true,
+  lightAndDarkMode: false,
 };
 
 export const LOCALE = ["en-EN"]; // set to [] to use the environment default

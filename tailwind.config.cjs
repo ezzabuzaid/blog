@@ -49,9 +49,12 @@ module.exports = {
         transparent: "transparent",
       },
       fontFamily: {
-        mono: ["Ubuntu", "monospace"],
+        mono: ["'IBM Plex Sans'", "monospace"],
       }
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require('tailwind-scrollbar'),
+    require("@tailwindcss/typography")
+  ],
 };

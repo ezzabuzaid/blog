@@ -3,6 +3,7 @@ import prefetch from "@astrojs/prefetch";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
+import expressiveCode from "astro-expressive-code";
 import { defineConfig } from "astro/config";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeExternalLinks from "rehype-external-links";
@@ -10,8 +11,6 @@ import rehypeSlug from "rehype-slug";
 import remarkToc from "remark-toc";
 import remarkEmbed from "./remark-embed.mjs";
 import { remarkReadingTime } from "./remark-reading-time.mjs";
-
-import expressiveCode from "astro-expressive-code";
 
 // https://astro.build/config
 export default defineConfig({

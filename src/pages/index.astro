@@ -1,24 +1,24 @@
 ---
-import Card from '@components/Card';
-import Footer from '@components/Footer.astro';
-import Hr from '@components/Hr.astro';
-import LinkButton from '@components/LinkButton.astro';
-import Socials from '@components/Socials.astro';
-import { SITE, SOCIALS } from '@config';
-import Layout from '@layouts/Layout.astro';
-import getSortedPosts from '@utils/getSortedPosts';
-import slugify from '@utils/slugify';
-import NewsLetter from '../components/NewsLetter.astro';
+import Card from "@components/Card";
+import Footer from "@components/Footer.astro";
+import Hr from "@components/Hr.astro";
+import LinkButton from "@components/LinkButton.astro";
+import Socials from "@components/Socials.astro";
+import { SITE, SOCIALS } from "@config";
+import Layout from "@layouts/Layout.astro";
+import getSortedPosts from "@utils/getSortedPosts";
+import slugify from "@utils/slugify";
+import NewsLetter from "../components/NewsLetter.astro";
 
 const sortedPosts = await getSortedPosts();
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 
-const socialCount = SOCIALS.filter((social) => social.active).length;
+const socialCount = SOCIALS.filter(social => social.active).length;
 ---
 
 <Layout title={SITE.title}>
-  <main >
-    <section id="hero" class="py-6">
+  <main>
+    <section id="hero" class="py-6 mx-auto max-w-3xl px-4">
       <p>
         {SITE.desc}
       </p>
@@ -36,7 +36,7 @@ const socialCount = SOCIALS.filter((social) => social.active).length;
     {
       featuredPosts.length > 0 && (
         <>
-          <section id="featured">
+          <section id="featured" class="mx-auto max-w-3xl px-4">
             <h2>Featured</h2>
             <ul>
               {featuredPosts.map(({ data }) => (
@@ -53,7 +53,7 @@ const socialCount = SOCIALS.filter((social) => social.active).length;
       )
     }
 
-    <section id="recent-posts">
+    <section id="recent-posts" class="mx-auto max-w-3xl px-4">
       <h2>Recent Posts</h2>
       <ul>
         {
@@ -65,7 +65,7 @@ const socialCount = SOCIALS.filter((social) => social.active).length;
                   frontmatter={data}
                   secHeading={false}
                 />
-              ),
+              )
           )
         }
       </ul>
