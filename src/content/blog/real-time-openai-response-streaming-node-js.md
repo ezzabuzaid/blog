@@ -10,6 +10,12 @@ tags: []
 
 You know how ChatGPT continuously show the results as it becomes available -generated-, It doesn't wait for the whole response to get together, rather it shows what the model is generating right away.
 
+- Smooth user experience: User doesn't have to wait till the whole response is generated.
+
+- Easier to read: When ChatGPT first released I liked that it respond as if you're talking to someone, which read different to other form of writing.
+
+- Reduce memory usage: This is a benefit of streaming in general, you offload the data without having to buffer it in memory.
+
 In this article, you're going to learn how you can stream OpenAI response just like how ChatGPT does it.
 
 I'm assuming you've basic knowledge in Node.js, and you're familiar with JavaScript features like `async/await`, `for await` loop and async iterators.
@@ -25,7 +31,7 @@ There are few ways to stream data from the server:
 - [Long Polling](https://javascript.info/long-polling)
 - [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)
 
-In this article, you're going to use the **Fetch API**; simple and more suitable for this use case.
+You're going to use the **Fetch API**; simple and more suitable for this use case.
 
 ## Solution
 
@@ -134,6 +140,8 @@ server.on("request", async (req, res) => {
 });
 ```
 
+> In the context of streaming data, a chunk refers to a piece or fragment of data that is handled, processed, or transmitted individually as part of a larger stream of data.
+
 ### The Client Side
 
 There are few ways to receive data coming from the server while using the Fetch API.
@@ -201,15 +209,54 @@ const inputEl = document.querySelector("input");
 fromEvent(inputEl, "input")
   .pipe(
     switchMap(() => fetch("http://localhost:3000")),
-    switchMap(response => response.body),
-    scan((acc, chunk) => acc + decoded.decode(chunk), "")
+    switchMap(response => response.body.pipeThrough(new TextDecoderStream())),
+    scan((acc, chunk) => acc + chunk, "")
   )
   .subscribe(total => {
     resultEl.textContent = total;
   });
 ```
 
-RxJS is a great library, but it is a bit overkill for this use case, you can use it if you're already using it in your project.
+RxJS is a great library, but it is a bit overkill for this use case, unless you're already using it in your project.
+
+## Decoding The Data
+
+A word on the decoding part, you need to decode the data coming from the server, as it is encoded using [`Uint8Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) by default.
+
+To decode the data, you need to use [`TextDecoder`](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder) API.
+
+```ts
+const decoder = new TextDecoder();
+```
+
+By default it uses `utf-8` encoding, which is what you need in most cases.
+
+```ts
+const decoder = new TextDecoder("utf-8");
+```
+
+The `decode` method accepts buffer (An ArrayBuffer, a TypedArray, or a DataView) and returns a string.
+
+```ts
+const decodedValue = decoder.decode(chunk);
+```
+
+Another options is using `TextDecoderStream` which is a transform stream that takes a stream of `Uint8Array` chunks as input and emits a stream of strings.
+
+The previous implementation can be rewritten as follows.
+
+```ts
+let total = "";
+const decoderTransformStream = new TextDecoderStream();
+const reader = response.body.pipeThrough(decoderTransformStream).getReader();
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+
+  total += value;
+  resultEl.textContent = total;
+}
+```
 
 ## Canceling The Request
 
@@ -281,14 +328,24 @@ req.on("close", () => {
 });
 ```
 
+The `close` listener is the place where you want to do clean up, besides aborting OpenAI request you might want to close any database connection or any other resource you're using.
+
 ## Handling Errors
 
-### Server Side
-
-Following [OpenAI API](https://platform.openai.com/docs/guides/error-codes/api-errors) error codes, you need to handle the most likely error you'll get.
+Following [OpenAI API](https://platform.openai.com/docs/guides/error-codes/api-errors) error codes, you need to handle the most likely error you'll get, at least.
 
 - Rate Limit Reached - Quota Exceeded (same error code)
 - Model Is Overloaded (will be in form of a server error)
+- Token Limit Reached
+
+To commuincate the errors to the client, you're going to prefix the error with `ERROR` string to simplify handling the error on the client side.
+
+> You cannot alter the response status code at this point, it will always be `200` even if the error is in form of a server error.
+
+### Server Side
+
+- Rate Limit Reached
+- Model Is Overloaded
 
 ```ts
 try {
@@ -301,8 +358,6 @@ try {
   }
 }
 ```
-
-Ending the response with `ERROR` prefix to simplify handling the error on the client side.
 
 - Token Limit Reached
 
@@ -350,7 +405,7 @@ while (true) {
 
 ## Backpressure & Buffering
 
-What if the client is slow to consume the data coming from the server -OpenAI-, you don't want to buffer too much data in the server memory. _Thing can get pretty bad when you have many concurrent requests._
+What if the client is slow to consume the data coming from the server -OpenAI-, you don't want to buffer too much data in the server memory. _Things can get pretty bad when you have many concurrent requests._
 
 In Node.js you can check if the client is ready to receive more data by checking the return value of `res.write` method.
 
@@ -366,13 +421,25 @@ if (bufferFull) {
 
 That is actually less than a solution, merely a workaround. A better solution would be to store the data somewhere else, like in-memory database, and stream the data from there when the client is ready to receive more.
 
+## More On Streams
+
+Beside the solutions you read, stream is vast concept and have many components, mainly categoriesd into the following.
+
+- **ReadableStream**: Represents a source of data, from which you can read. In the client-side, the server can be considered as a readable stream that you access using the Fetch API. In the server-side, the OpenAI API can be considered as a readable stream.
+
+- **WriteableStream**: Opposite to ReadableStream, a WritableStream represents a destination for data, where you can write. In the server-client setup, it represent the response object where you are writing the data to be sent to the client.
+
+- **TransformStream**: A TransformStream is a type of stream that sits between a ReadableStream and a WritableStream, transforming or processing the data as it passes through. This can be utilized for various purposes such as modifying, filtering, or formatting the data before it reaches the client. For instance, if there's a need to format the OpenAI's response before sending it to the client, a TransformStream could be employed.
+
+When combined together, they form a pipeline, where the data flows from the source to the destination, passing through the transform stream. For instance, data from OpenAI's API (ReadableStream) could be passed through a TransformStream for formatting or filtering, and then written to the client (WritableStream).
+
 ## Conclusion
 
 So I hope you have good idea how to mimic ChatGPT in your project, and how to stream data from the server to the client.
 
 Streaming is fun but you've to keep an eye on the memory usage on both client and server, you don't want to buffer too much data in the memory, try not to hold any data, always stream quick and early.
 
-Beside the solutions you read, stream is vast concept and have many components, there're streams that act as a source of data and others that alter data in between, and others that write data to a destination.
+In case you're using more complex form of Prompt Engineering, like [ReAct](https://www.promptingguide.ai/techniques/react) or [Generated Knowledge](https://learnprompting.org/docs/intermediate/generated_knowledge) that relys on the output of a previous LLM request, and have processing within like collecting user info, semantic search, you might then want use Server-Sent Events or WebSockets instead of Fetch API.
 
 ## Next Steps
 
@@ -382,7 +449,8 @@ Beside the solutions you read, stream is vast concept and have many components, 
 
 ## References
 
+- [Node.js Stream](https://nodejs.org/api/stream.html)
 - [Streams API](https://developer.mozilla.org/en-US/docs/Web/API/Streams_API)
-- https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams
-- https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_writable_streams
-- https://vercel.com/blog/an-introduction-to-streaming-on-the-web
+- [An Introduction to Streaming on the Web](https://vercel.com/blog/an-introduction-to-streaming-on-the-web)
+- [https://web.dev/articles/eventsource-basics](https://web.dev/articles/eventsource-basics)
+- [https://jakearchibald.com/2016/streams-ftw/#streams-the-fetch-api](2016 - the year of web streams) I have this bookmarked since 2016 😆

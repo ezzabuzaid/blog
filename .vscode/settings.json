@@ -18,7 +18,7 @@
 		{
 			"language": "markdown",
 			"scheme": "file",
-			"pattern": "src/content/blog/how-to-stream-openai-response.md"
+			"pattern": "src/content/blog/real-time-openai-response-streaming-node-js.md"
 		}
 	]
 }
