@@ -5,7 +5,7 @@
 @layer base {
   :root,
   html.light {
-    --color-fill: 242, 242, 242;
+    --color-fill: 255, 255, 255;
     --color-text-base: 0, 0, 0;
     --color-accent: 0, 0, 0;
     --color-card: 230, 230, 230;
@@ -20,14 +20,7 @@
     --color-card-muted: 138, 51, 2;
     --color-border: 171, 75, 8;
   }
-  #sun-svg,
-  html.dark #moon-svg {
-    display: none;
-  }
-  #moon-svg,
-  html.dark #sun-svg {
-    display: block;
-  }
+
   body {
     @apply flex min-h-screen flex-col bg-skin-fill font-mono text-skin-base selection:bg-skin-accent selection:bg-opacity-70 selection:text-skin-inverted;
   }
@@ -37,7 +30,7 @@
     focus-visible:no-underline focus-visible:outline-dashed;
   }
   svg {
-    @apply inline-block h-6 w-6 fill-skin-base group-hover:fill-skin-accent;
+    @apply inline-block  group-hover:fill-skin-accent;
   }
   svg.icon-tabler {
     @apply inline-block h-6 w-6 scale-125 fill-transparent
@@ -114,7 +107,7 @@ iframe .brand {
   display: none;
 }
 
-#table-of-content {
+/* #table-of-content {
   display: none;
 }
 
@@ -129,8 +122,13 @@ iframe .brand {
 }
 
 #table-of-content + ul a {
-  @apply no-underline font-normal text-gray-700;
+  @apply font-normal text-gray-700 no-underline;
 }
 #table-of-content + ul a.active {
   @apply text-lime-500;
+} */
+
+.post-line-text #table-of-content,
+.post-line-text #table-of-content ~ * {
+  display: none !important;
 }

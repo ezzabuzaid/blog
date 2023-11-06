@@ -1,20 +1,15 @@
 ---
-import Footer from '@components/Footer.astro';
-import SearchBar from '@components/Search';
-import { SITE } from '@config';
-import Layout from '@layouts/Layout.astro';
-import Main from '@layouts/Main.astro';
-import { getPublishedPosts } from '../utils/getPosts';
+import SearchBar from "@components/Search";
+import { SITE } from "@config";
+import Layout from "@layouts/Layout.astro";
+import Main from "@layouts/Main.astro";
+import { getPublishedPosts } from "../utils/getPosts";
 
-// Retrieve all articles
 const posts = await getPublishedPosts();
-
-// List of items to search in
 ---
 
 <Layout title={`Search | ${SITE.title}`}>
   <Main pageTitle="Search" pageDesc="Search any article ...">
-    <SearchBar client:load searchList={posts.map((it) => it.data)} />
+    <SearchBar client:load searchList={posts.map(it => it.data)} />
   </Main>
-  <Footer />
 </Layout>

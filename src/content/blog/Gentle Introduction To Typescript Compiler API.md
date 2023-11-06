@@ -70,9 +70,9 @@ dist
 
 - JavaScript code: The compiler will output JavaScript code that can be executed later on.
 - Source map: A source map is a file that maps the code within a compressed file back to its original position in a source file to aid debugging. It is mostly used by the browser to map the code it executes back to its original location in the source file.
-- Declaration file: A declaration file is a file that provides type information about existing JavaScript code to enables other programs to use the values (functions, variables, ...) defined in the file without having to guess what they are.
+- Declaration file: A file that provides type information about existing JavaScript code to enables other programs to use the values (functions, variables, ...) defined in the file without having to guess what they are.
 
-> The TypeScript compiler generates declaration files for all the code it compiles if enabled in tsconfig, and you can also write your own declaration files for existing JavaScript libraries.
+> The TypeScript compiler generates declaration files for all the code it compiles if enabled in tsconfig.json, and you can also write your own declaration files for existing JavaScript libraries.
 
 ![How TypeScript Compiler Works](../../assets/how-typescript-compiler-works.excalidraw.svg)
 
@@ -97,6 +97,7 @@ Using the TypeScript Compiler API has several benefits, particularly for those i
 3. Or even to build a [DSL (Domain Specific Language)](https://martinfowler.com/dsl.html).
 4. Custom Pre/Post build scripts.
 5. Code Migration.
+6. [Use it as Front-End for other low level languages.](https://www.assemblyscript.org/)
 
 > Angular recently introduced the [Standalone Components](https://angular.io/guide/standalone-components), which is a new way to write Angular components without the need to create a module. [Angular team created a migration script](https://github.com/angular/angular/blob/main/packages/core/schematics/ng-generate/standalone-migration/to-standalone.ts) that does this automatically, and it's using the Typescript Compiler API.
 
@@ -163,6 +164,8 @@ In this code you're doing the following:
 1. Create a [program](#typescript-program) from tsconfig so you've access to all files in the project.
 2. Loop over all files in the program and apply the rule.
 3. The rule is simple, if there is more than one class in the file, throw an error.
+
+> [Demo for this use case](https://stackblitz.com/edit/stackblitz-starters-1pmgun?embed=1&file=use-cases%2Fenforce-one-class-per-file%2Findex.ts&hideNavigation=1&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./use-cases/enforce-one-class-per-file/"
 
 Let's break it down, there are few key terms that you need to know:
 
@@ -249,7 +252,8 @@ In AST, the fundamental unit is called a Node.
 
 - FunctionDeclaration has kind 259
 - Block has kind 238
-  These numbers are exported in an enum called `SyntaxKind`
+
+These numbers are exported in an enum called `SyntaxKind`
 
 The node object has more than just these properties but right now we're only interested in a few, nonetheless, two additional important properties you might want to know about are:
 
@@ -284,7 +288,7 @@ The key difference between a node and a declaration is that
 
 ### Statement
 
-A statement is a node that represents a statement in the source code. A statement is a piece of code that performs some action. For example, a variable declaration is a statement that declares a variable.
+A statement is a node that represents a statement in the source code. A statement is a piece of code that performs some action, for example, a variable declaration is a statement that declares a variable.
 
 ```ts
 let a = 1;
@@ -340,7 +344,7 @@ function addFn(a: number, b: number) {
 - Function Expression
 
 ```ts
-let add = function addFn(a: number, b: number) {
+let addFnExpression = function addFn(a: number, b: number) {
   return a + b;
 };
 ```
@@ -348,16 +352,19 @@ let add = function addFn(a: number, b: number) {
 You need to ensure only the first one is allowed.
 
 ```ts
-const transformer: () => ts.TransformerFactory<ts.SourceFile> = () => {
+type Transformer = (
+  file: ts.SourceFile
+) => ts.TransformerFactory<ts.SourceFile>;
+const transformer: Transformer = file => {
   return function (context) {
     const visit: ts.Visitor = node => {
       if (ts.isVariableDeclaration(node)) {
         if (node.initializer && ts.isFunctionExpression(node.initializer)) {
           throw new Error(`
-					No function expression allowed.
-					Found function expression in ${file.fileName}
-					File: ${file.fileName}
-				`);
+          No function expression allowed.
+          Found function expression: ${node.name.getText(file)}
+          File: ${file.fileName}
+        `);
         }
       }
 
@@ -378,6 +385,8 @@ files
     ts.transform(file, [transformer(file)], program.getCompilerOptions())
   );
 ```
+
+> [Demo for this use case](https://stackblitz.com/edit/stackblitz-starters-1pmgun?embed=1&file=use-cases%2Fno-function-expression%2Findex.ts&hideNavigation=1&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./use-cases/no-function-expression"
 
 I know this isn't like the first example, but it's similar.
 
@@ -706,6 +715,8 @@ const classTestSymbol = {
 
 Symbols let the type checker look up names and then check their declarations to determine types. It also contains a small summary of what kind of declaration it is -- mainly whether it is a value, a type, or a namespace.
 
+## Diagnostic
+
 ## Printer
 
 ```ts
@@ -834,3 +845,13 @@ I'm writing few other blog posts that will help you get started with the Typescr
 - [TypeScript Compiler Notes](https://github.com/microsoft/TypeScript-Compiler-Notes)
 - [TypeScript Transformer Handbook](https://github.com/itsdouges/typescript-transformer-handbook)
 - [TypeScript Source Code](https://github.dev/microsoft/TypeScript/tree/main/src/compiler)
+
+## Related Projects
+
+- [OXC](https://github.com/web-infra-dev/oxc)
+- [ts-morph](https://github.com/dsherret/ts-morph)
+
+## Credits
+
+- The grpah tree was generated using [Mermaid JS](https://mermaid.js.org/)
+- The drawing was created using [Excalidraw](https://excalidraw.com/)

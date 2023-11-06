@@ -20,5 +20,6 @@
 			"scheme": "file",
 			"pattern": "src/content/blog/real-time-openai-response-streaming-node-js.md"
 		}
-	]
+	],
+
 }

@@ -2,7 +2,6 @@
 author: ezzabuzaid
 pubDatetime: 2022-07-07T12:34:56+00:00
 title: Gentle Introduction To ESLint Rules
-featured: true
 tags:
   - custom eslint rules
   - eslint

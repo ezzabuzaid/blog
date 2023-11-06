@@ -1,5 +1,4 @@
 import type { BlogFrontmatter } from "@content/_schemas";
-import Datetime from "./Datetime";
 
 export interface Props {
   href?: string;
@@ -10,25 +9,16 @@ export interface Props {
 export default function Card({ href, frontmatter, secHeading = true }: Props) {
   const { title, pubDatetime, description, minutesRead } = frontmatter;
   return (
-    <li className="my-6 space-y-0.5">
-      <a
-        rel="prefetch"
-        href={href}
-        className="inline-block text-lg font-medium text-skin-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
-      >
-        {secHeading ? (
-          <h2 className="text-lg font-medium decoration-dashed hover:underline">
-            {title}
-          </h2>
-        ) : (
-          <h3 className="text-lg font-medium decoration-dashed hover:underline">
-            {title}
-          </h3>
-        )}
+    <li className="my-1 space-y-0.5">
+      <a rel="prefetch" className="flex" href={href}>
+        <span>-</span>
+        <h3 className="ml-2 text-sm decoration-dashed hover:underline">
+          {title}
+        </h3>
       </a>
-      <Datetime datetime={pubDatetime} minutesRead={minutesRead} />
+      {/* <Datetime datetime={pubDatetime} minutesRead={minutesRead} /> */}
 
-      <p>{description}</p>
+      {/* <p>{description}</p> */}
     </li>
   );
 }

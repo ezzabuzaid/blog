@@ -1,14 +1,13 @@
 ---
-import Card from '@components/Card';
-import Footer from '@components/Footer.astro';
-import { SITE } from '@config';
-import Layout from '@layouts/Layout.astro';
-import Main from '@layouts/Main.astro';
-import slugify from '@utils/slugify';
-import type { CollectionEntry } from 'astro:content';
+import Card from "@components/Card";
+import { SITE } from "@config";
+import Layout from "@layouts/Layout.astro";
+import Main from "@layouts/Main.astro";
+import slugify from "@utils/slugify";
+import type { CollectionEntry } from "astro:content";
 
 export interface Props {
-  posts: CollectionEntry<'blog'>[];
+  posts: CollectionEntry<"blog">[];
 }
 
 const { posts } = Astro.props;
@@ -24,8 +23,6 @@ const { posts } = Astro.props;
       }
     </ul>
   </Main>
-
-  <Footer noMarginTop={true} />
 </Layout>
 
 <!-- <style>

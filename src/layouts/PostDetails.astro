@@ -27,10 +27,11 @@ const {
 const { Content } = await post.render();
 const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
   .href;
-const devMode = import.meta.env.DEV;
+const devMode = import.meta.env.PROD;
 ---
 
-<!-- <Chat client:only post={post.slug} /> -->
+{devMode && <Chat client:only post={post.data.title} />}
+
 <Layout
   title={title}
   author={author}
@@ -44,7 +45,7 @@ const devMode = import.meta.env.DEV;
     section: "Technology",
   }}
 >
-  <main class="w-full px-12 2xl:pl-64">
+  <main class="w-full px-12 2xl:pl-20">
     <Datetime
       datetime={pubDatetime}
       minutesRead={minutesRead}
@@ -78,36 +79,6 @@ const devMode = import.meta.env.DEV;
     <ul class="my-8">
       {tags.map(tag => <Tag name={slugifyStr(tag)} />)}
     </ul>
-    <!-- <NewsLetter /> -->
-    <div class="fixed bottom-8 right-4 mb-12 flex flex-col space-y-4">
-      <!-- <a
-      href="#"
-      class="filter grayscale flex transform items-center justify-center rounded-md transition duration-200 ease-out hover:-translate-y-1"
-    >
-      <span class="text-white text-6xl transition duration-200 ease-out"
-        >⬆️</span
-      >
-    </a> -->
-      <button
-        id="subscribe-button"
-        class="flex items-center rounded-full bg-blue-700 px-3.5 py-2.5 font-medium uppercase text-white shadow-xl hover:bg-blue-600 focus:bg-blue-700 focus:outline-none"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="fill-white"
-          height="24"
-          viewBox="0 -960 960 960"
-          width="24"
-        >
-          <path
-            d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z"
-          ></path>
-        </svg>
-
-        <span class="ml-1 hidden sm:block">Subscribe</span>
-      </button>
-    </div>
-    <Footer />
   </main>
 
   <script define:vars={{ title }}>
@@ -127,24 +98,9 @@ const devMode = import.meta.env.DEV;
           });
         });
       });
-
-      document
-        .getElementById("subscribe-button")
-        ?.addEventListener("click", () => {
-          window.plausible("Subscribe", {
-            props: {
-              blog: title,
-            },
-          });
-
-          // scroll to newsletter-section
-          const newsletterSection =
-            document.getElementById("newsletter-section");
-          newsletterSection?.scrollIntoView({ behavior: "smooth" });
-        });
     });
   </script>
-  <script is:inline type="module">
+  <!-- <script is:inline type="module">
     const asideEl = document.querySelector(`aside`);
     if (asideEl) {
       const tableOfContentHeadingEl =
@@ -221,5 +177,5 @@ const devMode = import.meta.env.DEV;
         observer.observe(section);
       });
     });
-  </script>
+  </script> -->
 </Layout>

@@ -42,4 +42,10 @@ export const SOCIALS: SocialObjects = [
     linkTitle: `Follow me on Twitter`,
     active: true,
   },
+  {
+    name: "RSSFeed",
+    href: "https://feeds.feedburner.com/techtextdev",
+    linkTitle: `Subscribe to my RSS Feed`,
+    active: true,
+  },
 ];

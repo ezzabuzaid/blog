@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Datetime from "../components/Datetime";
+import slugify from "../utils/slugify";
+
+export interface Props {
+  post: CollectionEntry<"blog">;
+}
+const { post } = Astro.props;
+const { Content } = await post.render();
+const { data } = post;
+---
+
+<li class="my-1 space-y-4">
+  <h2 class="text-4xl font-semibold decoration-dashed hover:underline">
+    <a rel="prefetch" class="flex" href={`/posts/${slugify(data)}`}>
+      {data.title}
+    </a>
+  </h2>
+  <Datetime datetime={data.pubDatetime} minutesRead={data.minutesRead} />
+
+  <article
+    class="post-line-text prose flex max-w-full justify-between [word-spacing:.08em] prose-code:font-[monospace]"
+  >
+    <div class="w-full lg:max-w-xl xl:max-w-2xl">
+      <Content />
+    </div>
+  </article>
+</li>

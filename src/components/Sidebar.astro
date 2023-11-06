@@ -1,0 +1,74 @@
+---
+import { LOGO_IMAGE, SITE } from "@config";
+
+import getSortedPosts from "@utils/getSortedPosts";
+import slugify from "@utils/slugify";
+import { Image } from "astro:assets";
+import logoSVG from "../assets/logo.svg";
+import SearchBar from "./Search";
+
+const allPosts = await getSortedPosts();
+const featuredPosts = allPosts.filter(({ data }) => data.featured);
+const restPosts = allPosts.filter(({ data }) => !data.featured);
+
+const activeNav = Astro.url.pathname.split("/")[1];
+
+import { getPublishedPosts } from "../utils/getPosts";
+import Card from "./Card";
+import NewsLetter from "./NewsLetter.astro";
+import Socials from "./Socials.astro";
+
+const posts = await getPublishedPosts();
+---
+
+<div class="my-2"></div>
+<section class="flex items-center">
+  <a href="/" class="relative py-1 text-lg font-semibold sm:static">
+    {
+      LOGO_IMAGE.enable ? (
+        <Image alt="Tech Talk logo" src={logoSVG} />
+      ) : (
+        SITE.title
+      )
+    }
+  </a>
+</section>
+
+<div class="my-2"></div>
+<SearchBar client:load searchList={posts.map(it => it.data)} />
+<div class="my-2"></div>
+<p class="mb-2 font-bold">Connect:</p>
+<Socials />
+<div class="my-2"></div>
+
+<section>
+  <p class="mb-2 font-bold">Featured Posts:</p>
+  <ul>
+    {
+      featuredPosts.map(({ data }) => (
+        <Card href={`/posts/${slugify(data)}`} frontmatter={data} />
+      ))
+    }
+  </ul>
+</section>
+<div class="my-2"></div>
+
+<section>
+  <p class="mb-2 font-bold">All Posts:</p>
+  <ul>
+    {
+      restPosts.map(
+        ({ data }, index) =>
+          index < 4 && (
+            <Card href={`/posts/${slugify(data)}`} frontmatter={data} />
+          )
+      )
+    }
+  </ul>
+</section>
+
+<div class="mb-4 mt-auto"></div>
+<NewsLetter />
+<div class="mb-2"></div>
+<!-- TODO: Add share button -->
+<!-- TODO: Tags should be here, on tag click list posts underneath -->

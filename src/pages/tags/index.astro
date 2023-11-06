@@ -1,11 +1,10 @@
 ---
-import Footer from '@components/Footer.astro';
-import Tag from '@components/Tag.astro';
-import { SITE } from '@config';
-import Layout from '@layouts/Layout.astro';
-import Main from '@layouts/Main.astro';
-import getUniqueTags from '@utils/getUniqueTags';
-import { getPublishedPosts } from '../../utils/getPosts';
+import Tag from "@components/Tag.astro";
+import { SITE } from "@config";
+import Layout from "@layouts/Layout.astro";
+import Main from "@layouts/Main.astro";
+import getUniqueTags from "@utils/getUniqueTags";
+import { getPublishedPosts } from "../../utils/getPosts";
 
 const posts = await getPublishedPosts();
 let tags = getUniqueTags(posts);
@@ -14,8 +13,7 @@ let tags = getUniqueTags(posts);
 <Layout title={`Tags | ${SITE.title}`}>
   <Main pageTitle="Tags" pageDesc="All the tags used in posts.">
     <ul>
-      {tags.map((tag) => <Tag name={tag} size="lg" />)}
+      {tags.map(tag => <Tag name={tag} size="lg" />)}
     </ul>
   </Main>
-  <Footer />
 </Layout>
