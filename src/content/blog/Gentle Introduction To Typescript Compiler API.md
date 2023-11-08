@@ -96,7 +96,7 @@ Using the TypeScript Compiler API has several benefits, particularly for those i
 2. To do [Static Code Analysis](https://snyk.io/learn/open-source-static-code-analysis/)
 3. Or even to build a [DSL (Domain Specific Language)](https://martinfowler.com/dsl.html).
 4. Custom Pre/Post build scripts.
-5. Code Migration.
+5. Code Modification/Migration.
 6. [Use it as Front-End for other low level languages.](https://www.assemblyscript.org/)
 
 > Angular recently introduced the [Standalone Components](https://angular.io/guide/standalone-components), which is a new way to write Angular components without the need to create a module. [Angular team created a migration script](https://github.com/angular/angular/blob/main/packages/core/schematics/ng-generate/standalone-migration/to-standalone.ts) that does this automatically, and it's using the Typescript Compiler API.
@@ -386,8 +386,6 @@ files
   );
 ```
 
-> [Demo for this use case](https://stackblitz.com/edit/stackblitz-starters-1pmgun?embed=1&file=use-cases%2Fno-function-expression%2Findex.ts&hideNavigation=1&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./use-cases/no-function-expression"
-
 I know this isn't like the first example, but it's similar.
 
 > In the first use case, it was enough to loop over the first level nodes in the file, but in this use case, you need to loop over all nodes in the file, the nested ones as well.
@@ -401,6 +399,8 @@ Few key terms that you need to know:
 - Transformer
 - Visitor
 - Context
+
+> [Demo for this use case](https://stackblitz.com/edit/stackblitz-starters-1pmgun?embed=1&file=use-cases%2Fno-function-expression%2Findex.ts&hideNavigation=1&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./use-cases/no-function-expression"
 
 ### Transformer
 
@@ -430,9 +430,7 @@ Same as the previous use case, but instead of throwing an error, you're going to
 _[See how the AST for the function expression looks like](https://ts-ast-viewer.com/#code/DYUwLgBAhgJjEF4IDMCuA7AxmAlge3WjgDF0AKKALgnVQFsAjEAJwBoIHrbGWBKCAN4AoCKNHNwqZoSgQA1BwDcQgL5A)_
 
 ```ts
-const transformer: (
-  file: ts.SourceFile
-) => ts.TransformerFactory<ts.SourceFile> = function (file) {
+const transformer: Transformer = function (file) {
   return function (context) {
     const visit: ts.Visitor = node => {
       if (ts.isVariableStatement(node)) {
@@ -519,6 +517,8 @@ Few key terms that you need to know:
 - Lexical Environment
 - Hoisting
 
+> [Demo for this use case](https://stackblitz.com/edit/stackblitz-starters-1pmgun?embed=1&file=use-cases%2Freplace-function-expression-with-declaration%2Findex.ts&hideNavigation=1&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./use-cases/replace-function-expression-with-declaration"
+
 ### Factory
 
 The `ts.factory` object contains a set of factory functions that can be used to create new nodes or update existing ones. You used `ts.factory.createFunctionDeclaration` to create a new function declaration node using the information from the function expression node and `ts.factory.updateSourceFile` to update the source file node statements while keeping the other properties intact.
@@ -543,64 +543,64 @@ These methods ensure that the transformer has a mechanism to correctly manage sc
 
 ## Use Case: Detect Third-Party Classes Used as Superclasses
 
-The last use case is a bit more complex, you're going to use the Typescript Compiler API to detect third-party classes used as superclasses. Not to do anything about it, just detect them.
+The last use case is a bit more complex, you're going to use the Typescript Compiler API to detect third-party classes used as superclasses, mot to do anything about it, just detect them which means you don't need to use the transformer function.
 
 ```ts
-const trackThirdPartyClassesUsedAsSuperClass: () => ts.TransformerFactory<ts.SourceFile> =
-  function () {
-    return function (context) {
-      const visit: ts.Visitor = node => {
-        if (ts.isClassDeclaration(node)) {
-          const hasSuperClass = node.heritageClauses?.some(
-            heritageClause =>
-              heritageClause.token === ts.SyntaxKind.ExtendsKeyword
-          );
+const trackThirdPartyClassesUsedAsSuperClass: ts.Visitor = node => {
+  if (ts.isClassDeclaration(node)) {
+    const superClass = (node.heritageClauses ?? []).find(
+      heritageClause => heritageClause.token === ts.SyntaxKind.ExtendsKeyword
+    );
 
-          if (!hasSuperClass) {
-            // Not intrested in classes that don't have super class.
-            return node;
-          }
+    // Not intrested in classes that don't have super class.
+    if (!superClass) {
+      return node;
+    }
 
-          const typeChecker = program.getTypeChecker();
-          const [superClass] = node.heritageClauses ?? [];
-          const superClassType = superClass.types[0];
-          const type = typeChecker.getTypeAtLocation(node);
-          const symbol = type.symbol;
-          const valueDeclaration = symbol.valueDeclaration;
+    // in case of class declaration, there will always be one heritage clause (extends)
+    const superClassType = superClass.types[0].expression;
 
-          if (!valueDeclaration) {
-            // In this case this should never happen (more on that later),
-            // but it's here just to satisfy typescript.
-            return node;
-          }
+    // Get the type checker
+    const typeChecker = program.getTypeChecker();
 
-          const thisSourceCodeFile = node.getSourceFile();
-          const sourceCodeInfo = {
-            fileName: thisSourceCodeFile.fileName,
-            className: node.name?.text,
-            ...ts.getLineAndCharacterOfPosition(thisSourceCodeFile, node.pos),
-          };
-          const thirdPartyCodeInfo = {
-            fileName: valueDeclaration.getSourceFile().fileName,
-            className: superClassType.expression.getText(),
-          };
-          const message = `
-							Class: "${sourceCodeInfo.className}"
-							Filename: "${sourceCodeInfo.fileName}"
-							SuperClass: "${thirdPartyCodeInfo.className}"
-							Filename: "${thirdPartyCodeInfo.fileName}"
-							Line: "${sourceCodeInfo.line}"
-							Column: "${sourceCodeInfo.character}"
-						`;
-          console.log(message);
-        }
+    const symbol = typeChecker.getSymbolAtLocation(superClassType);
+    if (!symbol) {
+      return undefined;
+    }
 
-        return ts.visitEachChild(node, visit, context);
-      };
+    const superClassDeclaration = (symbol.declarations ?? []).find(
+      ts.isClassDeclaration
+    );
 
-      return node => ts.visitEachChild(node, visit, context);
+    if (!superClassDeclaration) {
+      // In this case this should never happen (more on that later),
+      // but it's here just to satisfy typescript.
+      return node;
+    }
+
+    const thisSourceCodeFile = node.getSourceFile();
+    const sourceCodeInfo = {
+      fileName: thisSourceCodeFile.fileName,
+      className: node.name?.text,
+      ...ts.getLineAndCharacterOfPosition(thisSourceCodeFile, node.pos),
     };
-  };
+    const thirdPartyCodeInfo = {
+      fileName: superClassDeclaration.getSourceFile().fileName,
+      className: superClassType.getText(),
+    };
+    console.log(`
+        Class: "${sourceCodeInfo.className}"
+        Filename: "${sourceCodeInfo.fileName}"
+        SuperClass: "${thirdPartyCodeInfo.className}"
+        Filename: "${thirdPartyCodeInfo.fileName}"
+        Line: "${sourceCodeInfo.line}"
+        Column: "${sourceCodeInfo.character}"
+  `);
+  }
+
+  // visit each child in this node
+  return ts.forEachChild(node, visit);
+};
 ```
 
 Key terms that you need to know:
@@ -609,6 +609,8 @@ Key terms that you need to know:
 - Type
 - Type Checker
 - Symbol
+
+> [Demo for this use case](https://stackblitz.com/edit/stackblitz-starters-1pmgun?embed=1&file=use-cases%2F3rd-party-classes%2Findex.ts&hideNavigation=1&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./use-cases/3rd-party-classes/"
 
 ### HeritageClauses
 
@@ -850,6 +852,7 @@ I'm writing few other blog posts that will help you get started with the Typescr
 
 - [OXC](https://github.com/web-infra-dev/oxc)
 - [ts-morph](https://github.com/dsherret/ts-morph)
+- [jscodeshift](https://github.com/facebook/jscodeshift)
 
 ## Credits
 
