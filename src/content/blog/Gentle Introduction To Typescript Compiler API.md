@@ -801,7 +801,7 @@ Grammars are usually represented in a form called **Backus-Naur Form (BNF)** or 
 
 Simple example of a grammar:
 
-```bnf
+```bash
 <identifier> ::= "a" | "b" | "c" | ... | "z"
 <function> ::= "function" <identifier>* "(" ")" "{" "}"
 ```
@@ -810,7 +810,7 @@ The parser will use the grammar to build the AST, in case of writing a function,
 
 [Another example](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form#Example)
 
-```bnf
+```bash
  <postal-address> ::= <name-part> <street-address> <zip-part>
 
     <name-part> ::= <personal-part> <last-name> <opt-suffix-part> <EOL> | <personal-part> <name-part>

@@ -3,7 +3,7 @@ import Hr from "@components/Hr.astro";
 import { SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
 import getSortedPosts from "@utils/getSortedPosts";
-import PostLine from "./PostLine.astro";
+import PostLine from "../components/PostLine.astro";
 
 const sortedPosts = await getSortedPosts();
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
