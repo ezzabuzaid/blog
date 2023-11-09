@@ -14,13 +14,11 @@ const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
     {
       featuredPosts.length > 0 && (
         <>
-          <section class="mx-auto max-w-3xl">
-            <ul class="space-y-20">
-              {featuredPosts.map(post => (
-                <PostLine post={post} />
-              ))}
-            </ul>
-          </section>
+          <ul class="space-y-20">
+            {featuredPosts.map(post => (
+              <PostLine post={post} />
+            ))}
+          </ul>
           <Hr />
         </>
       )

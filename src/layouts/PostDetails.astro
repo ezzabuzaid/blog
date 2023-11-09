@@ -65,6 +65,13 @@ const devMode = import.meta.env.PROD;
     <article
       id="article"
       role="article"
+      class="prose w-full max-w-full justify-between [word-spacing:.08em] prose-code:font-[monospace] xl:max-w-3xl"
+    >
+      <Content />
+    </article>
+    <!-- <article
+      id="article"
+      role="article"
       class="prose flex max-w-full justify-between [word-spacing:.08em] prose-code:font-[monospace]"
     >
       <div class="w-full xl:max-w-2xl">
@@ -74,7 +81,7 @@ const devMode = import.meta.env.PROD;
         class="relative hidden w-1/3 list-inside pl-0 text-sm text-gray-700 transition-[margin-top] lg:block"
       >
       </aside>
-    </article>
+    </article> -->
 
     <ul class="my-8">
       {tags.map(tag => <Tag name={slugifyStr(tag)} />)}

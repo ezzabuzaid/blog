@@ -13,7 +13,11 @@ const { data } = post;
 
 <li class="my-1 space-y-4">
   <h2 class="text-4xl font-semibold decoration-dashed hover:underline">
-    <a rel="prefetch" class="flex" href={`/posts/${slugify(data)}`}>
+    <a
+      rel="prefetch"
+      class="flex w-full sm:w-9/12"
+      href={`/posts/${slugify(data)}`}
+    >
       {data.title}
     </a>
   </h2>

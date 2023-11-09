@@ -38,12 +38,6 @@
     sm:scale-110;
   }
 
-  .prose thead th:first-child,
-  tbody td:first-child,
-  tfoot td:first-child {
-    padding-left: 0.5714286em;
-  }
-
   /* ===== scrollbar ===== */
   html {
     overflow-y: scroll;
@@ -131,4 +125,8 @@ iframe .brand {
 .post-line-text #table-of-content,
 .post-line-text #table-of-content ~ * {
   display: none !important;
+}
+
+.prose {
+  font-size: 0.925rem;
 }
