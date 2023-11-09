@@ -740,40 +740,103 @@ function printNode(
 
 ## How The Compiler Works
 
-Before starting with API, you have to know how the compiler works.
-
 The compiler is a pipeline that consists of several stages, each stage takes the output of the previous stage and transforms it into something else.
 
-Let's say you have a file named `awesome.ts` with the following content:
+### Lexical Analysis
+
+In this stage, the compiler takes the source code and breaks it down into a series of tokens, a token is a characters or sequence of characters that can be treated as a single unit.
 
 ```ts
 function IAmAwesome() {}
 ```
 
-The compiler pipeline consists of the following stages:
+Will be transformed into the following tokens:
 
-### Lexical Analysis
+```bash
+<function, keyword>
+<IAmAwesome, identifier>
+<(, punctuation>
+<), punctuation>
+<{, punctuation>
+<}, punctuation>
+```
 
-The first stage of the compiler pipeline is the lexical analysis stage. In this stage, the compiler takes the source code and breaks it down into a series of tokens. A token is a characters or sequence of characters that can be treated as a single unit. Taking the `awesome.ts` file as an example, the compiler will break it down into the following tokens:
+The module/function that does this is called the **Scanner**/**Tokensizer** which is responsible for scanning the source code and generating the tokens. When the term scanner/tokenizer is used, imagine a while loop that loops over the source code character by character and switch case to determine the token type.
 
-`function` `IAmAwesome` `(` `)` `{` `}`
+```ts
+function scan(sourceCode: string) {
+  const tokens: Token[] = [];
+  let currentChar: string;
+  let index = -1;
+  do {
+    index = index + 1;
+    currentChar = sourceCode[];
+  } while (index < sourceCode.length) {
+    switch (currentChar) {
+      case "{":
+        // ...
+        break;
+      case "}":
+        // ...
+        break;
+      // ...
+    }
+  }
+}
+```
 
 [_Check how `function` is represented_](https://github.com/microsoft/TypeScript/blob/97147915ab667a52e31ac743843786cbc9049559/src/compiler/scanner.ts#L153)
 
 ### Syntax Analysis
 
-The second stage of the compiler pipeline is the syntax analysis stage. In this stage, the compiler takes the tokens generated in the previous stage and uses them to build a tree-like structure called an Abstract Syntax Tree (AST). The AST represents the syntactic structure of the source code.
+In this stage, the compiler takes the tokens generated in the previous stage and uses them to build a tree-like structure called an Abstract Syntax Tree (AST). _The AST represents the syntactic structure of the source code._
 
-Some stuff that the compiler does in this stage:
+The part of the compiler that does this is called the **Parser** which is responsible for parsing the tokens and building the AST that is then used by the semantic analysis stage.
 
-- It will check if a function has a body.
-- It will check if a function has a name.
+So the Tokensizer generates the tokens and the Parser builds the AST. You may be wondering (are you?) how the parser knows what the AST should look like, well, it's defined in the TypeScript grammar.
 
-The part of the compiler that does this is called the **Parser**. The parser is responsible for parsing the tokens and building the AST. The AST is then used by the semantic analysis stage to perform type checking and other semantic checks.
+A grammar is a set of rules that define the syntax of a language. Think of the English grammar, it defines the rules of the English language, such as how to form a sentence, how to use punctuation, etc.
+
+Grammars are usually represented in a form called **Backus-Naur Form (BNF)** or [Antlr](https://www.antlr.org/), which is a notation that describes the grammar of a language.
+
+Simple example of a grammar:
+
+```bnf
+<identifier> ::= "a" | "b" | "c" | ... | "z"
+<function> ::= "function" <identifier>* "(" ")" "{" "}"
+```
+
+The parser will use the grammar to build the AST, in case of writing a function, the parser will look for the `function` keyword, then the identifier, then the `(`, then the `)`, then the `{`, then the `}` in case of any of these tokens is missing, the parser will throw an error.
+
+[Another example](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form#Example)
+
+```bnf
+ <postal-address> ::= <name-part> <street-address> <zip-part>
+
+    <name-part> ::= <personal-part> <last-name> <opt-suffix-part> <EOL> | <personal-part> <name-part>
+
+  <personal-part> ::= <first-name> | <initial> "."
+
+ <street-address> ::= <house-num> <street-name> <opt-apt-num> <EOL>
+
+       <zip-part> ::= <town-name> "," <state-code> <ZIP-code> <EOL>
+
+<opt-suffix-part> ::= "Sr." | "Jr." | <roman-numeral> | ""
+    <opt-apt-num> ::= "Apt" <apt-num> | ""
+```
 
 ### Semantic Analysis
 
-The third stage of the compiler pipeline is the semantic analysis stage. In this stage, the compiler takes the AST generated in the previous stage and uses it to perform type checking and builds a symbol table using the **Binder** component.
+In this stage, the compiler takes the AST generated in the previous stage and uses it to perform type checking and builds a symbol table using the **Binder** component.
+
+The parse will ensure the code is syntactically correct, but it doesn't ensure it's semantically correct, for example, the following code is syntactically correct but semantically incorrect.
+
+```ts
+let a = 1;
+a();
+```
+
+This is where TypeScript shines, it will catch this error at compile time, thanks to the semantic analysis stage.
 
 #### Type Checking
 
@@ -847,6 +910,7 @@ I'm writing few other blog posts that will help you get started with the Typescr
 - [TypeScript Compiler Notes](https://github.com/microsoft/TypeScript-Compiler-Notes)
 - [TypeScript Transformer Handbook](https://github.com/itsdouges/typescript-transformer-handbook)
 - [TypeScript Source Code](https://github.dev/microsoft/TypeScript/tree/main/src/compiler)
+- [What Is Semantic Analysis in a Compiler?](https://pgrandinetti.github.io/compilers/page/what-is-semantic-analysis-in-compilers/)
 
 ## Related Projects
 
