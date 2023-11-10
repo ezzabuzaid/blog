@@ -27,7 +27,7 @@ const {
 const { Content } = await post.render();
 const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
   .href;
-const devMode = import.meta.env.PROD;
+const devMode = import.meta.env.DEV;
 ---
 
 {devMode && <Chat client:only post={post.data.title} />}
@@ -185,4 +185,43 @@ const devMode = import.meta.env.PROD;
       });
     });
   </script> -->
+  <script>
+    (() => {
+      const article = document.querySelector("article");
+      if (!article) {
+        return;
+      }
+      article.querySelectorAll("p").forEach(p => {
+        p.innerHTML = p.innerHTML
+          .split(" ")
+          .map(word => `<span>${word}</span>`)
+          .join(" ");
+      });
+      article.querySelectorAll("li").forEach(li => {
+        if (li.childNodes[0].nodeName !== "#text") {
+          return;
+        }
+        li.innerHTML = li.innerHTML
+          .split(" ")
+          .map(word => `<span>${word}</span>`)
+          .join(" ");
+      });
+
+      let lastElement: Element | null;
+      const cssClass = "text-green-500";
+      article.addEventListener("mousemove", function (event) {
+        const x = event.clientX;
+        const y = event.clientY;
+        const element = document.elementFromPoint(x, y);
+
+        if (element?.tagName === "SPAN") {
+          if (lastElement !== element) {
+            element.classList.add(cssClass);
+          }
+        }
+
+        lastElement = element;
+      });
+    })();
+  </script>
 </Layout>
