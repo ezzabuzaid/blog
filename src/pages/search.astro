@@ -10,6 +10,6 @@ const posts = await getPublishedPosts();
 
 <Layout title={`Search | ${SITE.title}`}>
   <Main pageTitle="Search" pageDesc="Search any article ...">
-    <SearchBar client:load searchList={posts.map(it => it.data)} />
+    <SearchBar client:load searchList={posts} />
   </Main>
 </Layout>
