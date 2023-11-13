@@ -731,6 +731,54 @@ Symbols let the type checker look up names and then check their declarations to 
 
 ## Diagnostic
 
+Diagnostics in TypeScript are objects that represent issues the compiler has identified in the code. These issues can range from syntax errors and type mismatches to more subtle semantic issues that might not be immediately apparent.
+
+Here's a simple example of how you might encounter a diagnostic in TypeScript:
+
+```ts
+let greeting: string = 42;
+```
+
+The TypeScript compiler will generate a diagnostic message for the above code, indicating that the type 'number' is not assignable to the type 'string'.
+
+---
+
+When the TypeScript compiler runs, it performs several checks on the code. If it encounters something that doesn't align with the language rules or the project's configuration, it creates a diagnostic object. Each diagnostic object contains information about the nature of the problem, including:
+
+- The file in which the issue was found.
+- The start and end position of the relevant code.
+- A message describing the issue.
+- A diagnostic category (error, warning, suggestion, or message).
+- A code that uniquely identifies the type of diagnostic.
+
+You can access diagnostics programmatically using the TypeScript Compiler API. Here's a snippet that demonstrates how to retrieve and log all diagnostics for a given TypeScript program:
+
+```ts
+const emitResult = program.emit();
+
+// Retrieve and concatenate all diagnostics
+const allDiagnostics = ts
+  .getPreEmitDiagnostics(program)
+  .concat(emitResult.diagnostics);
+
+// Iterate over diagnostics and log them
+allDiagnostics.forEach(diagnostic => {
+  if (diagnostic.file) {
+    let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(
+      diagnostic.start!
+    );
+    let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
+    console.log(
+      `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`
+    );
+  } else {
+    console.log(ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"));
+  }
+});
+```
+
+Diagnostics are not just for the compiler; they are also used by IDEs and editors to provide real-time feedback to developers. For example, when you see red squiggly lines under code in Visual Studio Code, that's the editor using TypeScript diagnostics to indicate an issue.
+
 ## Printer
 
 ```ts
@@ -896,7 +944,7 @@ While Binding and Type Checking are distinct processes, they are interdependent.
 
 Using [ESLint](https://eslint.org/) is a better option if you want to enforce rules on your codebase due to the fact that it's specifically built for that purpose. However, if you want to build a tool that does something more complex, then the Typescript Compiler API is the way to go.
 
-[I have wrote a guide for you](https://techtext.dev/posts/gentle-introduction-to-eslint-rules) to learn more.
+[I have wrote a guide for you](https://writer.sh/posts/gentle-introduction-to-eslint-rules) to learn more.
 
 ## Conclusion
 

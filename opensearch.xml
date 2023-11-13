@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
-	<ShortName>TechText</ShortName>
-	<LongName>TechText: The developer home</LongName>
-	<Description>Search for articles on TechText</Description>
-	<Image height="16" width="16" type="image/svg+xml">https://techtext.dev/favicon.svg</Image>
-	<Url type="text/html" template="https://techtext.dev/search/?q={searchTerms}"/>
+	<ShortName>Writer.sh</ShortName>
+	<LongName>Writer.sh: The developer home</LongName>
+	<Description>Search for articles on Writer.sh</Description>
+	<Image height="16" width="16" type="image/svg+xml">https://writer.sh/favicon.svg</Image>
+	<Url type="text/html" template="https://writer.sh/search/?q={searchTerms}"/>
 	<Contact>ezzabuzaid@hotmail.com</Contact>
 	<Query role="example" searchTerms="Build TypeAhead Using RxJS" />
 	<Developer>ezzabuzaid</Developer>
-	<Attribution>Powered by TechText</Attribution>
+	<Attribution>Powered by Writer.sh</Attribution>
 	<SyndicationRight>open</SyndicationRight>
 	<AdultContent>false</AdultContent>
 </OpenSearchDescription>

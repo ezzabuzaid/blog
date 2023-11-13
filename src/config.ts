@@ -1,7 +1,7 @@
 import type { Site, SocialObjects } from "./types";
 
 export const SITE: Site = {
-  website: "https://techtext.dev/",
+  website: "https://writer.sh/",
   author: "Ezzabuzaid",
   desc: "I'm Senior Software Engineer and a Technical Writer with a keen interest in merging technology and communication. Passionate about software development and committed to reading and lifelong learning.",
   title: "Writer.sh - Software Engineering Blog",
@@ -44,7 +44,7 @@ export const SOCIALS: SocialObjects = [
   // },
   {
     name: "RSSFeed",
-    href: "https://feeds.feedburner.com/techtextdev",
+    href: "https://feeds.feedburner.com/writersh",
     linkTitle: `Subscribe to my RSS Feed`,
     active: true,
   },

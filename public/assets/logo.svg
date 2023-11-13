@@ -14,7 +14,7 @@
 			<rect id="Rectangle" x="0" y="2" width="96" height="18"></rect><text id="headerText.primary"
 				font-family="Droid Sans Mono" font-size="18" font-weight="400" letter-spacing=".81" fill="#364f6b"
 				data-text-alignment="C" font-style="normal">
-				<tspan x="1.5520820617675781" y="17.5">TechText</tspan>
+				<tspan x="1.5520820617675781" y="17.5">Writer.sh</tspan>
 			</text>
 		</g>
 		<path d="M92 70l36 0l0 2l-36 0l0 -2zm-60 0l36 0l0 2l-36 0l0 -2zm0 35l96 0l0 2l-96 0l0 -2z" id="shape.primary"

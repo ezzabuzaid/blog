@@ -14,7 +14,7 @@ import { remarkReadingTime } from "./remark-reading-time.mjs";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://techtext.dev/",
+  site: "https://writer.sh/",
   integrations: [
     prefetch(),
     expressiveCode(),
