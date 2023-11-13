@@ -19,7 +19,9 @@ export default defineConfig({
     prefetch(),
     expressiveCode(),
     mdx(),
-    tailwind(),
+    tailwind({
+      applyBaseStyles: false,
+    }),
     react(),
     sitemap(),
   ],
