@@ -191,21 +191,34 @@ const devMode = import.meta.env.DEV;
       if (!article) {
         return;
       }
-      article.querySelectorAll("p").forEach(p => {
-        p.innerHTML = p.innerHTML
-          .split(" ")
-          .map(word => `<span>${word}</span>`)
-          .join(" ");
-      });
-      article.querySelectorAll("li").forEach(li => {
-        if (li.childNodes[0].nodeName !== "#text") {
-          return;
+
+      function spanify(
+        el: Element,
+        ignore: (node: Element) => boolean = () => false
+      ) {
+        for (const node of el.childNodes) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            const segmenter = new Intl.Segmenter([], { granularity: "word" });
+            const segments = segmenter.segment(node.textContent ?? "");
+            const spans = Array.from(segments).map(word => {
+              const span = document.createElement("span");
+              span.textContent = word.segment;
+              return span;
+            });
+            setTimeout(() => {
+              node.replaceWith(...spans);
+            });
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            if (!ignore(node as Element)) {
+              spanify(node as Element, ignore);
+            }
+          }
         }
-        li.innerHTML = li.innerHTML
-          .split(" ")
-          .map(word => `<span>${word}</span>`)
-          .join(" ");
-      });
+      }
+
+      spanify(article, node =>
+        (node.classList ?? []).contains("expressive-code")
+      );
 
       let lastElement: Element | null;
       const cssClass = "text-green-500";

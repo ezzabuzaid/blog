@@ -72,9 +72,19 @@ dist
 - Source map: A source map is a file that maps the code within a compressed file back to its original position in a source file to aid debugging. It is mostly used by the browser to map the code it executes back to its original location in the source file.
 - Declaration file: A file that provides type information about existing JavaScript code to enables other programs to use the values (functions, variables, ...) defined in the file without having to guess what they are.
 
-> The TypeScript compiler generates declaration files for all the code it compiles if enabled in tsconfig.json, and you can also write your own declaration files for existing JavaScript libraries.
+> The TypeScript compiler generates declaration files for all the code it compiles if enabled in tsconfig.json.
 
-![How TypeScript Compiler Works](../../assets/how-typescript-compiler-works.excalidraw.svg)
+<figure>
+
+![TypeScript Code Generation](../../assets/typescript-code-generation.excalidraw.svg)
+
+<figcaption>
+  <center>
+    TypeScript Compilation Process: From Source Code to JavaScript, Declaration Files, and Source Maps
+  </center>
+</figcaption>
+
+</figure>
 
 ### What is The TypeScript Compiler API?
 
@@ -742,7 +752,12 @@ function printNode(
 
 ## How The Compiler Works
 
-The compiler is a pipeline that consists of several stages, each stage takes the output of the previous stage and transforms it into something else.
+<figure>
+
+![How The TypeScript Compiler Works](../../assets/how-the-ts-compiler-works.svg)
+
+<figcaption><center>The compiler is a pipeline that consists of several stages, each stage takes the output of the previous stage and transforms it into something else.</center></figcaption>
+</figure>
 
 The following is high-level overview.
 
