@@ -45,7 +45,7 @@ const devMode = import.meta.env.DEV;
     section: "Technology",
   }}
 >
-  <main class="w-full px-12 2xl:pl-20">
+  <main class="w-full px-4 sm:px-12 2xl:pl-20">
     <Datetime
       datetime={pubDatetime}
       minutesRead={minutesRead}
@@ -86,6 +86,11 @@ const devMode = import.meta.env.DEV;
     <ul class="my-8">
       {tags.map(tag => <Tag name={slugifyStr(tag)} />)}
     </ul>
+    <div
+      id="section-highlighter"
+      class="absolute -z-10 rounded border border-slate-400 transition-all"
+    >
+    </div>
   </main>
 
   <script define:vars={{ title }}>
@@ -194,8 +199,12 @@ const devMode = import.meta.env.DEV;
 
       function spanify(
         el: Element,
-        ignore: (node: Element) => boolean = () => false
+        ignore: (node: ChildNode) => boolean = () => false
       ) {
+        if (ignore(el)) {
+          return;
+        }
+
         for (const node of el.childNodes) {
           if (node.nodeType === Node.TEXT_NODE) {
             const segmenter = new Intl.Segmenter([], { granularity: "word" });
@@ -205,20 +214,36 @@ const devMode = import.meta.env.DEV;
               span.textContent = word.segment;
               return span;
             });
-            setTimeout(() => {
-              node.replaceWith(...spans);
-            });
+            node.replaceWith(...spans);
           } else if (node.nodeType === Node.ELEMENT_NODE) {
-            if (!ignore(node as Element)) {
-              spanify(node as Element, ignore);
-            }
+            spanify(node as Element, ignore);
           }
         }
       }
 
-      spanify(article, node =>
-        (node.classList ?? []).contains("expressive-code")
-      );
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const { target, isIntersecting } = entry;
+          if (
+            isIntersecting &&
+            target.classList.contains("spanned") === false
+          ) {
+            target.classList.add("spanned");
+            spanify(
+              target,
+              node =>
+                node.nodeType === Node.ELEMENT_NODE &&
+                (Array.from((node as Element).classList) ?? []).includes(
+                  "expressive-code"
+                )
+            );
+          }
+        });
+      });
+
+      document.querySelectorAll("article > *").forEach(directChild => {
+        observer.observe(directChild);
+      });
 
       let lastElement: Element | null;
       const cssClass = "text-green-500";
@@ -235,6 +260,61 @@ const devMode = import.meta.env.DEV;
 
         lastElement = element;
       });
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const highligher = document.querySelector(
+        "#section-highlighter"
+      ) as HTMLElement;
+      const article = document.querySelector("article");
+      if (!article || !highligher) {
+        return;
+      }
+      const headings = Array.from(article.querySelectorAll("h3"));
+
+      window.addEventListener("scroll", () => {
+        const [firstVisibleHeading] = headings.filter(isInViewport);
+        let nextHeading =
+          firstVisibleHeading?.nextElementSibling as HTMLElement;
+        const sections: HTMLElement[] = [firstVisibleHeading];
+        while (nextHeading?.tagName.startsWith("H") === false) {
+          sections.push(nextHeading as HTMLElement);
+          nextHeading = nextHeading?.nextElementSibling as HTMLElement;
+        }
+        if (!firstVisibleHeading) return;
+        adjustHighlighter(firstVisibleHeading, nextHeading, sections);
+      });
+
+      function isInViewport(element: HTMLElement) {
+        const rect = element.getBoundingClientRect();
+        return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <=
+            (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <=
+            (window.innerWidth || document.documentElement.clientWidth)
+        );
+      }
+
+      function adjustHighlighter(
+        firstVisibleHeading: HTMLElement,
+        nextHeading: HTMLElement,
+        sections: HTMLElement[]
+      ) {
+        const height = nextHeading.offsetTop - firstVisibleHeading.offsetTop;
+        const width = Math.max(...sections.map(section => section.clientWidth));
+        const top = firstVisibleHeading.offsetTop;
+        const left = firstVisibleHeading.offsetLeft;
+        const paddingHorz = 32;
+        const paddingTop = 8;
+        highligher.style.setProperty("height", `${height + paddingTop}px`);
+        highligher.style.setProperty("width", `${width + paddingHorz}px`);
+        highligher.style.setProperty("top", `${top - paddingTop * 2}px`);
+        highligher.style.setProperty("left", `${left - paddingHorz / 2}px`);
+      }
     })();
   </script>
 </Layout>
