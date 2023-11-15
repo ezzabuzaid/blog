@@ -7,7 +7,7 @@ draft: false
 tags:
   - typescript
   - guide
-description: Learn how to use the Typescript Compiler API to build your own tools
+description: Dive deep into the inner workings of the TypeScript Compiler API and discover how it can enhance your development workflow. From manual type checking to code generation and transformation, this guide provides a detailed walkthrough of the API's functionalities.
 ---
 
 TypeScript extends JavaScript by adding types, thereby enhancing code quality and understandability through static type checking which enables developers to catch errors at compile-time rather than runtime.
@@ -16,21 +16,21 @@ The TypeScript team has built a compiler `tsc` to process TypeScript type annota
 
 In this article, you'll explore the TypeScript Compiler API, which is an integral part of the TypeScript compiler that exposes various functionalities, enabling you to interact with the compiler programmatically.
 
-> The article is organized into different use cases. Each use case will introduce you to a new aspect of the Compiler API, and by the end of the article, you'll have a thorough understanding of how the Compiler API works and how to use it to build your own tools.
+> The article is organized into different use cases each of which will introduce you to a new aspect of the Compiler API, and by the end of the article, you'll have a thorough understanding of how the Compiler API works and how to use it to build your own tools. Keep in mind the use cases are not complete, they're just to demonstrate the concept.
 
 ## Table of Content
 
 ## What is A Compiler?
 
-A compiler is a specialized software program that **translates** source code written in one programming language into another language, usually machine code or an intermediate form. Compilers perform several tasks including lexical analysis, syntax analysis, semantic analysis, code generation and more.
+A compiler is a specialized software program that **translates** source code written in one programming language into another language, usually machine code or an intermediate form. Compilers perform several tasks including lexical analysis, syntax analysis, semantic analysis, code generation, and more.
 
 Compilers come in various forms, serving different needs, to my understanding TypeScript is a [Source-to-source](https://en.wikipedia.org/wiki/Source-to-source_compiler) compiler, which means it takes TypeScript code and compiles it into JavaScript code.
 
 ### What is The TypeScript Compiler?
 
-The TypeScript Compiler (tsc) takes TypeScript code (JavaScript and type information), and compiles it into plain JavaScript as the end result while in the process it performs type checking to catch errors at compile time rather than at runtime.
+The TypeScript Compiler (tsc) takes TypeScript code (JavaScript and type information) and compiles it into plain JavaScript as the result while in the process it performs type checking to catch errors at compile time rather than at runtime.
 
-For the compilation to happen you need to feed the compiler a TypeScript file/code and TypeScript configuration file (tsconfig.json) to guide the compiler on how to behave.
+For the compilation to happen you need to feed the compiler a TypeScript file/code and the configuration file (tsconfig.json) to guide the compiler on how to behave.
 
 ```ts
 // file.ts
@@ -70,7 +70,7 @@ dist
 
 - JavaScript code: The compiler will output JavaScript code that can be executed later on.
 - Source map: A source map is a file that maps the code within a compressed file back to its original position in a source file to aid debugging. It is mostly used by the browser to map the code it executes back to its original location in the source file.
-- Declaration file: A file that provides type information about existing JavaScript code to enables other programs to use the values (functions, variables, ...) defined in the file without having to guess what they are.
+- Declaration file: A file that provides type information about existing JavaScript code to enable other programs to use the values (functions, variables, ...) defined in the file without having to guess what they are.
 
 > The TypeScript compiler generates declaration files for all the code it compiles if enabled in tsconfig.json.
 
@@ -102,16 +102,16 @@ and more.
 
 Using the TypeScript Compiler API has several benefits, particularly for those interested in building tools around TypeScript. You could utilize the API
 
-1. In a VsCode extension
+1. [Write a Language Service Plugin](https://github.com/Microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin)
 2. To do [Static Code Analysis](https://snyk.io/learn/open-source-static-code-analysis/)
 3. Or even to build a [DSL (Domain Specific Language)](https://martinfowler.com/dsl.html).
 4. Custom Pre/Post build scripts.
 5. Code Modification/Migration.
-6. [Use it as Front-End for other low level languages.](https://www.assemblyscript.org/)
+6. [Use it as a Front-End for other low-level languages.](https://www.assemblyscript.org/)
 
 > Angular recently introduced the [Standalone Components](https://angular.io/guide/standalone-components), which is a new way to write Angular components without the need to create a module. [Angular team created a migration script](https://github.com/angular/angular/blob/main/packages/core/schematics/ng-generate/standalone-migration/to-standalone.ts) that does this automatically, and it's using the Typescript Compiler API.
 
-There are few interesting projects that utilize the Typescript Compiler API, such as:
+There are a few interesting projects that utilize the Typescript Compiler API, such as:
 
 - [Compile JSONSchema to TypeScript type declarations](https://github.com/bcherny/json-schema-to-typescript)
 - [TypeScript AST Viewer](https://ts-ast-viewer.com/)
@@ -177,7 +177,7 @@ In this code you're doing the following:
 
 > [Demo for this use case](https://stackblitz.com/edit/stackblitz-starters-1pmgun?embed=1&file=use-cases%2Fenforce-one-class-per-file%2Findex.ts&hideNavigation=1&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./use-cases/enforce-one-class-per-file/"
 
-Let's break it down, there are few key terms that you need to know:
+Let's break it down, there are a few key terms that you need to know:
 
 - Program
 - Source File
@@ -191,9 +191,9 @@ When working with the TypeScript Compiler, one of the central elements you'll en
 The Program is created using the `ts.createProgram` function, which can accept a variety of configuration options, such as
 
 - `options`: These are the compiler options that guide how the TypeScript Compiler will behave. This could include settings like the target ECMAScript version, module resolution strategy, and whether to include type-checking errors, among others.
-- `rootNames`: This property specifies the entry files for the program. It an array of filenames (.ts) that act as the roots from which the TypeScript Compiler will begin its operations.
+- `rootNames`: This property specifies the entry files for the program. It is an array of filenames (.ts) that act as the roots from which the TypeScript Compiler will begin its operations.
 - `projectReferences`: If your TypeScript project consists of multiple sub-projects that reference each other, this property is used to manage those relationships.
-- `configFileParsingDiagnostics`: This property is an array that will capture any diagnostic information or errors that arise when parsing the tsconfig.json file.
+- `configFileParsingDiagnostics`: This property is an array that will capture any diagnostic information or errors that arise when parsing the tsconfig.json file. More on that later.
 
 ```ts
 const tsconfigPath = "./tsconfig.json"; // path to your tsconfig.json
@@ -215,7 +215,7 @@ Writing code is actually writing text, you understand it because you know the la
 
 The compiler will take this text and transform it into something that can be utilised. This transformation is called **parsing** and its output is called **Abstract Syntax Tree (AST)**.
 
-A source file as a representation of a file in your project, it contains information about the file, such as its name, path, and contents.
+A source file is a representation of a file in your project, it contains information about the file, such as its name, path, and contents.
 
 The AST is a tree-like data structure and as any tree, it has a root node. The root node is **Source File**.
 
@@ -223,7 +223,7 @@ The AST is a tree-like data structure and as any tree, it has a root node. The r
 
 The code you write is essentially a text that isn't useful unless it can be parsed. That parsing process produces a tree data structure called AST, it contains a lot of information like the name, kind, and position of the node in the source code.
 
-The AST is used by the compiler to understand the code and perform various operations on it. For example, the compiler uses the AST to perform type checking.
+The AST is used by the compiler to understand the code and perform various operations on it. For example, the compiler uses the AST to perform type-checking.
 
 The following code:
 
@@ -231,7 +231,7 @@ The following code:
 function IAmAwesome() {}
 ```
 
-Will be transformed into the following AST:
+will be transformed into the following AST:
 
 ```json
 { // -> Source File Node
@@ -269,7 +269,7 @@ The node object has more than just these properties but right now we're only int
 
 **Parent**: This property points to the node that is the parent of the current node in the AST.
 
-**Flags**: These are binary attributes stored as flags in the node. They can tell you various properties of the node, such as whether it's a read-only field if it has certain modifiers.
+**Flags**: These are binary attributes stored as flags in the node. They can tell you various properties of the node, such as whether it's a read-only field or it has certain modifiers.
 
 ### Declaration
 
@@ -283,7 +283,7 @@ class Test {
 }
 ```
 
-In this example we have two declarations:
+In this example, we have two declarations:
 
 - `Test` -> `ClassDeclaration`
 - `runner` -> `PropertyDeclaration`
@@ -314,7 +314,7 @@ An expression is a node in the code that evaluates to a value. For example
 let a = 1 + 2;
 ```
 
-the part `1 + 2` is an expression, specifically a binary expression
+The part `1 + 2` is an expression, specifically a binary expression
 
 Another example
 
@@ -322,7 +322,7 @@ Another example
 const add = function addFn(a: number, b: number) {};
 ```
 
-`function ...` is an expression, specifically a function expression.
+The `function ...` is an expression, specifically a function expression.
 
 More advanced example
 
@@ -400,11 +400,11 @@ I know this isn't like the first example, but it's similar.
 
 > In the first use case, it was enough to loop over the first level nodes in the file, but in this use case, you need to loop over all nodes in the file, the nested ones as well.
 
-The main logic is within the `visit` function, it checks if the node is a `VariableDeclaration` and whether its initializer is a `FunctionExpression`, if so, then throw an error.
+The main logic is within the `visit` function, it checks if the node is a `VariableDeclaration` and whether its initializer is a `FunctionExpression`, and if so, then throws an error.
 
 The looping over the files is the same but with a slight difference, you're using `ts.transform` API.
 
-Few key terms that you need to know:
+A few key terms that you need to know:
 
 - Transformer
 - Visitor
@@ -521,7 +521,7 @@ const transformer: Transformer = function (file) {
 };
 ```
 
-Few key terms that you need to know:
+A few key terms that you need to know:
 
 - Factory
 - Lexical Environment
@@ -547,13 +547,13 @@ Here are the key points regarding the lexical environment in your transformer fu
 
   _The previous code only handles the function expression at the top level_
 
-- Declaration Collection: The lexical environment also collect the hoisted declarations through `context.endLexicalEnvironment()`. This method returns an array of Statement nodes that represent the declarations hoisted to the current lexical environment, which can then be included in the `SourceFile` node.
+- Declaration Collection: The lexical environment also collects the hoisted declarations through `context.endLexicalEnvironment()`. This method returns an array of Statement nodes that represent the declarations hoisted to the current lexical environment, which can then be included in the `SourceFile` node.
 
 These methods ensure that the transformer has a mechanism to correctly manage scope and collect hoisted declarations, which is crucial for accurately transforming code while maintaining correct scoping and semantics.
 
 ## Use Case: Detect Third-Party Classes Used as Superclasses
 
-The last use case is a bit more complex, you're going to use the Typescript Compiler API to detect third-party classes used as superclasses, mot to do anything about it, just detect them which means you don't need to use the transformer function.
+The last use case is a bit more complex, you're going to use the Typescript Compiler API to detect third-party classes used as superclasses, not to do anything about it, just detect them which means you don't need to use the transformer function.
 
 ```ts
 const trackThirdPartyClassesUsedAsSuperClass: ts.Visitor = node => {
@@ -636,7 +636,7 @@ interface HeritageClause {
 _ `token` is the keyword used in the clause, it can be `extends` or `implements`._
 _ `types` is an array of `ExpressionWithTypeArguments` nodes, which represents the types specified in the clause._
 
-`types` will have single item if you're extending a class or multiple items if you're implementing interfaces.
+`types` will have a single item if you're extending a class or multiple items if you're implementing interfaces.
 
 In this example, you're only interested in the `extends` hence `const [superClass] = node.heritageClauses`
 
@@ -644,7 +644,7 @@ In this example, you're only interested in the `extends` hence `const [superClas
 
 It is the "Type" part in **TypeScript** 😏, representing the type information of a particular symbol in the AST.
 
-A `Type` object is assoicated with a `Symbol` to represent the type of the symbol (named entity).
+A `Type` object is associated with a `Symbol` to represent the type of the symbol (named entity).
 
 ```ts
 interface Type {
@@ -659,7 +659,7 @@ interface Type {
 
 ### Type Checker
 
-It is an essential part of the TypeScript Compiler API, acting as the engine that powers the type system in TypeScript. The Type Checker traverse the AST, examining the **Type** and **Symbol** of nodes to ensure they adhere to the type annotations and constraints defined in the code.
+It is an essential part of the TypeScript Compiler API, acting as the engine that powers the type system in TypeScript. The Type Checker traverses the AST, examining the **Type** and **Symbol** of nodes to ensure they adhere to the type annotations and constraints defined in the code.
 
 The Type Checker can be accessed via the `program` object, and it provides a rich set of methods to retrieve type information, check types, and obtain symbol information, among other functionalities.
 
@@ -667,7 +667,7 @@ The Type Checker can be accessed via the `program` object, and it provides a ric
 const typeChecker = program.getTypeChecker();
 ```
 
-In this use case, you used typeChecker to get the type of the class declaration node and the symbol associated with it, which you then used to get the value declaration of the symbol.
+In this use case, you used `typeChecker` to get the type of the class declaration node and the symbol associated with it, which you then used to get the value declaration of the symbol.
 
 ```ts
 const type = typeChecker.getTypeAtLocation(node);
@@ -675,7 +675,7 @@ const symbol = type.symbol;
 const valueDeclaration = symbol.valueDeclaration;
 ```
 
-TypeChecker have a lot of methods to facilitate working with types, symbols, and nodes.
+TypeChecker has a lot of methods to facilitate working with types, symbols, and nodes.
 
 ### Symbol
 
@@ -698,7 +698,7 @@ interface Symbol {
 ```
 
 - `flags`: The flags associated with the symbol which can be used to determine the type of symbol -variable, function, class, interface, etc.-
-- `escapedName`: The name of declaration associated with the symbol.
+- `escapedName`: The name of declarations associated with the symbol.
 - `declarations`: List of declarations associated with the symbol, think of function/method override.
 - `valueDeclaration`: Points to the declaration that serves as the "primary" or "canonical" declaration of the symbol. In simpler terms, it's the declaration that gives the symbol its "value" or "meaning" within the code. For example, if you have a variable initialized with a function, the valueDeclaration would point to that function expression.
 - `members`: Symbol table that contains information about the properties or members of the symbol. For instance, if the symbol represents a class, members would contain symbols for each of the class's methods and properties.
@@ -731,7 +731,21 @@ Symbols let the type checker look up names and then check their declarations to 
 
 ## Diagnostic
 
-Diagnostics in TypeScript are objects that represent issues the compiler has identified in the code. These issues can range from syntax errors and type mismatches to more subtle semantic issues that might not be immediately apparent.
+When the TypeScript compiler runs, it performs several checks on the code. If it encounters something that doesn't align with the language rules or the project's configuration, it creates an object that represents identified issues the compiler has found in the code.
+
+Each diagnostic object contains information about the nature of the problem, including:
+
+- The file in which the issue was found.
+- The start and end position of the relevant code.
+- A message describing the issue.
+- A diagnostic category (error, warning, suggestion, or message).
+- A code that uniquely identifies the type of diagnostic.
+
+The issues can range from syntax errors and type mismatches to more subtle semantic issues that might not be immediately apparent. Mainly, there are two kinds of diagnostics:
+
+- Syntactic Diagnostics: These are errors that occur when the compiler parses the code and encounters something that doesn't align with the language syntax. For instance, if you have a missing semicolon or a missing closing brace, the compiler will generate a syntactic diagnostic.
+
+- Semantic Diagnostics: These are errors that occur when the compiler performs type-checking on the code and encounters something that doesn't align with the type annotations or constraints defined in the code. For instance, if you have a variable of type string and you try to assign a number to it, the compiler will generate a semantic diagnostic.
 
 Here's a simple example of how you might encounter a diagnostic in TypeScript:
 
@@ -741,25 +755,61 @@ let greeting: string = 42;
 
 The TypeScript compiler will generate a diagnostic message for the above code, indicating that the type 'number' is not assignable to the type 'string'.
 
----
-
-When the TypeScript compiler runs, it performs several checks on the code. If it encounters something that doesn't align with the language rules or the project's configuration, it creates a diagnostic object. Each diagnostic object contains information about the nature of the problem, including:
-
-- The file in which the issue was found.
-- The start and end position of the relevant code.
-- A message describing the issue.
-- A diagnostic category (error, warning, suggestion, or message).
-- A code that uniquely identifies the type of diagnostic.
-
-You can access diagnostics programmatically using the TypeScript Compiler API. Here's a snippet that demonstrates how to retrieve and log all diagnostics for a given TypeScript program:
+To obtain semantic diagnostics, you can use the `getSemanticDiagnostics` method on the program object. This method returns an array of diagnostic objects, each of which contains information about the issue, such as the file in which it was found, the start and end position of the relevant code, and a message describing the issue.
 
 ```ts
-const emitResult = program.emit();
+program.getSemanticDiagnostics();
+```
 
+Will return
+
+```json
+[
+  {
+    "start": 0,
+    "length": 8,
+    "code": 2322,
+    "category": 1,
+    "messageText": "Type 'number' is not assignable to type 'string'.",
+    "relatedInformation": undefined
+  }
+]
+```
+
+To obtain syntactic diagnostics
+
+```ts
+// missing expression after assignment operator
+let greeting: string =;
+
+// get syntactic diagnostics
+program.getSyntacticDiagnostics();
+```
+
+Will return
+
+```json
+[
+  {
+    "start": 0,
+    "length": 1,
+    "messageText": "Expression expected.",
+    "category": 1,
+    "code": 1109,
+    "reportsUnnecessary": undefined
+  }
+]
+```
+
+---
+
+Diagnostics are not just for the compiler; they are also used by IDEs and editors to provide real-time feedback to developers. For example, when you see red squiggly lines under code in Visual Studio Code, that's the editor using TypeScript diagnostics to indicate an issue.
+
+Here's a snippet that demonstrates how to retrieve diagnostics for a given TypeScript program before emitting the output files:
+
+```ts
 // Retrieve and concatenate all diagnostics
-const allDiagnostics = ts
-  .getPreEmitDiagnostics(program)
-  .concat(emitResult.diagnostics);
+const allDiagnostics = ts.getPreEmitDiagnostics(program);
 
 // Iterate over diagnostics and log them
 allDiagnostics.forEach(diagnostic => {
@@ -777,15 +827,16 @@ allDiagnostics.forEach(diagnostic => {
 });
 ```
 
-Diagnostics are not just for the compiler; they are also used by IDEs and editors to provide real-time feedback to developers. For example, when you see red squiggly lines under code in Visual Studio Code, that's the editor using TypeScript diagnostics to indicate an issue.
+You might have noticed the function says pre-emit `getPreEmitDiagnostics` which implies there will be diagnostics after the emit process, and you're right, there are.
+
+The post-emit diagnostics are generated after the emit process, and they are used to report issues that might arise during the emit process. For instance, there might be issues with generating source maps or writing output files.
 
 ## Printer
 
+TypeScript provides a printer API that can be used to generate source code from an AST, it is useful when you want to perform transformations on the AST and then generate the corresponding source code in text format.
+
 ```ts
-function printNode(
-  file: ts.Node,
-  result: ts.TransformationResult<ts.SourceFile>
-) {
+function print(file: ts.Node, result: ts.TransformationResult<ts.SourceFile>) {
   const printer = ts.createPrinter({
     newLine: ts.NewLineKind.LineFeed,
   });
@@ -798,6 +849,12 @@ function printNode(
 }
 ```
 
+In use case 3, you'll need to write the modified AST to the original file back, to do that you'll need to use the printer API to get the AST into text.
+
+Worth mentioning that the printer doesn't preserve the original formatting of the source code.
+
+> For this exact reason I don't recommend direct use of the compiler API to modify source code, instead, I use [ts-morph](https://github.com/dsherret/ts-morph) which is a wrapper around the compiler API that preserves the original formatting.
+
 ## How The Compiler Works
 
 <figure>
@@ -807,11 +864,11 @@ function printNode(
 <figcaption><center>The compiler is a pipeline that consists of several stages, each stage takes the output of the previous stage and transforms it into something else.</center></figcaption>
 </figure>
 
-The following is high-level overview.
+The following is a high-level overview.
 
 ### Lexical Analysis
 
-In this stage, the compiler takes the source code and breaks it down into a series of tokens, a token is a characters or sequence of characters that can be treated as a single unit.
+In this stage, the compiler takes the source code and breaks it down into a series of tokens, a token is a character or sequence of characters that can be treated as a single unit.
 
 ```ts
 function IAmAwesome() {}
@@ -828,7 +885,7 @@ Will be transformed into the following tokens:
 <}, punctuation>
 ```
 
-The module/function that does this is called the **Scanner**/**Tokensizer** which is responsible for scanning the source code and generating the tokens. When the term scanner/tokenizer is used, imagine a while loop that loops over the source code character by character and switch case to determine the token type.
+The module/function that does this is called the **Scanner**/**Tokenizer** which is responsible for scanning the source code and generating the tokens. When the term scanner/tokenizer is used, imagine a while loop that loops over the source code character by character and switch case to determine the token type.
 
 ```ts
 function scan(sourceCode: string) {
@@ -837,8 +894,9 @@ function scan(sourceCode: string) {
   let index = -1;
   do {
     index = index + 1;
-    currentChar = sourceCode[];
-  } while (index < sourceCode.length) {
+    currentChar = sourceCode[index];
+  } while (index < sourceCode.length);
+  {
     switch (currentChar) {
       case "{":
         // ...
@@ -852,8 +910,6 @@ function scan(sourceCode: string) {
 }
 ```
 
-[_Check how `function` is represented_](https://github.com/microsoft/TypeScript/blob/97147915ab667a52e31ac743843786cbc9049559/src/compiler/scanner.ts#L153)
-
 ### Syntax Analysis
 
 In this stage, the compiler takes the tokens generated in the previous stage and uses them to build a tree-like structure called an Abstract Syntax Tree (AST). _The AST represents the syntactic structure of the source code._
@@ -862,18 +918,18 @@ The part of the compiler that does this is called the **Parser** which is respon
 
 So the Tokensizer generates the tokens and the Parser builds the AST. You may be wondering (are you?) how the parser knows what the AST should look like, well, it's defined in the TypeScript grammar.
 
-A grammar is a set of rules that define the syntax of a language. Think of the English grammar, it defines the rules of the English language, such as how to form a sentence, how to use punctuation, etc.
+A grammar is a set of rules that define the syntax of a language. Think of English grammar, it defines the rules of the English language, such as how to form a sentence, how to use punctuation, etc.
 
 Grammars are usually represented in a form called **Backus-Naur Form (BNF)** or [Antlr](https://www.antlr.org/), which is a notation that describes the grammar of a language.
 
-Simple example of a grammar:
+A simple example of grammars:
 
 ```bash
 <identifier> ::= "a" | "b" | "c" | ... | "z"
 <function> ::= "function" <identifier>* "(" ")" "{" "}"
 ```
 
-The parser will use the grammar to build the AST, in case of writing a function, the parser will look for the `function` keyword, then the identifier, then the `(`, then the `)`, then the `{`, then the `}` in case of any of these tokens is missing, the parser will throw an error.
+The parser will use the grammar to build the AST, in case of writing a function, the parser will look for the `function` keyword, then the identifier, the `(`, the `)`, the `{`, then the `}` in case of any of these tokens is missing, the parser will throw an error. [Read More on parsing](https://pgrandinetti.github.io/compilers/page/what-is-a-programming-language-parser/)
 
 [Another example](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form#Example)
 
@@ -894,7 +950,7 @@ The parser will use the grammar to build the AST, in case of writing a function,
 
 ### Semantic Analysis
 
-At this stage, the TypeScript compiler performs semantic analysis on the AST (Abstract Syntax Tree) generated during the parsing stage. The semantic analysis ensures that the syntactically correct code is also semantically valid. For instance, consider the following TypeScript snippet:
+At this stage, the TypeScript compiler performs semantic analysis on the AST generated during the parsing stage to ensure that the syntactically correct code is also semantically valid. For instance, consider the following TypeScript snippet:
 
 ```ts
 let a = 1;
@@ -905,7 +961,7 @@ While the parser confirms this code is free of syntax errors, semantic analysis 
 
 The semantic analysis phase comprises two key processes: **Binding** and **Type Checking**.
 
-**Binding**: This is where the compiler's **Binder** comes into play. It walks the AST and creates symbols for all declarations it encounters, such as variables, functions, classes, etc.
+**Binding**: It walks the AST and creates symbols for all declarations it encounters, such as variables, functions, classes, etc.
 
 - A **Symbol** is created for each declaration, capturing its name, type, scope, and additional attributes.
 - The symbol is then stored in a **SymbolTable**, which is essentially a map that associates symbols with their names and is scoped to a specific block, function, or module.
@@ -916,7 +972,7 @@ The internal representation of a `SymbolTable` in TypeScript might look somethin
 type SymbolTable = Map<__String, Symbol>;
 ```
 
-And a function to create such a table could be as follows:
+The function to create such a table could be as follows:
 
 ```ts
 export function createSymbolTable(symbols?: readonly Symbol[]): SymbolTable {
@@ -932,19 +988,23 @@ export function createSymbolTable(symbols?: readonly Symbol[]): SymbolTable {
 
 **Type Checking**: The **Type Checker** takes over after binding. It uses the symbol table to verify that each symbol's usage is consistent with its declared type. In the provided code example, the type checker identifies that `a` is a number and cannot be invoked, raising a compile-time error.
 
-While Binding and Type Checking are distinct processes, they are interdependent. The Binder populates the symbol table necessary for the Type Checker to verify the correct usage of types. Conversely, the Type Checker may influence the binding process, particularly in complex scenarios involving type inference or generics.
+While Binding and Type checking are distinct processes, they are interdependent. The Binder populates the symbol table necessary for the Type Checker to verify the correct usage of types. Conversely, the Type Checker may influence the binding process, particularly in complex scenarios involving type inference or generics.
 
-### Code Generation
+### Emitting
 
-### Emit
+This is where the compiler generates the output files, such as JavaScript files, source maps, and declaration files after the AST has been successfully created and type-checked.
 
-![Symbol Table](../../assets/symbol-table.png)
+```ts
+project.emit();
+```
+
+Recall diagnostics? the emit process will fail if there are any errors but that can be overridden by setting `noEmitOnError` to true.
 
 ## ESLint
 
-Using [ESLint](https://eslint.org/) is a better option if you want to enforce rules on your codebase due to the fact that it's specifically built for that purpose. However, if you want to build a tool that does something more complex, then the Typescript Compiler API is the way to go.
+Using [ESLint](https://eslint.org/) is a better option if you want to enforce rules on your codebase because it's specifically built for that purpose. However, if you want to build a tool that does something more complex, then the Typescript Compiler API is the way to go.
 
-[I have wrote a guide for you](https://writer.sh/posts/gentle-introduction-to-eslint-rules) to learn more.
+[I have written a guide for you](https://writer.sh/posts/gentle-introduction-to-eslint-rules) to learn more.
 
 ## Conclusion
 
@@ -958,9 +1018,9 @@ You can also generate TypeScript code using the API, think of protobuf to TypeSc
 
 Practice, practice, practice. The best way to learn is to practice what you've learned here. Try to build a tool that does something useful for you or your team.
 
-Think of manual tasks -typescript related- that you do often and try to automate them. Stuff that are error prone, time consuming, or just boring.
+Think of manual tasks -typescript-related- that you do often and try to automate them. Stuff that is error-prone, time-consuming, or just boring.
 
-I'm writing few other blog posts that will help you get started with the Typescript Compiler API, follow me on [Twitter](https://twitter.com/ezzabuzaid) to get notified when they're out.
+I'm writing a few other blog posts that will help you get started with the Typescript Compiler API, follow me on [Twitter](https://twitter.com/ezzabuzaid) to get notified when they're out.
 
 ## References
 
@@ -978,5 +1038,5 @@ I'm writing few other blog posts that will help you get started with the Typescr
 
 ## Credits
 
-- The grpah tree was generated using [Mermaid JS](https://mermaid.js.org/)
+- The graph tree was generated using [Mermaid JS](https://mermaid.js.org/)
 - The drawing was created using [Excalidraw](https://excalidraw.com/)

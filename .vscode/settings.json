@@ -1,0 +1,9 @@
+{
+	"grammarly.selectors": [
+		{
+			"language": "markdown",
+			"scheme": "file",
+			"pattern": "src/content/blog/gentle-introduction-to-typescript-compiler-api.md"
+		}
+	]
+}
