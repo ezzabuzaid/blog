@@ -36,16 +36,16 @@ export const SOCIALS: SocialObjects = [
     linkTitle: `Send me an email`,
     active: true,
   },
-  // {
-  //   name: "Twitter",
-  //   href: "https://twitter.com/ezzabuzaid",
-  //   linkTitle: `Follow me on Twitter`,
-  //   active: true,
-  // },
+  {
+    name: "Twitter",
+    href: "https://twitter.com/ezzabuzaid",
+    linkTitle: `Follow me on Twitter`,
+    active: false,
+  },
   {
     name: "RSSFeed",
     href: "https://feeds.feedburner.com/writersh",
     linkTitle: `Subscribe to my RSS Feed`,
-    active: true,
+    active: false,
   },
 ];

@@ -8,6 +8,7 @@ import getSortedPosts from "@utils/getSortedPosts";
 import getUniqueTags from "@utils/getUniqueTags";
 import { type CollectionEntry } from "astro:content";
 import { getPublishedPosts } from "../../utils/getPosts";
+import slugify from "../../utils/slugify";
 
 export interface Props {
   post: CollectionEntry<"blog">;
@@ -39,7 +40,7 @@ const tagPosts = getPostsByTag(sortTagsPost, tag);
     <ul>
       {
         tagPosts.map(post => (
-          <Card href={`/posts/${post.id}`} frontmatter={post.data} />
+          <Card href={`/posts/${slugify(post)}`} frontmatter={post.data} />
         ))
       }
     </ul>

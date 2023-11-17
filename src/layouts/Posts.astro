@@ -4,6 +4,7 @@ import { SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
 import type { CollectionEntry } from "astro:content";
+import slugify from "../utils/slugify";
 
 export interface Props {
   posts: CollectionEntry<"blog">[];
@@ -17,7 +18,7 @@ const { posts } = Astro.props;
     <ul>
       {
         posts.map(post => (
-          <Card href={`/posts/${post.id}`} frontmatter={post.data} />
+          <Card href={`/posts/${slugify(post)}`} frontmatter={post.data} />
         ))
       }
     </ul>

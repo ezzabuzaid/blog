@@ -79,9 +79,11 @@ dist
 ![TypeScript Code Generation](../../assets/typescript-code-generation.excalidraw.svg)
 
 <figcaption>
+
   <center>
     TypeScript Compilation Process: From Source Code to JavaScript, Declaration Files, and Source Maps
   </center>
+
 </figcaption>
 
 </figure>
@@ -252,7 +254,18 @@ will be transformed into the following AST:
   ]
 ```
 
-![AST](../../assets/ast.png)
+<figure>
+![AST For Function Declaration Node](../../assets/ast.png)
+
+<figcaption>
+
+  <center>
+  A visual breakdown of a TypeScript Abstract Syntax Tree (AST), illustrating the hierarchical structure of nodes representing a source file with a simple function declaration. Each node is annotated with its role and kind, detailing the organization of code into an AST for compiler processing.
+  </center>
+
+</figcaption>
+
+</figure>
 
 ### Node
 
@@ -337,7 +350,19 @@ const first = 1,
 - `first`, `second`, and `third` are `Identifier` nodes.
 - `1`, `2 + 3`, and `whatIsThird()` are `NumericLiteral`, `BinaryExpression`, and `CallExpression` nodes respectively.
 
+<figure>
+
 ![Variable List AST](../../assets/var-ast.svg)
+
+<figcaption>
+
+  <center>
+A diagram illustrating a TypeScript AST segment for a variable statement. It depicts a structure with a variable statement node branching into a variable declaration list, which further separates into individual variable declarations. Each declaration showcases different kinds of assignments: a number literal, a binary expression, and a call expression.
+  </center>
+
+</figcaption>
+
+</figure>
 
 ## Use Case: No Function Expression
 
@@ -861,7 +886,11 @@ Worth mentioning that the printer doesn't preserve the original formatting of th
 
 ![How The TypeScript Compiler Works](../../assets/how-the-ts-compiler-works.svg)
 
-<figcaption><center>The compiler is a pipeline that consists of several stages, each stage takes the output of the previous stage and transforms it into something else.</center></figcaption>
+<figcaption>
+  <center>
+   This flowchart outlines the TypeScript compilation process, detailing each step from parsing to emitting executable JavaScript code. It highlights phases such as lexical and syntax analysis, semantic analysis (including scope, symbol creation, and type checking), and transformation (converting TypeScript to JavaScript and downleveling to support older JavaScript versions). Diagnostic reporting runs alongside these processes, and during the emitting phase, JavaScript code, source maps, and declaration files are generated, with an option to halt emission on error.
+  </center>
+</figcaption>
 </figure>
 
 The following is a high-level overview.
@@ -916,11 +945,11 @@ In this stage, the compiler takes the tokens generated in the previous stage and
 
 The part of the compiler that does this is called the **Parser** which is responsible for parsing the tokens and building the AST that is then used by the semantic analysis stage.
 
-So the Tokensizer generates the tokens and the Parser builds the AST. You may be wondering (are you?) how the parser knows what the AST should look like, well, it's defined in the TypeScript grammar.
+So the Tokensizer generates the tokens and the Parser builds the AST. You may be wondering (are you?) how the parser knows what the AST should look like, well, it's defined in the [Language Grammar](https://pgrandinetti.github.io/compilers/page/what-is-a-programming-language-grammar/).
 
 A grammar is a set of rules that define the syntax of a language. Think of English grammar, it defines the rules of the English language, such as how to form a sentence, how to use punctuation, etc.
 
-Grammars are usually represented in a form called **Backus-Naur Form (BNF)** or [Antlr](https://www.antlr.org/), which is a notation that describes the grammar of a language.
+Grammar is usually represented in a form called **Backus-Naur Form (BNF)** or [Antlr](https://www.antlr.org/), which is a notation that describes the grammar of a language.
 
 A simple example of grammars:
 
@@ -1040,3 +1069,4 @@ I'm writing a few other blog posts that will help you get started with the Types
 
 - The graph tree was generated using [Mermaid JS](https://mermaid.js.org/)
 - The drawing was created using [Excalidraw](https://excalidraw.com/)
+- Image caption were generated using ChatGPT

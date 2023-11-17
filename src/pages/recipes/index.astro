@@ -5,6 +5,7 @@ import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import type { CollectionEntry } from "astro:content";
+import slugify from "../../utils/slugify";
 
 export interface Props {
   pageNum: number;
@@ -24,7 +25,7 @@ const sortedPosts = (await getSortedPosts()).filter(post =>
     <ul>
       {
         sortedPosts.map(post => (
-          <Card href={`/posts/${post.id}`} frontmatter={post.data} />
+          <Card href={`/posts/${slugify(post)}`} frontmatter={post.data} />
         ))
       }
     </ul>

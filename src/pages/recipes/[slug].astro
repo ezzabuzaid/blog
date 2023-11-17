@@ -4,6 +4,7 @@ import Posts from "@layouts/Posts.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import { type CollectionEntry } from "astro:content";
 import { getPublishedPosts } from "../../utils/getPosts";
+import slugify from "../../utils/slugify";
 
 export interface Props {
   post: CollectionEntry<"blog">;
@@ -13,7 +14,7 @@ export async function getStaticPaths() {
   const posts = await getPublishedPosts();
 
   const postResult = posts.map(post => ({
-    params: { slug: post.id },
+    params: { slug: slugify(post) },
     props: { post },
   }));
 

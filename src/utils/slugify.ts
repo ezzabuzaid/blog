@@ -1,9 +1,9 @@
-import type { BlogFrontmatter } from "@content/_schemas";
 import { slug as slugger } from "github-slugger";
+import type { BlogContentType } from "./getPosts";
 
 export const slugifyStr = (str: string) => slugger(str);
 
-const slugify = (post: BlogFrontmatter) => slugger(post.title);
+const slugify = (post: BlogContentType) => post.id.replace(".md", "");
 
 export const slugifyAll = (arr: string[]) => arr.map(str => slugifyStr(str));
 
