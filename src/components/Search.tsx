@@ -1,8 +1,8 @@
 import Card from "@components/Card";
 import Fuse from "fuse.js";
 import { useEffect, useMemo, useRef, useState } from "react";
-import slugify from "../utils/slugify";
 import type { BlogContentType } from "../utils/getPosts";
+import slugify from "../utils/slugify";
 interface Props {
   searchList: BlogContentType[];
 }

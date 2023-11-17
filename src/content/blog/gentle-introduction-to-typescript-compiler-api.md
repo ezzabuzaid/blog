@@ -255,6 +255,7 @@ will be transformed into the following AST:
 ```
 
 <figure>
+
 ![AST For Function Declaration Node](../../assets/ast.png)
 
 <figcaption>
@@ -439,8 +440,6 @@ A few key terms that you need to know:
 
 ### Transformer
 
-That transformer function is important because it provides **context** that happens to be needed to walk the AST.
-
 As the name implies, the transformer function can transform the AST (the code) in any way you want. In this example, you're using it to enforce a rule, however, instead of throwing an error, you can transform the code to **fix** the error (more in the next use case)
 
 ### Visitor
@@ -568,7 +567,7 @@ Here are the key points regarding the lexical environment in your transformer fu
 
 - Scope Management: The lexical environment helps in managing the scope of variables and function declarations. When you start a new lexical environment with `context.startLexicalEnvironment()`, you are essentially marking the beginning of a new scope. When you end it with `context.endLexicalEnvironment()`, you are closing off that scope and collecting any declarations that were hoisted to this scope during the transformation process.
 
-- Hoisting: The lexical environment provides the facilities for hoisting function declarations using `context.hoistFunctionDeclaration()`. Hoisting in this scenario means moving function declarations to the appropriate scope in the source file (the current running scope). For instance, if you have a function declaration inside a function, it will be hoisted to the top of the function, if you have a function declaration inside a class, it will be hoisted to the top of the class.
+- Hoisting: The lexical environment provides the facilities for hoisting function declarations using `context.hoistFunctionDeclaration()`. Hoisting in this scenario means moving function declarations to the appropriate scope in the source file (the current running scope). For instance, if you have a function declaration inside a function, it will be hoisted to the top of the function, if you have a function declaration inside a for loop, it will be hoisted to the top of the for loop, and so on.
 
   _The previous code only handles the function expression at the top level_
 
@@ -634,8 +633,16 @@ const trackThirdPartyClassesUsedAsSuperClass: ts.Visitor = node => {
   }
 
   // visit each child in this node
-  return ts.forEachChild(node, visit);
+  return ts.forEachChild(node, trackThirdPartyClassesUsedAsSuperClass);
 };
+
+const files = program.getSourceFiles();
+
+files
+  .filter(file => !file.isDeclarationFile)
+  .forEach(file => {
+    ts.forEachChild(file, trackThirdPartyClassesUsedAsSuperClass);
+  });
 ```
 
 Key terms that you need to know:
@@ -1014,6 +1021,8 @@ export function createSymbolTable(symbols?: readonly Symbol[]): SymbolTable {
   return result;
 }
 ```
+
+[Read more on the binding process](https://github.com/microsoft/TypeScript-Compiler-Notes/blob/main/codebase/src/compiler/binder.md)
 
 **Type Checking**: The **Type Checker** takes over after binding. It uses the symbol table to verify that each symbol's usage is consistent with its declared type. In the provided code example, the type checker identifies that `a` is a number and cannot be invoked, raising a compile-time error.
 

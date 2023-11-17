@@ -130,3 +130,7 @@ iframe .brand {
 .prose {
   font-size: 0.925rem;
 }
+img {
+  width: 100%;
+  height: auto;
+}
