@@ -3,9 +3,9 @@ import type { Site, SocialObjects } from "./types";
 export const SITE: Site = {
   website: "https://writer.sh/",
   author: "Ezzabuzaid",
-  desc: "I'm Senior Software Engineer and a Technical Writer with a keen interest in merging technology and communication. Passionate about software development and committed to reading and lifelong learning.",
-  title: "Writer.sh - Software Engineering Blog",
-  ogImage: "logo.svg",
+  title: "Writer.sh - Developer's Journey",
+  desc: "Writer.sh showcases inspiring tales of developers who forged their own way, from unconventional beginnings to entrepreneurial triumphs in the tech realm.",
+  ogImage: "logo.png",
   lightAndDarkMode: false,
 };
 
@@ -44,7 +44,7 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "RSSFeed",
-    href: "https://feeds.feedburner.com/writersh",
+    href: "./rss.xml",
     linkTitle: `Subscribe to my RSS Feed`,
     active: false,
   },

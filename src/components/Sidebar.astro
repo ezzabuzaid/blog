@@ -3,7 +3,7 @@ import { LOGO_IMAGE, SITE } from "@config";
 
 import getSortedPosts from "@utils/getSortedPosts";
 import { Image } from "astro:assets";
-import logoSVG from "../assets/logo.svg";
+import logoSVG from "../assets/logo.png";
 import SearchBar from "./Search";
 
 const allPosts = await getSortedPosts();
@@ -40,8 +40,7 @@ const posts = await getPublishedPosts();
 <p class="mb-2 font-bold">Connect:</p>
 <Socials />
 <div class="my-1"></div>
-<a class="text-sm" href="https://feeds.feedburner.com/writersh"
-  >- <span class="underline">RSS Feed</span></a
+<a class="text-sm" href="./rss.xml">- <span class="underline">RSS Feed</span></a
 >
 <a class="text-sm" href="https://twitter.com/ezzabuzaid"
   >- <span class="underline">Twitter Account</span></a

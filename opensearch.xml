@@ -3,7 +3,7 @@
 	<ShortName>Writer.sh</ShortName>
 	<LongName>Writer.sh: The developer home</LongName>
 	<Description>Search for articles on Writer.sh</Description>
-	<Image height="16" width="16" type="image/svg+xml">https://writer.sh/favicon.svg</Image>
+	<Image height="16" width="16" type="image/svg+xml">https://writer.sh/favicon.png</Image>
 	<Url type="text/html" template="https://writer.sh/search/?q={searchTerms}"/>
 	<Contact>ezzabuzaid@hotmail.com</Contact>
 	<Query role="example" searchTerms="Build TypeAhead Using RxJS" />
