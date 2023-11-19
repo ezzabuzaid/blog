@@ -21,6 +21,7 @@ export interface Props {
     section?: string;
     tags?: string[];
   };
+  schema?: string;
 }
 const {
   article = {},
@@ -29,6 +30,7 @@ const {
   author = SITE.author,
   description = SITE.desc,
   ogImage = SITE.ogImage,
+  schema,
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
 } = Astro.props;
 
@@ -65,12 +67,14 @@ const socialImageURL = new URL(ogImage, Astro.url.origin).href;
     <!-- Fathom - beautiful, simple website analytics -->
     <script
       src="https://cdn.usefathom.com/script.js"
+      is:inline
       data-honor-dnt="true"
       data-site="PBWPAFRL"
       defer></script>
     <!-- / Fathom -->
 
     <!-- Twitter -->
+    {schema && <script type="application/ld+json" set:html={schema} />}
 
     <AstroSeo
       title={pageTitle || title}

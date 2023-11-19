@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^1.0.0",
+    "@astrojs/partytown": "^2.0.2",
     "@astrojs/prefetch": "^0.4.0",
     "@astrojs/rss": "^3.0.0",
     "@astrolib/seo": "^0.6.0",
@@ -45,6 +46,7 @@
     "remark-inline-links": "^7.0.0",
     "remark-toc": "^8.0.1",
     "satori": "^0.10.3",
+    "schema-dts": "^1.1.2",
     "shiki": "^0.14.5",
     "sidebarjs": "^10.0.0",
     "tailwind": "^4.0.0",

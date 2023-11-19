@@ -1,4 +1,5 @@
 import mdx from "@astrojs/mdx";
+import partytown from "@astrojs/partytown";
 import prefetch from "@astrojs/prefetch";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
@@ -24,6 +25,11 @@ export default defineConfig({
     }),
     react(),
     sitemap(),
+    partytown({
+      config: {
+        debug: true,
+      },
+    }),
   ],
   markdown: {
     rehypePlugins: [

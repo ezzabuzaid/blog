@@ -7,6 +7,7 @@ import slugify, { slugifyStr } from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
 import Chat from "./ask/Chat.tsx";
 import { splitWords } from "./ask/split-words";
+import { articleSchema } from "../utils/structured-data";
 
 export interface Props {
   post: CollectionEntry<"blog">;
@@ -24,17 +25,34 @@ const {
   tags,
   minutesRead,
 } = post.data;
+import authors from "../assets/authors.json";
 const id = slugify(post);
 
 const { Content } = await post.render();
 const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
   .href;
 const devMode = import.meta.env.DEV;
+const schema = JSON.stringify(
+  articleSchema({
+    articleType: "BlogPosting",
+    audience: {
+      description: "Developers",
+      type: "Developers",
+    },
+    // @ts-ignore
+    author: authors[author],
+    datePublished: post.data.pubDatetime.toISOString(),
+    title,
+    description,
+    url: Astro.url.href,
+  })
+);
 ---
 
 {devMode && <Chat client:only post={slugify(post)} />}
 
 <Layout
+  schema={schema}
   title={title}
   author={author}
   description={description}
@@ -322,4 +340,3 @@ const devMode = import.meta.env.DEV;
     })();
   </script>
 </Layout>
- ./ask/Chat.tsx
