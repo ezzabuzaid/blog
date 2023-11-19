@@ -1,6 +1,6 @@
 ---
 author: ezzabuzaid
-pubDatetime: 2023-10-03T11:36:15.265Z
+pubDatetime: 2023-11-17T11:00:00.00Z
 title: Gentle Introduction To Typescript Compiler API
 featured: true
 draft: false
