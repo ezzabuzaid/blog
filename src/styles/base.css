@@ -20,6 +20,9 @@
     --color-card-muted: 138, 51, 2;
     --color-border: 171, 75, 8;
   }
+  :root {
+    --chat-bg: #f8f8f8;
+  }
 
   body {
     @apply flex min-h-screen flex-col bg-skin-fill font-mono text-skin-base selection:bg-skin-accent selection:bg-opacity-70 selection:text-skin-inverted;
@@ -30,7 +33,7 @@
     focus-visible:no-underline focus-visible:outline-dashed;
   }
   svg {
-    @apply inline-block  group-hover:fill-skin-accent;
+    @apply inline-block;
   }
   svg.icon-tabler {
     @apply inline-block h-6 w-6 scale-125 fill-transparent

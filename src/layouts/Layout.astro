@@ -62,19 +62,13 @@ const socialImageURL = new URL(ogImage, Astro.url.origin).href;
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
 
-    <!-- Plausible Analytics -->
+    <!-- Fathom - beautiful, simple website analytics -->
     <script
-      defer
-      data-domain="writer.sh"
-      src="https://plausible.io/js/script.js"></script>
-
-    <script>
-      window.plausible =
-        window.plausible ||
-        function () {
-          (window.plausible.q = window.plausible.q || []).push(arguments);
-        };
-    </script>
+      src="https://cdn.usefathom.com/script.js"
+      data-honor-dnt="true"
+      data-site="PBWPAFRL"
+      async></script>
+    <!-- / Fathom -->
 
     <!-- Twitter -->
 

@@ -5,7 +5,8 @@ import Tag from "@components/Tag.astro";
 import Layout from "@layouts/Layout.astro";
 import slugify, { slugifyStr } from "@utils/slugify";
 import type { CollectionEntry } from "astro:content";
-import Chat from "./Chat.tsx";
+import Chat from "./ask/Chat.tsx";
+import { splitWords } from "./ask/split-words";
 
 export interface Props {
   post: CollectionEntry<"blog">;
@@ -23,6 +24,7 @@ const {
   tags,
   minutesRead,
 } = post.data;
+const id = slugify(post);
 
 const { Content } = await post.render();
 const ogUrl = new URL(ogImage ? ogImage : `${title}.png`, Astro.url.origin)
@@ -93,7 +95,7 @@ const devMode = import.meta.env.DEV;
     </div>
   </main>
 
-  <script define:vars={{ title }}>
+  <script define:vars={{ id }}>
     document.addEventListener("DOMContentLoaded", function () {
       const articleEl = document.getElementById("article");
       articleEl?.querySelectorAll("a").forEach(anchorEl => {
@@ -102,10 +104,10 @@ const devMode = import.meta.env.DEV;
           link.startsWith("http") && !link.startsWith(window.location.origin);
         const eventName = isOutboundLink ? "OutboundLink" : "InternalLink";
         anchorEl.addEventListener("click", () => {
-          window.plausible(eventName, {
+          window.fathom.trackEvent(eventName, {
             props: {
               href: link,
-              blog: title,
+              blog: id,
             },
           });
         });
@@ -191,6 +193,8 @@ const devMode = import.meta.env.DEV;
     });
   </script> -->
   <script>
+    import { splitWords } from "./ask/split-words";
+
     (() => {
       const article = document.querySelector("article");
       if (!article) {
@@ -207,14 +211,14 @@ const devMode = import.meta.env.DEV;
 
         for (const node of el.childNodes) {
           if (node.nodeType === Node.TEXT_NODE) {
-            const segmenter = new Intl.Segmenter([], { granularity: "word" });
-            const segments = segmenter.segment(node.textContent ?? "");
-            const spans = Array.from(segments).map(word => {
+            const spans = splitWords(node.textContent ?? "").map(word => {
               const span = document.createElement("span");
-              span.textContent = word.segment;
+              span.textContent = word;
               return span;
             });
-            node.replaceWith(...spans);
+            setTimeout(() => {
+              node.replaceWith(...spans);
+            });
           } else if (node.nodeType === Node.ELEMENT_NODE) {
             spanify(node as Element, ignore);
           }
@@ -318,3 +322,4 @@ const devMode = import.meta.env.DEV;
     })();
   </script>
 </Layout>
+ ./ask/Chat.tsx

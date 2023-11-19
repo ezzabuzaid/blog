@@ -3,5 +3,7 @@
 
 // extends Window object to have plausible
 interface Window {
-  plausible: any;
+  fathom: {
+    trackEvent: (name: string, options?: any) => void;
+  };
 }
