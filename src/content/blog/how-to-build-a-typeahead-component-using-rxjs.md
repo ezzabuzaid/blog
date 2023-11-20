@@ -365,4 +365,4 @@ This is less of a concern to the frontend developer, as their main focus is usua
 
 In this article, we learned how to build a typeahead component using RxJS. We also learned about backpressure and how it can affect our application's performance. I hope you found this article helpful and that it will help you build better applications in the future.
 
-You can take this further and apply [Infinite Scroll](/posts/reactive-infinity-scroll) along with typeahead to have a unique user experience.
+You can take this further and apply [Infinite Scroll](https://writer.sh/posts/reactive-infinity-scroll) along with typeahead to have a unique user experience.
