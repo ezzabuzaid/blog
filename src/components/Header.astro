@@ -14,8 +14,6 @@ interface Props {
   author: string;
 }
 const props = Astro.props;
-/* @vite-ignore */
-const hero = import("../assets/" + props.slug + ".png");
 const author = (authors as any)[props.author];
 ---
 
@@ -39,14 +37,12 @@ const author = (authors as any)[props.author];
       <a href={author.mainUrl}>{author.displayName}</a>
     </div>
   </div>
-  {
-    (
-      <Image
-        width={325}
-        class={"hidden rounded-xl lg:block"}
-        src={hero}
-        alt={"hero"}
-      />
-    )
-  }
+
+  <Image
+    width={325}
+    height={325}
+    class={"hidden rounded-xl lg:block"}
+    src={import(`../assets/${props.slug}.png`)}
+    alt={"hero"}
+  />
 </div>

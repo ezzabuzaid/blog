@@ -62,6 +62,7 @@ export default defineConfig({
   },
   vite: {
     optimizeDeps: {
+      extensions: [".png"],
       exclude: ["@resvg/resvg-js"],
     },
   },
