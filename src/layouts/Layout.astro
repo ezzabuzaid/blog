@@ -3,7 +3,6 @@ import "@fontsource/inter";
 import { AstroSeo } from "@astrolib/seo";
 import { SITE } from "@config";
 import "@styles/base.css";
-import { ViewTransitions } from "astro:transitions";
 import Sidebar from "../components/Sidebar.astro";
 const currentYear = new Date().getFullYear();
 
@@ -41,7 +40,6 @@ const socialImageURL = new URL(ogImage, Astro.url.origin).href;
 <!doctype html>
 <html lang="en">
   <head>
-    <ViewTransitions />
     <meta name="msvalidate.01" content="028AB3230C1387CBBF8E25014AAB09FE" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />

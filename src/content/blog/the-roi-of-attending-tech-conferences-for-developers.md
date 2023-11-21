@@ -4,6 +4,7 @@ pubDatetime: 2023-09-15T00:00:00Z
 title: The ROI of Attending Tech Conferences for Developers
 featured: false
 draft: false
+heroImage: the-roi-of-attending-tech-conferences-for-developers
 tags:
   - conferences
   - carrer

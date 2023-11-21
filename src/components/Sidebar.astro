@@ -7,8 +7,8 @@ import logoSVG from "../assets/logo.png";
 import SearchBar from "./Search";
 
 const allPosts = await getSortedPosts();
-const featuredPosts = allPosts.filter(({ data }) => data.featured);
-const restPosts = allPosts.filter(({ data }) => !data.featured);
+const featuredPosts = allPosts.filter(({ data }) => data.featured === true);
+const restPosts = allPosts.filter(({ data }) => data.featured !== true);
 
 const activeNav = Astro.url.pathname.split("/")[1];
 

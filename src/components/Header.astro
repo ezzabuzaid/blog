@@ -5,6 +5,7 @@ import Datetime from "./Datetime";
 
 interface Props {
   title: string;
+  slug: string;
   publicationDate: string;
   minutesRead?: string;
   description: string;
@@ -13,9 +14,8 @@ interface Props {
   author: string;
 }
 const props = Astro.props;
-const hero = props.heroImage
-  ? import("../assets/" + props.heroImage + ".png")
-  : Promise.resolve();
+/* @vite-ignore */
+const hero = import("../assets/" + props.slug + ".png");
 const author = (authors as any)[props.author];
 ---
 
@@ -40,7 +40,7 @@ const author = (authors as any)[props.author];
     </div>
   </div>
   {
-    props.heroImage && (
+    (
       <Image
         width={325}
         class={"hidden rounded-xl lg:block"}

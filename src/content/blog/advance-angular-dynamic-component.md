@@ -2,6 +2,7 @@
 author: ezzabuzaid
 pubDatetime: 2021-08-06T00:00:00+00:00
 title: Advance Angular Dynamic Component
+featured: false
 tags:
   - angular
   - receipe

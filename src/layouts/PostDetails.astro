@@ -80,6 +80,7 @@ const schema = JSON.stringify(
       author={author}
       id="header"
       title={title}
+      slug={slugify(post)}
       publicationDate={pubDatetime?.toISOString()}
       description={description}
       minutesRead={minutesRead}
