@@ -4,6 +4,7 @@ pubDatetime: 2023-11-17T11:00:00.00Z
 title: Gentle Introduction To Typescript Compiler API
 featured: true
 draft: false
+heroImage: gentle-introduction-to-typescript-compiler-api
 tags:
   - typescript
   - guide

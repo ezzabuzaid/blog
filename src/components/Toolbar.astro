@@ -1,0 +1,57 @@
+---
+interface Props {
+  title: string;
+  publicationDate: string;
+  thresholdSelector: string;
+}
+const props = Astro.props;
+const { thresholdSelector } = props;
+import { RWebShare } from "react-web-share";
+---
+
+<div
+  id="toolbar"
+  role="toolbar"
+  class="shadow-p fixed top-0 z-10 flex w-[var(--content-width)] -translate-y-full transform items-center justify-between rounded-b border-r bg-skin-fill px-4 py-3 opacity-0 shadow-[rgba(0,0,0,0.05)_0px_6px_24px_0px,rgba(0,0,0,0.08)_0px_0px_0px_1px] transition-[opacity,transform] duration-500 ease-out sm:px-12 2xl:pl-20"
+>
+  <p class="invisible">Menu</p>
+  <p class="whitespace-nowrap">{props.title}</p>
+  <div class="invisible">
+    <RWebShare
+      data={{
+        text: "Like humans, flamingos make friends for life",
+        url: "https://on.natgeo.com/2zHaNup",
+        title: "Flamingos",
+      }}
+      onClick={() => console.log("shared successfully!")}
+    >
+      <div>
+        <button>Share 🔗</button>
+      </div>
+    </RWebShare>
+  </div>
+</div>
+
+<script define:vars={{ thresholdSelector }}>
+  const toolbar = document.querySelector("#toolbar");
+  if (!toolbar) {
+    throw new Error("Toolbar not found");
+  }
+
+  window.addEventListener("scroll", () => {
+    const scrollPosition = window.scrollY;
+    const threshold = document.querySelector(thresholdSelector);
+    const thresholdPosition = threshold?.offsetHeight;
+    if (scrollPosition > thresholdPosition) {
+      toolbar.classList.remove("opacity-0");
+      toolbar.classList.add("opacity-100");
+      toolbar.classList.remove("-translate-y-full");
+      toolbar.classList.add("translate-y-0");
+    } else {
+      toolbar.classList.remove("opacity-100");
+      toolbar.classList.add("opacity-0");
+      toolbar.classList.remove("translate-y-0");
+      toolbar.classList.add("-translate-y-full");
+    }
+  });
+</script>

@@ -4,6 +4,7 @@ pubDatetime: 2023-09-10T00:00:00.00Z
 pageTitle: Build Infinity Scroll Using RxJS
 title: Reactive Infinity Scroll
 featured: true
+heroImage: reactive-infinity-scroll
 tags:
   - rxjs
   - angular

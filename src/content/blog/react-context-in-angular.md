@@ -3,6 +3,7 @@ author: ezzabuzaid
 pubDatetime: 2021-9-10T00:00:00+00:00
 title: React Context In Angular
 featured: false
+heroImage: react-context-in-angular
 tags:
   - angular
   - react
@@ -37,7 +38,7 @@ Words 📝 might not be that efficient, a practical example might be.
 
 Here's 4 components (AppComponent, Parent, Child, Grandchild), the **AppComponent** passes a value to the **Parent** component, the **Parent** component will pass it to the **Child** component which forwards it to the Grandchild component.
 
-```typescript
+```typescript title="app.component.ts"
 @Component({
   selector: "app-root",
   template: '<app-parent [familyName]="familyNameValue"></app-parent>',
@@ -47,7 +48,9 @@ export class AppComponent {
 }
 ```
 
-```typescript
+AppComponent passes the value to the Parent component
+
+```typescript title="parent.component.ts"
 @Component({
   selector: "app-parent",
   template: '<app-child [familyName]="familyName"></app-child>',
@@ -57,7 +60,9 @@ export class ParentComponent {
 }
 ```
 
-```typescript
+Parent component passes the value to the Child component
+
+```typescript title="child.component.ts"
 @Component({
   selector: "app-child",
   template: '<app-grandchild [familyName]="familyName"></app-grandchild>',
@@ -67,7 +72,9 @@ export class ChildComponent {
 }
 ```
 
-```typescript
+Child component passes the value to the Grandchild component
+
+```typescript title="grandchild.component.ts"
 @Component({
   selector: "app-grandchild",
   template: "Family Name: {{familyName}}",

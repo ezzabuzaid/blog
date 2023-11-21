@@ -3,6 +3,7 @@ author: ezzabuzaid
 pubDatetime: 2023-09-19T17:00:00.00Z
 title: "How To Build a Typeahead Component Using RxJS"
 featured: true
+heroImage: how-to-build-a-typeahead-component-using-rxjs
 tags:
   - rxjs
   - angular

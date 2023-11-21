@@ -22,6 +22,11 @@
   }
   :root {
     --chat-bg: #f8f8f8;
+    --sidebar-width: 25%;
+    --content-width: theme("width.full");
+    @media screen(lg) {
+      --content-width: theme("width.3/4");
+    }
   }
 
   body {

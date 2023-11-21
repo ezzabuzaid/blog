@@ -1,6 +1,7 @@
 ---
 import Datetime from "@components/Datetime";
 import Footer from "@components/Footer.astro";
+import Toolbar from "@components/Toolbar.astro";
 import Tag from "@components/Tag.astro";
 import Layout from "@layouts/Layout.astro";
 import slugify, { slugifyStr } from "@utils/slugify";
@@ -10,7 +11,7 @@ import { splitWords } from "./ask/split-words";
 import { articleSchema } from "../utils/structured-data";
 
 export interface Props {
-  post: CollectionEntry<"blog">;
+  post: BlogContentType;
 }
 
 const { post } = Astro.props;
@@ -24,8 +25,11 @@ const {
   pubDatetime,
   tags,
   minutesRead,
+  heroImage,
 } = post.data;
 import authors from "../assets/authors.json";
+import Header from "../components/Header.astro";
+import type { BlogContentType } from "../utils/getPosts";
 const id = slugify(post);
 
 const { Content } = await post.render();
@@ -65,21 +69,21 @@ const schema = JSON.stringify(
     section: "Technology",
   }}
 >
+  <Toolbar
+    thresholdSelector="#header"
+    title={title}
+    publicationDate={pubDatetime?.toISOString()}
+  />
   <main class="w-full px-4 sm:px-12 2xl:pl-20">
-    <Datetime
-      datetime={pubDatetime}
+    <Header
+      heroImage={heroImage}
+      author={author}
+      id="header"
+      title={title}
+      publicationDate={pubDatetime?.toISOString()}
+      description={description}
       minutesRead={minutesRead}
-      size="lg"
-      className="my-2 max-w-2xl"
     />
-    <h1
-      class="mt-4 max-w-2xl text-6xl font-semibold text-skin-accent md:text-6xl"
-    >
-      {title}
-    </h1>
-    <p class="my-4 max-w-2xl text-lg text-slate-500 md:text-xl">
-      {description}
-    </p>
 
     <div class="mt-20"></div>
     <article
