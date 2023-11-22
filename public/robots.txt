@@ -1,8 +1,6 @@
-User-agent: Googlebot
-Disallow: /nogooglebot/
-
 User-agent: *
 Allow: /
+Disallow: /*.md$
 Disallow: /tags/
 Disallow: /recipes/
 

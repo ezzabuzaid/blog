@@ -1043,7 +1043,7 @@ Recall diagnostics? the emit process will fail if there are any errors but that 
 
 Using [ESLint](https://eslint.org/) is a better option if you want to enforce rules on your codebase because it's specifically built for that purpose. However, if you want to build a tool that does something more complex, then the Typescript Compiler API is the way to go.
 
-[I have written a guide for you](https://writer.sh/posts/gentle-introduction-to-eslint-rules) to learn more.
+[I have written a guide for you](https://writer.sh/posts/gentle-introduction-to-ESLint-rules) to learn more.
 
 ## Conclusion
 
