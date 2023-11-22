@@ -15,6 +15,9 @@ interface Props {
 }
 const props = Astro.props;
 const author = (authors as any)[props.author];
+
+const images = await import.meta.glob<ImageMetadata>("../assets/**/*.png");
+const imagesrc = images[`../assets/${props.slug}.png`]();
 ---
 
 <div class="flex items-center space-x-8">
@@ -42,7 +45,7 @@ const author = (authors as any)[props.author];
     width={325}
     height={325}
     class={"hidden rounded-xl lg:block"}
-    src={import(`../assets/${props.slug}.png`)}
+    src={imagesrc}
     alt={"hero"}
   />
 </div>
