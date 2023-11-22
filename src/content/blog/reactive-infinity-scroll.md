@@ -8,7 +8,6 @@ heroImage: reactive-infinity-scroll
 tags:
   - rxjs
   - angular
-  - receipe
 description: "Learn how to build infinite scrolling using RxJS. Improve user experience, optimize resource usage, and fetch data incrementally!"
 ---
 

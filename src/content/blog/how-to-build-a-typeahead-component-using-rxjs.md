@@ -7,7 +7,6 @@ heroImage: how-to-build-a-typeahead-component-using-rxjs
 tags:
   - rxjs
   - angular
-  - receipe
 description: "Learn how to build a typeahead component using RxJS. Improve the user experience and performance of your application."
 ---
 

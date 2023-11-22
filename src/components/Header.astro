@@ -17,6 +17,7 @@ const props = Astro.props;
 const author = (authors as any)[props.author];
 
 const images = await import.meta.glob<ImageMetadata>("../assets/**/*.png");
+console.log(images, `../assets/${props.slug}.png`);
 const imagesrc = images[`../assets/${props.slug}.png`]();
 ---
 

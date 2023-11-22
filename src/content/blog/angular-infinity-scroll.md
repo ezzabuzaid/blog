@@ -8,7 +8,6 @@ featured: false
 tags:
   - rxjs
   - angular
-  - receipe
 description: "Implement Infinity Scroll in Angular using Directive and Pipe and see the pros and cons of each approach."
 ---
 

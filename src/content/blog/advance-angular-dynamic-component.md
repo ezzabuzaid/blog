@@ -5,7 +5,6 @@ title: Advance Angular Dynamic Component
 featured: false
 tags:
   - angular
-  - receipe
 description: "Create Angular Dynamic Components the correcy way"
 ---
 
