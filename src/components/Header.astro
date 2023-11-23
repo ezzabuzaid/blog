@@ -16,9 +16,13 @@ interface Props {
 const props = Astro.props;
 const author = (authors as any)[props.author];
 
-const images = await import.meta.glob<ImageMetadata>("../assets/**/*.png");
+const images = await import.meta.glob("../assets/**/*.png");
 console.log(images, `../assets/${props.slug}.png`);
-const imagesrc = images[`../assets/${props.slug}.png`]();
+const [, heorImg] =
+  Object.entries(images).find(([key]) => {
+    return key.toLowerCase() === `../assets/${props.slug}.png`.toLowerCase();
+  }) ?? [];
+const heroImgSrc = (heorImg as any)();
 ---
 
 <div class="flex items-center space-x-8">
@@ -46,7 +50,7 @@ const imagesrc = images[`../assets/${props.slug}.png`]();
     width={325}
     height={325}
     class={"hidden rounded-xl lg:block"}
-    src={imagesrc}
+    src={heroImgSrc}
     alt={"hero"}
   />
 </div>
