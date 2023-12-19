@@ -12,7 +12,7 @@ tags:
 description: "Migrating to Angular's latest feature, DestroyRef, streamlines component cleanup, pairing seamlessly with takeUntilDestroyed using codemod"
 ---
 
-Angular has been releasing new things nonstop, one of which Is the `DestroyRef` token, a utility class that provides an onDestroy hook that is called when a component/directive is destroyed.
+Angular has been releasing new things nonstop, one of which Is the `DestroyRef` token, a utility class that provides an `onDestroy` hook that is called when a component/directive is destroyed.
 
 ```ts
 @Component({...})
@@ -25,11 +25,11 @@ class IAmAHookComponent {
 }
 ```
 
-We already have this with the `OnDestroy` interface, but the cool thing about `DestroyRef` is that it works wonderfully with another utility function named `takeUntilDestroyed.`
+We already have this with the `OnDestroy` interface, but the cool thing about `DestroyRef` is that it works wonderfully with another utility function named `takeUntilDestroyed`
 
 ## Problem
 
-Before `takeUntilDestroyed` you’ve to do something similar to unsubscribe from an observable `stream$.`
+Before `takeUntilDestroyed` you’ve to do something similar to unsubscribe from an observable `stream$`
 
 ```ts
 @Component({...})
@@ -76,7 +76,7 @@ export class UsingPackageComponent {
 }
 ```
 
-Very similar. However, I always prefer to maximize the framework’s usage as much as possible. As we already have a method now to do it the Angular way, I’d instead remove a package from my `node_modules.`
+Very similar. However, I always prefer to maximize the framework’s usage as much as possible. As we already have a method now to do it the Angular way, I’d instead remove a package from my `node_modules`
 
 ## Solution
 
@@ -105,7 +105,7 @@ const files = project.getSourceFiles(
 );
 ```
 
-Keep in mind that you’re only going to migrate one of the simple cases of using until-destroy mentioned above. if you’re using `checkProperties,` `arrayName,` or `blackList,` you’ve to improve on the code here.
+Keep in mind that you’re only going to migrate the first case of using `until-destroy` mentioned above. if you’re using `checkProperties,` `arrayName,` or `blackList,` you’ve to improve on the code.
 
 ## The Code
 
@@ -116,6 +116,7 @@ The plan is to iterate over all files from `ts-morph` and then loop over all cla
 for (const file of files) {
   const classes = file.getDescendantsOfKind(morph.SyntaxKind.ClassDeclaration);
   for (const clazz of classes) {
+    // Codemod Logic goes here
   }
 }
 ```
@@ -179,11 +180,10 @@ The `untilDestroyed` function is not used in the class. You need to get all call
   // migrate untilDestroyed() to takeUntilDestroyed()
   const untilDestroyedCalls = clazz
     .getDescendantsOfKind(morph.SyntaxKind.CallExpression)
-    .filter(
-      call =>
-        call.getLastChildByKind(morph.SyntaxKind.Identifier)?.getText() ===
-        "untilDestroyed"
-    );
+    .filter(call => {
+      const identifier = call.getLastChildByKind(morph.SyntaxKind.Identifier);
+      return identifier?.getText() === "untilDestroyed";
+    });
 
   if (!untilDestroyedCalls.length) {
     continue;
@@ -267,7 +267,7 @@ for (const untilDestroyedCall of untilDestroyedCalls) {
 }
 ```
 
-You might have noticied the `variable` `doWeNeedDestroyRef` that is used to determine if you need to add the `_destroyRef` property to the class. If you’re using `untilDestroyed` within a method, you need to add the `_destroyRef` property to the class.
+You might have noticied the variable `doWeNeedDestroyRef` that is used to determine if you need to add the `_destroyRef` property to the class. If you’re using `untilDestroyed` within a method, you need to add the `_destroyRef` property to the class.
 
 ```ts
 {
@@ -346,18 +346,17 @@ function setImports(
 
 ## Demo
 
-> [Demo for this use case](https://stackblitz.com/edit/stackblitz-starters-emxuvu?file=package.json&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./index.ts"
+> [Demo & Complete Code](https://stackblitz.com/edit/stackblitz-starters-emxuvu?file=package.json&view=editor): To run this code, open the terminal at the bottom and run "npx ts-node ./index.ts"
 
 Navigate to examples folder where you'll see how the code is migrated.
 
 ## Conclusion
 
-The `ts-morph` API althought simple and to the point might confuse you if you're not familiar with the TypeScript compiler API. You can read the [Gentle Introduction To Typescript Compiler API](https://writer.sh/posts/gentle-introduction-to-typescript-compiler-api/) to get a better understanding of the TypeScript compiler API.
+The `ts-morph` API although simple and to the point it still might confuse you if you're not familiar with the TypeScript compiler API. You can read the [Gentle Introduction To Typescript Compiler API](https://writer.sh/posts/gentle-introduction-to-typescript-compiler-api/) to get a better understanding of the TypeScript compiler API.
 
 Make sure to run the script on a clean repository (commit any code) as it will modify the code in place.
 
 ## References
 
-[Getting to Know the DestroyRef Provider in Angular](https://netbasal.com/getting-to-know-the-destroyref-provider-in-angular-9791aa096d77)
-
-[Until Destroy](https://github.com/ngneat/until-destroy)
+- [Getting to Know the DestroyRef Provider in Angular](https://netbasal.com/getting-to-know-the-destroyref-provider-in-angular-9791aa096d77)
+- [Until Destroy](https://github.com/ngneat/until-destroy)
