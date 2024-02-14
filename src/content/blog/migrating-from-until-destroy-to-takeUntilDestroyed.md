@@ -327,7 +327,7 @@ Finally, you need to ensure the `DestroyRef` and `takeUntilDestroyed` imports ar
   }
 }
 
-function setImports(
+export function setImports(
   sourceFile: morph.SourceFile,
   imports: [string, string[]][]
 ): void {
@@ -339,7 +339,15 @@ function setImports(
       sourceFile.addImportDeclaration({
         moduleSpecifier,
       });
-    moduleSpecifierImport.addNamedImports(namedImports);
+
+    const missingNamedImports = namedImports.filter(
+      namedImport =>
+        !moduleSpecifierImport
+          .getNamedImports()
+          .some(imp => imp.getName() === namedImport)
+    );
+
+    moduleSpecifierImport.addNamedImports(missingNamedImports);
   });
 }
 ```
